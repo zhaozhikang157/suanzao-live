@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.AppUserMapper">
+    <resultMap id="appUserMapper" type="com.longlian.model.AppUser">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="OPENID" property="openid"/>
+        <result column="MOBILE" property="mobile"/>
+        <result column="NAME" property="name"/>
+        <result column="STATUS" property="status"/>
+        <result column="LEVEL" property="level"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="LOGIN_COUNT" property="loginCount"/>
+        <result column="INVITATION_APP_ID" property="invitationAppId"/>
+        <result column="USER_PRIV" property="userPriv"/>
+        <result column="PASSWORD" property="password"/>
+        <result column="PHOTO" property="photo"/>
+        <result column="CITY" property="city"/>
+        <result column="FROM_TYPE" property="fromType"/>
+        <result column="ID_CARD" property="idCard"/>
+        <result column="ID_CARD_FRONT" property="idCardFront"/>
+        <result column="ID_CARD_REAR" property="idCardRear"/>
+        <result column="GENDER" property="gender"/>
+        <result column="BIRTHDAY" property="birthday"/>
+        <result column="YUNXIN_TOKEN" property="yunxinToken"/>
+        <result column="USER_TYPE" property="userType"/>
+        <result column="UNIONID" property="unionid"/>
+        <result column="TEACHER_CREATE_TIME" property="teacherCreateTime"/>
+        <result column="IS_VIRTUAL_USER" property="isVirtualUser"/>
+    </resultMap>
+
+    <resultMap id="avatarUser" type="com.longlian.dto.AppUserDto" extends="appUserMapper">
+        <result column="IS_IN_ROOM" property="isInRoom"/>
+    </resultMap>
+
+    <sql id="bankSql">
+        ID,OPENID,MOBILE,`NAME`,STATUS,LEVEL,CREATE_TIME,LOGIN_COUNT,INVITATION_APP_ID,USER_PRIV,UNIONID,TEACHER_CREATE_TIME,
+        PASSWORD,PHOTO,CITY,FROM_TYPE,ID_CARD,ID_CARD_FRONT,ID_CARD_REAR,GENDER,BIRTHDAY,YUNXIN_TOKEN,USER_TYPE,IS_VIRTUAL_USER
+    </sql>
+    <sql id="bankSql2">
+       a.ID,a.OPENID,a.MOBILE,a.`NAME`,a.STATUS,a.LEVEL,a.CREATE_TIME,a.LOGIN_COUNT,a.INVITATION_APP_ID,a.USER_PRIV,a.UNIONID,a.TEACHER_CREATE_TIME,a.PASSWORD,a.PHOTO,a.CITY,a.FROM_TYPE,a.ID_CARD,a.ID_CARD_FRONT,a.ID_CARD_REAR,a.GENDER,a.BIRTHDAY,a.YUNXIN_TOKEN,a.USER_TYPE,a.IS_VIRTUAL_USER
+    </sql>
+
+
+
+    <select id="getTrackUserInfo" resultType="Map">
+        SELECT au.id id,au.name trackAppName ,au.REAL_NAME trackRealName,au.mobile trackMobile,
+                at.amount trackAmount
+        FROM app_user au,account_track at
+        <where>
+            1=1  and at.TO_ACCOUNT_ID=au.id
+            <if test="@Ognl@isNotEmpty(map.orderId)">
+                AND at.order_id=#{map.orderId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.returnLevel)">
+                AND at.RETURN_MONEY_LEVEL=#{map.returnLevel}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.trackName)">
+                AND (au.NAME=#{map.trackName} or au.REAL_NAME=#{map.trackName})
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getAllAppUserinfoPage" resultType="Map">
+        SELECT ID as id, MOBILE as mobile , `NAME` as userName ,CREATE_TIME as createTime , PHOTO as photo ,
+        CITY as city , GENDER as gender , USER_TYPE as userType , `FROM_TYPE` as fromType
+        FROM app_user
+        <where>
+            <if test="@Ognl@isNotEmpty(name)">
+                AND `NAME` LIKE  CONCAT('%',#{name},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND MOBILE = #{mobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(userType)">
+                AND USER_TYPE = #{userType}
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--后台轮询推荐老师奖励-->
+    <select id="getInvitationTeachRewardList" resultType="Map">
+        select lr.ID roomId , au.ID appId , au.INVITATION_APP_ID invitationAppId from app_user au
+        inner JOIN live_room lr on lr.APP_ID = au.ID
+        where au.USER_TYPE = '1'
+        <if test="@Ognl@isNotEmpty(ids)"> and au.ID NOT  IN (${ids})</if>
+        and au.INVITATION_APP_ID > 0
+        and au.STATUS = '0';
+    </select>
+
+    <!--银行卡详情 会员资料部分-->
+    <select id="getAppUser" parameterType="java.lang.Long" resultType="Map">
+        SELECT app_user.ID id,app_user.PHOTO url,app_user.`NAME` aname
+        FROM app_user
+        WHERE app_user.ID = #{id}
+    </select>
+
+    <!--银行卡详情 列表部分-->
+    <select id="findBankCard" parameterType="java.lang.Long" resultType="Map">
+        SELECT
+        bank_card.NAME,
+        bank.`NAME` AS BANK_NAME,
+        bank_card.CARD_NO,
+        bank_card.ID_CARD,
+        app_user.MOBILE
+        FROM bank_card
+        LEFT JOIN bank ON bank.ID = bank_card.BANK_ID
+        LEFT JOIN app_user ON app_user.ID =bank_card.APP_ID
+        WHERE bank_card.APP_ID = #{appId}
+    </select>
+
+    <select id="getMemberDetailsListPage" resultType="Map">
+        SELECT
+        au.id AS id,
+        au. NAME NAME,
+        au.MOBILE mobile,
+        au.GENDER gender,
+        au.USER_TYPE userType,
+        lr.WEIXIN_NUM weixin,
+        au.CITY city,
+        au.OPENID openid,
+        au.TEACHER_CREATE_TIME teacherCreateTime,
+        au.CREATE_TIME createTime
+        FROM
+        app_user au
+        LEFT JOIN live_room lr ON lr.APP_ID = au.ID
+        <where>
+            au.STATUS = '0'
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND au.`NAME` LIKE  CONCAT('%',#{map.name},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND au.MOBILE = #{map.mobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.userType)">
+                AND au.USER_TYPE = #{map.userType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND au.TEACHER_CREATE_TIME &gt; #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND au.TEACHER_CREATE_TIME &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createStartTime)">
+                AND au.CREATE_TIME &gt; #{map.createStartTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createEndTime)">
+                AND au.CREATE_TIME &lt; #{map.createEndTime}
+            </if>
+            ORDER BY au.CREATE_TIME DESC
+        </where>
+    </select>
+    <select id="getTeacherListPage" resultType="Map">
+        SELECT   au.id as id, au.NAME name , au.MOBILE mobile, au.GENDER gender, au.USER_TYPE userType ,  lr.WEIXIN_NUM weixin ,au.REAL_NAME as realName,
+        au.CITY city , au.OPENID openid , au.TEACHER_CREATE_TIME teacherCreateTime , au.CREATE_TIME createTime,IFNULL(p.status,1) status,IFNULL(t.status,1) teacherStatus,t.PROXY_APP_ID as proxyAppId
+        FROM    proxy_user p RIGHT JOIN  app_user au on p.APP_ID = au.ID  LEFT JOIN  proxy_teacher t on t.TEACHER_ID =au.ID  LEFT JOIN live_room lr ON lr.APP_ID = au.ID
+        <where>
+            au.STATUS = '0'
+            AND au.USER_TYPE = '1'
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND au.`NAME` LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND au.MOBILE = #{map.mobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.userType)">
+                AND au.USER_TYPE = #{map.userType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND au.TEACHER_CREATE_TIME &gt; #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND au.TEACHER_CREATE_TIME &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createStartTime)">
+                AND au.CREATE_TIME &gt; #{map.createStartTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createEndTime)">
+                AND au.CREATE_TIME &lt; #{map.createEndTime}
+            </if>
+            ORDER BY au.CREATE_TIME DESC
+        </where>
+    </select>
+    <select id="findById" parameterType="long" resultMap="appUserMapper">
+        SELECT *
+        FROM  app_user
+        WHERE  ID =#{id}
+    </select>
+
+    <select id="findAllAppUser" resultType="Long">
+        SELECT ID FROM app_user
+    </select>
+
+    <insert id="importUser" parameterType="java.util.List">
+        insert into app_user (PHOTO, `NAME` , REAL_NAME , CREATE_TIME , GENDER , FROM_TYPE , USER_TYPE , IS_VIRTUAL_USER) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.photo}, #{item.name} , #{item.realName} , #{item.createTime} , #{item.gender} , #{item.fromType} ,
+            #{item.userType}, #{item.isVirtualUser})
+        </foreach>
+    </insert>
+
+    <select id="findAvatars" resultType="Long">
+        SELECT ID FROM app_user WHERE IS_VIRTUAL_USER = '1'
+    </select>
+
+
+
+    <select id="findAllAvatar" resultMap="avatarUser">
+        SELECT <include refid="bankSql"/>
+        FROM app_user a
+
+        WHERE a.IS_VIRTUAL_USER = '1' AND a.STATUS = '0'
+
+        ORDER  by a.ID
+
+    </select>
+
+    <select id="findAllAvatarPage" resultMap="avatarUser">
+        SELECT <include refid="bankSql2"/>
+        <if test="@Ognl@isNotEmpty(courseId)">
+            , (case when c.id is null then '0' else '1' end) IS_IN_ROOM
+        </if>
+        FROM app_user a
+        <if test="@Ognl@isNotEmpty(courseId)">
+            left join course_avatar_user c on a.id = c.USER_ID AND c.COURSE_ID = #{courseId}
+        </if>
+        WHERE a.IS_VIRTUAL_USER = '1' AND a.STATUS = '0'
+        <if test="@Ognl@isNotEmpty(isInRoom)">
+            <if test="isInRoom == 1 ">
+               AND c.id is not null
+            </if>
+            <if test="isInRoom == 0">
+                AND c.id is null
+            </if>
+        </if>
+        <if test="@Ognl@isNotEmpty(name)">
+            AND a.NAME like CONCAT('%',#{name},'%' )
+        </if>
+        ORDER  by a.ID
+
+    </select>
+
+    <update id="updateYunxinToken">
+        update app_user set YUNXIN_TOKEN = #{token}  where ID = #{id}
+    </update>
+
+    <select id="getUsersByCount" resultMap="appUserMapper">
+        SELECT <include refid="bankSql"/> FROM app_user
+            WHERE IS_VIRTUAL_USER = '1' AND STATUS = '0'
+            AND ID not in (select USER_ID from course_avatar_user where COURSE_ID = #{courseId}) order by ID limit #{count}
+    </select>
+
+    <update id="updateAvatar">
+        update app_user SET PHOTO = #{photo} , NAME = #{name} , REAL_NAME = #{realName} , GENDER = #{gender} WHERE ID = #{id}
+    </update>
+
+    <select id="getUserCount" resultType="int">
+        SELECT count(*) FROM app_user
+    </select>
+
+    <select id="findNoYunxinTokenUser" resultType="map">
+        select u.ID id ,u.NAME name , u.PHOTO photo  from app_user u where u.YUNXIN_TOKEN is null ORDER BY u.CREATE_TIME desc
+    </select>
+    <update id="resetPwd">
+        update app_user SET PASSWORD = #{password} WHERE ID = #{id}
+    </update>
+    <select id="findUserPhoneList" resultType="map">
+    select u.id,u.mobile,rs.free_date
+    from live_room r,(SELECT DISTINCT live_id,FREE_DATE FROM wechat_official_room where FREE_DATE is not null and live_id > 0) rs,app_user u
+    where r.id=rs.live_id and r.app_id=u.ID
+    </select>
+</mapper>

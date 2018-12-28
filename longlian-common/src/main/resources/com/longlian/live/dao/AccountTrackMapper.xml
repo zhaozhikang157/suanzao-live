@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.AccountTrackMapper">
+    <cache></cache>
+    <resultMap id="BaseResultMap" type="com.longlian.model.AccountTrack">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="FORM_ACCOUNT_ID" jdbcType="BIGINT" property="formAccountId"/>
+        <result column="TO_ACCOUNT_ID" jdbcType="BIGINT" property="toAccountId"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount"/>
+        <result column="CURR_BALANCE" jdbcType="DECIMAL" property="currBalance"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="TRACK_ID" jdbcType="BIGINT" property="trackId"/>
+        <result column="ORDER_ID" jdbcType="BIGINT" property="orderId"/>
+        <result column="RETURN_MONEY_LEVEL" jdbcType="INTEGER" property="returnMoneyLevel"/>
+        <result column="COURSE_TYPE" jdbcType="INTEGER" property="courseType"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    FORM_ACCOUNT_ID, TO_ACCOUNT_ID, TYPE, AMOUNT,
+    CURR_BALANCE, CREATE_TIME, TRACK_ID, ORDER_ID,RETURN_MONEY_LEVEL,COURSE_TYPE
+  </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        ID ,
+        <include refid="Base_Column_List"/>
+        from account_track
+        where ID = #{id}
+    </select>
+
+    <insert id="insert" parameterType="AccountTrack">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into account_track (
+        <include refid="Base_Column_List"></include>
+        )
+        values (#{formAccountId}, #{toAccountId}, #{type}, #{amount}, #{currBalance}, #{createTime}, #{trackId},
+        #{orderId},#{returnMoneyLevel},#{courseType})
+    </insert>
+
+    <select id="getProfit" parameterType="java.lang.Long" resultType="Map">
+      select account_track.CREATE_TIME as createTime,
+      app_user.MOBILE as mobile,
+      account_track.AMOUNT as amount,
+      account_track.RETURN_MONEY_LEVEL as level
+      from account_track
+      LEFT JOIN app_user ON app_user.ID = account_track.FORM_ACCOUNT_ID
+      WHERE account_track.TO_ACCOUNT_ID = #{id} AND account_track.RETURN_MONEY_LEVEL IN (1,2,3)
+      AND account_track.TYPE=0
+      ORDER BY account_track.CREATE_TIME DESC
+  </select>
+
+    <select id="getWalletsPage" resultType="Map" useCache="false">
+        SELECT * FROM
+        (SELECT ID , AMOUNT AS amount , ORDER_TYPE as type ,0 yy, OPT_STATUS as status  ,
+        CREATE_TIME AS createTime , ORDER_TYPE as orderType
+        FROM orders WHERE APP_ID = #{id} AND OPT_STATUS = '0' AND ORDER_TYPE = '1'
+        UNION ALL
+        SELECT `at`.ID , `at`.AMOUNT as amount , `at`.TYPE as type ,1 yy, `at`.RETURN_MONEY_LEVEL AS status  ,
+				`at`.CREATE_TIME AS createTime , o.ORDER_TYPE AS  orderType
+        FROM account_track `at`
+				LEFT JOIN orders o ON o.ID = `at`.ORDER_ID
+				WHERE `at`.TO_ACCOUNT_ID = #{id}) a
+        ORDER BY a.createTime DESC
+    </select>
+
+    <select id="getWalletsPageNew" resultType="Map" useCache="false">
+        SELECT
+            t.id,
+            t.amount,
+            t.type,
+            t.RETURN_MONEY_LEVEL `status`,
+            t.CREATE_TIME createTime,
+            t2.ORDER_TYPE orderType
+        FROM
+            account_track t
+        LEFT JOIN orders t2 ON t.ORDER_ID = t2.ID AND t2.ORDER_TYPE in (0, 6)
+        WHERE
+          t.TO_ACCOUNT_ID = #{id}
+        AND t.TYPE = 0
+        <if test="@Ognl@isNotEmpty(returnMoneyLevel)">
+        	 AND t.RETURN_MONEY_LEVEL = #{returnMoneyLevel} 
+        </if>
+        <if test="@Ognl@isEmpty(returnMoneyLevel)">
+	         AND t.RETURN_MONEY_LEVEL IN (0, 1, 7, 13, 14)
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+
+    <!--分销排行前5-->
+    <select id="getDistributionSortByCourseId" resultType="java.util.Map">
+        select
+        sum(`at`.AMOUNT)  amount  ,  `at`.TO_ACCOUNT_ID appId ,au.`NAME` name  ,au.PHOTO photo
+        from  account_track at
+        INNER JOIN orders o on o.ID = at.ORDER_ID
+        INNER JOIN join_course_record jcr on o.JOIN_COURSE_ID =  jcr.ID
+        INNER JOIN app_user au on au.ID = at.TO_ACCOUNT_ID
+        WHERE
+        jcr.COURSE_ID = #{courseId} and
+        o.ORDER_TYPE = '0' and
+        o.OPT_STATUS = '1' and
+        `at`.RETURN_MONEY_LEVEL = '1' and
+        `at`.TYPE = '0' and
+        `at`.TO_ACCOUNT_ID != -8888
+        GROUP BY   `at`.TO_ACCOUNT_ID ORDER BY sum(  `at`.AMOUNT) desc  LIMIT 5
+    </select>
+
+    <select id="getDistributionMasterListPage" resultType="java.util.Map" useCache="false">
+        select
+        sum(`at`.AMOUNT)  amount , `at`.TO_ACCOUNT_ID appId ,au.`NAME` name ,au.PHOTO photo,
+        (SELECT COUNT(1) FROM join_course_record WHERE INVITATION_USER_ID = `at`.TO_ACCOUNT_ID AND STATUS='0' AND SIGN_UP_STATUS = '1') as count
+        from  account_track at
+        INNER JOIN orders o on o.ID = at.ORDER_ID
+        INNER JOIN join_course_record jcr on o.JOIN_COURSE_ID =  jcr.ID
+        INNER JOIN app_user au on au.ID = at.TO_ACCOUNT_ID
+        WHERE
+        jcr.COURSE_ID = #{courseId} and
+        o.ORDER_TYPE = '0' and
+        o.OPT_STATUS = '1' and
+        `at`.RETURN_MONEY_LEVEL = '1' and
+        `at`.TYPE = '0' and
+        `at`.TO_ACCOUNT_ID != -8888
+        GROUP BY   `at`.TO_ACCOUNT_ID ORDER BY sum(  `at`.AMOUNT) desc
+    </select>
+
+    <select id="findAllWallet" resultType="java.util.Map">
+        SELECT
+        sum(AMOUNT) AS amount , RETURN_MONEY_LEVEL AS `level`
+        FROM account_track
+        WHERE TYPE = '0' AND TO_ACCOUNT_ID = #{appId} GROUP BY RETURN_MONEY_LEVEL
+    </select>
+
+    <select id="findTodayAccount" resultType="java.math.BigDecimal" useCache="false">
+        SELECT
+        IFNULL(sum(AMOUNT),0.00) AS amount
+        FROM account_track
+        WHERE TYPE = '0' AND TO_ACCOUNT_ID = #{appId} AND DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') = CURRENT_DATE()
+    </select>
+
+    <select id="findTodayWalletByTypePage" resultType="java.util.Map">
+        SELECT
+          *
+        FROM account_track
+        WHERE TYPE = 0
+        AND RETURN_MONEY_LEVEL IN (4,0)
+    </select>
+
+    <select id="findAccountMoney" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(AMOUNT) ,0) FROM orders WHERE ORDER_TYPE = '1' AND OPT_STATUS = '0' AND APP_ID = #{appId}
+    </select>
+
+    <resultMap id="DtoResultMap" type="com.longlian.dto.AccountTrackDto" extends="BaseResultMap">
+        <result column="endTime" property="endTime"/>
+        <result column="userName" property="userName"/>
+        <result column="mobile" property="mobile"/>
+        <result column="income" property="income"/>
+        <result column="expenditure" property="expenditure"/>
+        <result column="startTime" property="startTime"/>
+        <result column="orderNo" property="orderNo"/>
+    </resultMap>
+
+    <select id="getIncomeSummaryPage" resultMap="DtoResultMap">
+        select
+        `at`.TO_ACCOUNT_ID , app_user.NAME userName , app_user.MOBILE mobile,
+        (select sum(AMOUNT) from account_track where TO_ACCOUNT_ID = `at`.TO_ACCOUNT_ID and TYPE = '0'
+        and CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and CREATE_TIME &lt;= '${accountTrackDto.endTimeStr}') AS income ,
+        (select sum(AMOUNT) from account_track where TO_ACCOUNT_ID = `at`.TO_ACCOUNT_ID and TYPE = '1'
+        and CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and CREATE_TIME &lt;= '${accountTrackDto.endTimeStr}') AS
+        expenditure
+        from account_track `at`
+       <!-- LEFT JOIN app_user ON app_user.ID = `at`.TO_ACCOUNT_ID    此处sql无需用左外连接查询较慢 ,修改如下行-->
+        , app_user
+        <where>
+            app_user.ID = `at`.TO_ACCOUNT_ID AND
+            `at`.CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and `at`.CREATE_TIME &lt;= '${accountTrackDto.endTimeStr}'
+            <if test="accountTrackDto.toAccountId >0 ">
+                AND `at`.TO_ACCOUNT_ID = #{accountTrackDto.toAccountId}
+            </if>
+            <if test="@Ognl@isNotEmpty(accountTrackDto.userName)">
+                AND app_user.NAME LIKE CONCAT('%',#{accountTrackDto.userName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(accountTrackDto.mobile)">
+                AND app_user.MOBILE = #{accountTrackDto.mobile}
+            </if>
+            <if test="accountTrackDto.returnMoneyLevel>-1">
+                AND `at`.RETURN_MONEY_LEVEL = #{accountTrackDto.returnMoneyLevel}
+            </if>
+            AND `at`.TO_ACCOUNT_ID != -8888
+        </where>
+        GROUP BY `at`.TO_ACCOUNT_ID
+        limit #{page.offset},#{page.limit}
+    </select>
+
+    <select id="getIncomeSummaryTotalCount" resultType="map">
+        select count(*) totalCount FROM
+        (select `at`.TO_ACCOUNT_ID
+        from account_track `at`
+        , app_user
+        <where>
+            app_user.ID = `at`.TO_ACCOUNT_ID AND
+            `at`.CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and `at`.CREATE_TIME &lt;=
+            '${accountTrackDto.endTimeStr}'
+            <if test="accountTrackDto.toAccountId >0 ">
+                AND `at`.TO_ACCOUNT_ID = #{accountTrackDto.toAccountId}
+            </if>
+            <if test="@Ognl@isNotEmpty(accountTrackDto.userName)">
+                AND app_user.NAME LIKE CONCAT('%',#{accountTrackDto.userName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(accountTrackDto.mobile)">
+                AND app_user.MOBILE = #{accountTrackDto.mobile}
+            </if>
+            <if test="accountTrackDto.returnMoneyLevel>-1">
+                AND `at`.RETURN_MONEY_LEVEL = #{accountTrackDto.returnMoneyLevel}
+            </if>
+            AND `at`.TO_ACCOUNT_ID != -8888
+        </where>
+        GROUP BY `at`.TO_ACCOUNT_ID
+        ) t
+    </select>
+
+    <select id="findAllBanlanceByTime" resultType="Map">
+        SELECT account_track.TO_ACCOUNT_ID appId , account_track.CURR_BALANCE currBalance <!-- , orders.REMARK remark-->
+        FROM account_track
+       <!-- LEFT JOIN orders ON orders.ID = account_track.ORDER_ID -->
+        WHERE account_track.CREATE_TIME &lt;= #{endTime}
+         AND account_track.TO_ACCOUNT_ID != -8888
+        ORDER BY account_track.CREATE_TIME DESC
+    </select>
+
+    <!--收支详情-->
+    <select id="getDetailedPage" resultMap="DtoResultMap" useCache="false">
+        SELECT `at`.CREATE_TIME , o.ORDER_NO orderNo , au.NAME userName, `at`.TO_ACCOUNT_ID , au.MOBILE mobile,
+         `at`.RETURN_MONEY_LEVEL , `at`.TYPE , `at`.AMOUNT , `at`.CURR_BALANCE
+         FROM account_track `at`
+         LEFT JOIN app_user au ON au.ID = `at`.TO_ACCOUNT_ID
+         LEFT JOIN orders o ON o.ID = `at`.ORDER_ID
+         WHERE `at`.TO_ACCOUNT_ID = #{appId}
+         AND `at`.CREATE_TIME &gt;= #{startTime}
+         and `at`.CREATE_TIME &lt;= #{endTime}
+        ORDER BY `at`.CREATE_TIME DESC
+    </select>
+
+    <select id="getTrackAndOrdersPage" resultType="Map" useCache="false">
+        SELECT c.LIVE_TOPIC liveTopic,account_track.CREATE_TIME as createTime ,app_user.name AS uname,app_user.real_name realName, app_user.MOBILE as mobile , orders.ORDER_TYPE as orderType,
+        orders.TRAN_NO as tranNo , orders.ORDER_NO as orderNo , orders.BANK_TYPE as bankType ,
+        orders.REAL_AMOUNT as oamount , account_track.AMOUNT as tamount , account_track.CURR_BALANCE as currBalance,
+        orders.LL_CHARGE as llCharge, orders.CHARGE as charge , account_track.RETURN_MONEY_LEVEL as returnMoneyLevel,
+        orders.OPT_STATUS as optStatus , orders.REMARK AS remark
+        FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        left join join_course_record jcr on orders.JOIN_COURSE_ID=jcr.id
+        LEFT  JOIN  course c on c.id=jcr.course_id
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            account_track.TO_ACCOUNT_ID =#{ziJinChiAccountId}
+            <if test="@Ognl@isNotEmpty(trackDto.orderNo)">
+                AND orders.ORDER_NO = #{trackDto.orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(trackDto.orderType)">
+                AND account_track.TYPE = #{trackDto.orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(trackDto.bankType)">
+                AND orders.BANK_TYPE = #{trackDto.bankType}
+            </if>
+            <if test="@Ognl@isNotEmpty(trackDto.startTime)">
+                AND account_track.CREATE_TIME &gt; #{trackDto.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(trackDto.endTime)">
+                AND account_track.CREATE_TIME &lt; #{trackDto.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(trackDto.mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{trackDto.mobile},'%' )
+            </if>
+        </where>
+        ORDER BY account_track.ID DESC
+    </select>
+    <!--  本年度收入 -->
+
+    <select id="getYearMonthWeekDateOamount" resultType="map">
+        SELECT (case WHEN yeart.yearOamount is null then 0 else yeart.yearOamount end ) yearOamount,
+                (case when montht.monthOamount is null then 0 else montht.monthOamount END ) monthOamount,
+                (case when weekt.weekOamount is null then 0 else weekt.weekOamount end ) weekOamount,
+                (case when datet.dayOamount is null then 0 else datet.dayOamount end) dayOamount
+         FROM
+         (
+          SELECT  SUM(orders.REAL_AMOUNT) as yearOamount FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+         WHERE   account_track.TO_ACCOUNT_ID = #{map.id}
+            AND account_track.CREATE_TIME LIKE CONCAT(#{map.year},'%' )
+                AND orders.ORDER_TYPE != '1'
+        ) yeart,
+          (
+          SELECT  SUM(orders.REAL_AMOUNT) as monthOamount FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+         WHERE   account_track.TO_ACCOUNT_ID = #{map.id}
+            AND account_track.CREATE_TIME LIKE CONCAT(#{map.month},'%' )
+                AND orders.ORDER_TYPE != '1'
+        ) montht,
+        (
+          SELECT  SUM(orders.REAL_AMOUNT) as weekOamount FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+         WHERE   account_track.TO_ACCOUNT_ID = #{map.id}
+            AND account_track.CREATE_TIME &gt; #{map.mondayDate}
+            AND account_track.CREATE_TIME &lt; #{map.mondayDate}
+                AND orders.ORDER_TYPE != '1'
+        ) weekt,
+       (
+        SELECT  SUM(orders.REAL_AMOUNT) as dayOamount FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+         WHERE   account_track.TO_ACCOUNT_ID = #{map.id}
+             AND account_track.CREATE_TIME LIKE CONCAT(#{map.day},'%' )
+                AND orders.ORDER_TYPE != '1'
+       ) datet
+    </select>
+
+    <!--总收入-->
+    <select id="getCountOamount" resultType="java.math.BigDecimal">
+        SELECT
+        SUM(orders.REAL_AMOUNT) as countOamount
+        FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            account_track.TO_ACCOUNT_ID = #{id}
+            <if test="orderType=='' ">
+                AND orders.ORDER_TYPE != '1'
+            </if>
+            <if test="@Ognl@isNotEmpty(orderNo)">
+                AND orders.ORDER_NO = #{orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(orderType)">
+                AND orders.ORDER_TYPE = #{orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(bankType)">
+                AND orders.BANK_TYPE = #{bankType}
+            </if>
+            <if test="@Ognl@isNotEmpty(startDate)">
+                AND account_track.CREATE_TIME &gt; #{startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(endDate)">
+                AND account_track.CREATE_TIME &lt; #{endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getCountTamount" resultType="java.math.BigDecimal">
+        SELECT
+        SUM(orders.REAL_AMOUNT) as countTamount
+        FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            account_track.TO_ACCOUNT_ID = #{id}
+            <if test="orderType=='' ">
+                AND orders.ORDER_TYPE = 1
+            </if>
+            <if test="@Ognl@isNotEmpty(orderNo)">
+                AND orders.ORDER_NO = #{orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(orderType)">
+                AND orders.ORDER_TYPE = #{orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(bankType)">
+                AND orders.BANK_TYPE = #{bankType}
+            </if>
+            <if test="@Ognl@isNotEmpty(startDate)">
+                AND account_track.CREATE_TIME &gt; #{startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(endDate)">
+                AND account_track.CREATE_TIME &lt; #{endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getTrackAndOrders" resultType="Map">
+        SELECT account_track.CREATE_TIME as createTime, app_user.MOBILE as mobile ,app_user.name AS uname,app_user.real_name realName,orders.ORDER_TYPE as
+        orderType,orders.TRAN_NO as tranNo,
+        orders.ORDER_NO as orderNo,orders.BANK_TYPE as bankType ,orders.REAL_AMOUNT as oamount,account_track.AMOUNT as
+        tamount,
+        account_track.CURR_BALANCE as currBalance,orders.LL_CHARGE as llCharge,orders.CHARGE as charge , orders.REMARK
+        AS remark
+        FROM account_track
+        INNER JOIN orders ON orders.ID = account_track.ORDER_ID
+        INNER JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            account_track.TO_ACCOUNT_ID = #{id}
+            <if test="@Ognl@isNotEmpty(orderNo)">
+                AND orders.ORDER_NO = #{orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(orderType)">
+                AND orders.ORDER_TYPE = #{orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(bankType)">
+                AND orders.BANK_TYPE = #{bankType}
+            </if>
+            <if test="@Ognl@isNotEmpty(startDate)">
+                AND account_track.CREATE_TIME &gt; #{startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(endDate)">
+                AND account_track.CREATE_TIME &lt; #{endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )
+            </if>
+        </where>
+        ORDER BY account_track.ID DESC
+    </select>
+
+    <select id="getCountCharge" resultType="java.math.BigDecimal">
+        SELECT
+        SUM(orders.CHARGE) as countCharge
+        FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            account_track.TO_ACCOUNT_ID = #{id}
+            <if test="@Ognl@isNotEmpty(orderNo)">
+                AND orders.ORDER_NO = #{orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(orderType)">
+                AND orders.ORDER_TYPE = #{orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(bankType)">
+                AND orders.BANK_TYPE = #{bankType}
+            </if>
+            <if test="@Ognl@isNotEmpty(startDate)">
+                AND account_track.CREATE_TIME &gt; #{startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(endDate)">
+                AND account_track.CREATE_TIME &lt; #{endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getCountllCharge" resultType="java.math.BigDecimal">
+        SELECT
+        SUM(orders.LL_CHARGE) as countllCharge
+        FROM account_track
+        LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            account_track.TO_ACCOUNT_ID = #{id}
+            <if test="@Ognl@isNotEmpty(orderNo)">
+                AND orders.ORDER_NO = #{orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(orderType)">
+                AND orders.ORDER_TYPE = #{orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(bankType)">
+                AND orders.BANK_TYPE = #{bankType}
+            </if>
+            <if test="@Ognl@isNotEmpty(startDate)">
+                AND account_track.CREATE_TIME &gt; #{startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(endDate)">
+                AND account_track.CREATE_TIME &lt; #{endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getListByOrderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        ID ,
+        <include refid="Base_Column_List"/>
+        from account_track
+        where ORDER_ID = #{orderId}
+    </select>
+
+    <select id="importExcelBalanceOfPayments" parameterType="com.longlian.dto.AccountTrackDto" resultType="Map">
+        select
+        `at`.TO_ACCOUNT_ID toAccountId, app_user.NAME userName , app_user.MOBILE mobile,
+        (select sum(AMOUNT) from account_track where TO_ACCOUNT_ID = `at`.TO_ACCOUNT_ID and TYPE = '0'
+        and CREATE_TIME &gt;= #{accountTrackDto.startTime} and CREATE_TIME &lt;= #{accountTrackDto.endTime}) AS income ,
+        (select sum(AMOUNT) from account_track where TO_ACCOUNT_ID = `at`.TO_ACCOUNT_ID and TYPE = '1'
+        and CREATE_TIME &gt;= #{accountTrackDto.startTime} and CREATE_TIME &lt;= #{accountTrackDto.endTime}) AS
+        expenditure
+        from account_track `at`
+        LEFT JOIN app_user ON app_user.ID = `at`.TO_ACCOUNT_ID
+        <where>
+            `at`.CREATE_TIME &gt;= #{accountTrackDto.startTime} and `at`.CREATE_TIME &lt;= #{accountTrackDto.endTime}
+            <if test="accountTrackDto.toAccountId >0 ">
+                AND `at`.TO_ACCOUNT_ID = #{accountTrackDto.toAccountId}
+            </if>
+            <if test="@Ognl@isNotEmpty(accountTrackDto.mobile)">
+                AND app_user.MOBILE = #{accountTrackDto.mobile}
+            </if>
+            <if test="accountTrackDto.returnMoneyLevel>-1">
+                AND `at`.RETURN_MONEY_LEVEL = #{accountTrackDto.returnMoneyLevel}
+            </if>
+            AND `at`.TO_ACCOUNT_ID != -8888
+        </where>
+        GROUP BY `at`.TO_ACCOUNT_ID
+    </select>
+
+    <select id="importDetails" resultType="Map">
+        SELECT `at`.CREATE_TIME createTime, o.ORDER_NO orderNo , au.NAME userName, `at`.TO_ACCOUNT_ID toAccountId,
+        au.MOBILE mobile,`at`.RETURN_MONEY_LEVEL returnMoneyLevel, `at`.TYPE type, `at`.AMOUNT amount,
+         `at`.CURR_BALANCE currBalance
+        FROM account_track `at`
+        LEFT JOIN app_user au ON au.ID = `at`.TO_ACCOUNT_ID
+        LEFT JOIN orders o ON o.ID = `at`.ORDER_ID
+        WHERE `at`.TO_ACCOUNT_ID = #{appId}
+        AND `at`.CREATE_TIME &gt;= #{startTime}
+        and `at`.CREATE_TIME &lt;= #{endTime}
+        ORDER BY `at`.CREATE_TIME DESC
+    </select>
+
+    <!--收支明细-->
+    <select id="getReDetailPage" resultMap="DtoResultMap" useCache="false">
+        SELECT `at`.CREATE_TIME , o.ORDER_NO orderNo , au.NAME userName, `at`.TO_ACCOUNT_ID , au.MOBILE mobile,
+        `at`.RETURN_MONEY_LEVEL , `at`.TYPE , `at`.AMOUNT , `at`.CURR_BALANCE
+        FROM account_track `at`
+        LEFT JOIN app_user au ON au.ID = `at`.TO_ACCOUNT_ID
+        LEFT JOIN orders o ON o.ID = `at`.ORDER_ID
+        <where>
+            `at`.CREATE_TIME &gt;= #{accountTrackDto.startTime}
+            and `at`.CREATE_TIME &lt;= #{accountTrackDto.endTime}
+            AND `at`.TO_ACCOUNT_ID IN (${appIds})
+            <if test="@Ognl@isNotEmpty(accountTrackDto.mobile)">
+                AND au.MOBILE = #{accountTrackDto.mobile}
+            </if>
+            <if test="accountTrackDto.returnMoneyLevel>-1">
+                AND `at`.RETURN_MONEY_LEVEL = #{accountTrackDto.returnMoneyLevel}
+            </if>
+        </where>
+        ORDER BY `at`.CREATE_TIME DESC
+    </select>
+
+    <select id="getImportReDetail" resultMap="DtoResultMap">
+        SELECT `at`.CREATE_TIME , o.ORDER_NO orderNo , au.NAME userName, `at`.TO_ACCOUNT_ID , au.MOBILE mobile,
+        `at`.RETURN_MONEY_LEVEL , `at`.TYPE , `at`.AMOUNT , `at`.CURR_BALANCE
+        FROM account_track `at`
+        LEFT JOIN app_user au ON au.ID = `at`.TO_ACCOUNT_ID
+        LEFT JOIN orders o ON o.ID = `at`.ORDER_ID
+        <where>
+            `at`.CREATE_TIME &gt;= #{accountTrackDto.startTime} and `at`.CREATE_TIME &lt;= #{accountTrackDto.endTime}
+            AND `at`.TO_ACCOUNT_ID IN (${appIds})
+            <if test="@Ognl@isNotEmpty(accountTrackDto.mobile)">
+                AND au.MOBILE = #{accountTrackDto.mobile}
+            </if>
+            <if test="accountTrackDto.returnMoneyLevel>-1">
+                AND `at`.RETURN_MONEY_LEVEL = #{accountTrackDto.returnMoneyLevel}
+            </if>
+            AND `at`.TO_ACCOUNT_ID != -8888
+        </where>
+        ORDER BY `at`.CREATE_TIME DESC
+    </select>
+
+    <select id="getIncomeSummary" resultMap="DtoResultMap">
+        select
+        `at`.TO_ACCOUNT_ID , app_user.NAME userName , app_user.MOBILE mobile,
+        (select sum(AMOUNT) from account_track where TO_ACCOUNT_ID = `at`.TO_ACCOUNT_ID and TYPE = '0'
+        and CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and CREATE_TIME &lt;= '${accountTrackDto.endTimeStr}') AS income ,
+        (select sum(AMOUNT) from account_track where TO_ACCOUNT_ID = `at`.TO_ACCOUNT_ID and TYPE = '1'
+        and CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and CREATE_TIME &lt;= '${accountTrackDto.endTimeStr}') AS
+        expenditure
+        from account_track `at`
+        LEFT JOIN app_user ON app_user.ID = `at`.TO_ACCOUNT_ID
+        <where>
+            `at`.CREATE_TIME &gt;= '${accountTrackDto.startTimeStr}' and `at`.CREATE_TIME &lt;= '${accountTrackDto.endTimeStr}'
+            <if test="accountTrackDto.toAccountId >0 ">
+                AND `at`.TO_ACCOUNT_ID = #{accountTrackDto.toAccountId}
+            </if>
+            <if test="@Ognl@isNotEmpty(accountTrackDto.mobile)">
+                AND app_user.MOBILE = #{accountTrackDto.mobile}
+            </if>
+            <if test="accountTrackDto.returnMoneyLevel>-1">
+                AND `at`.RETURN_MONEY_LEVEL = #{accountTrackDto.returnMoneyLevel}
+            </if>
+            AND `at`.TO_ACCOUNT_ID != -8888
+        </where>
+        GROUP BY `at`.TO_ACCOUNT_ID
+    </select>
+
+    <select id="findAuditing" resultType="BigDecimal">
+        SELECT SUM(AMOUNT) FROM orders WHERE APP_ID = #{appId} AND ORDER_TYPE = 1 AND OPT_STATUS = 0
+    </select>
+
+    <select id="findAuditSuccess" resultType="BigDecimal">
+        SELECT SUM(AMOUNT) FROM orders WHERE APP_ID = #{appId} AND ORDER_TYPE = 1 AND OPT_STATUS = 1
+    </select>
+
+    <select id="getproxyIncomePage" resultType="Map" useCache="false">
+        SELECT `at`.CREATE_TIME createTime , au.`NAME` userName, `at`.AMOUNT amount
+        FROM account_track `at` LEFT JOIN app_user au ON au.ID = `at`.FORM_ACCOUNT_ID
+        WHERE `at`.TYPE = '0' AND `at`.RETURN_MONEY_LEVEL = '6' AND `at`.TO_ACCOUNT_ID = #{appId}
+        ORDER BY `at`.CREATE_TIME DESC
+    </select>
+
+</mapper>

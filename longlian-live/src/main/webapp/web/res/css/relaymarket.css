@@ -1,0 +1,401 @@
+/* 2018年7月10日*/
+/* DHY*/
+body {
+    width: 100%;
+    max-width: 18.75rem;
+    margin: 0 auto;
+    overflow: hidden;
+    background: #f0f1f4;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+/* header*/
+header {
+    width: 100%;
+    position: fixed;
+    height: 4.1rem;
+    background: #fff;
+    top: 0;
+    z-index: 99;
+    position: relative;
+}
+/*查询*/
+.search_box {
+    width:100%;
+    position:relative;
+    top:0;
+    z-index:1111111;
+    max-width: 18.75rem;
+    left: 50%;
+    margin-left: -9.4rem;
+}
+.searchInput {
+    padding: .5rem .65rem .1rem .65rem;
+    max-width:18.75rem;
+    margin: 0 auto;
+}
+#searchFn {
+    -webkit-box-flex: 1;
+    width: 100%;
+    height: 1.5rem;
+    display: block;
+    border:1px #cccccc solid;
+    color: #9da0a5;
+    max-width:18.75rem;
+    font-size:0.6rem;
+    padding:0.4rem 0;
+    border-radius:0.8rem ;
+    background:#eeeeee url(../image/btn.png) no-repeat;
+    background-position: 0.6rem 50%;
+    background-size:0.65rem 0.65rem ;
+    text-align: left;
+    padding-left: 1.7rem;
+    box-sizing: border-box;
+}
+ input#searchFn::-webkit-search-cancel-button{
+     display: none;
+ }
+ input#searchFn::-ms-clear{
+     display: none;
+ }
+#searchFn::-webkit-input-placeholder {
+    font-size: 0.6rem;
+    line-height: normal;
+    color:#9da0a5
+}
+.searchcloseBtn {
+    width: .9rem;
+    margin-left: 0.5rem;
+    height: 1.45rem;
+    line-height: 1.45rem;
+    color: #282828;
+    display: none;
+}
+.searclose_index {
+    display: none;
+    position: absolute;
+    top: 0.85rem;
+    right: 3rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    background: url(/web/res/image/Close@2x.png) no-repeat center center;
+    background-size: 100% 100%;
+}
+/*排序*/
+.sort_box{
+    position: relative;
+}
+.sort_box ul{
+    width: 100%;
+}
+.sort_box ul li{
+    display: inline-block;
+    width: 24%;
+    text-align: center;
+    font-size: .675rem;
+    padding: .7rem 0;
+    color: #333;
+    position: relative;
+}
+.sort_box ul li.on{
+    color: #dd2f31;
+}
+.sort_box ul li i{
+    background: url(../image/sort_@1.png) no-repeat;
+    display: inline-block;
+    width: .5rem;
+    height: .7rem;
+    position: absolute;
+    margin-left: 0.2rem;
+    background-size: contain;
+}
+.sort_box ul li.on i.down{
+    background: url(../image/sort_@2.png) no-repeat;
+    background-size: contain;
+}
+
+.sort_box ul li.on i.up{
+    background: url(../image/sort_@3.png) no-repeat;
+    background-size: contain;
+}
+/*内容区*/
+.content{
+    position: absolute;
+    width: 100%;
+    top: 4.3rem;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.content .sort_list{
+    overflow: hidden;
+    padding-top: 0.5rem;
+    background-color: #fff;
+    padding: 0.5rem .75rem 0;
+    margin-bottom: .2rem;
+}
+.content .sort_list .sort_img{
+    border-radius: 0.25rem;
+    width: 6.45rem;
+    height: 4rem;
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+}
+.content .sort_list .sort_img .projection{
+    width: 100%;
+    height: 1.2rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: url(/web/res/image/Weeklyselectionmask@2x.png) no-repeat center center;
+    background-size: 100% 100%;
+    display: -webkit-box;
+    -webkit-box-align: center;
+}
+.content .sort_list .sort_img .liveingpic{
+    margin-left: 0.25rem;
+    display: inline-block;
+    width: 0.525rem;
+    height: 0.55rem;
+    background: url(/web/res/image/liveing.gif) no-repeat center center;
+    background-size: 100% 100%;
+    vertical-align: middle;
+}
+.content .sort_list .sort_img .playbacks{
+    margin-left: 0.25rem;
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    background: url(/web/res/image/newplayb.png) no-repeat center center;
+    background-size: 100% 100%;
+    vertical-align: middle;
+}
+
+.content .sort_list .sort_img .backlookout{
+    margin-left: 0.25rem;
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.525rem;
+    background: url(/web/res/image/backlookout.png) no-repeat center center;
+    background-size: 100% 100%;
+    vertical-align: middle;
+}
+.content .sort_list .sort_img .playNumber{
+    font-size: 0.5rem;
+    color: white;
+    display: inline-block;
+    margin-left: 0.25rem;
+    vertical-align: middle;
+}
+
+.content .sort_list .sort_img .videoIco{
+    width: 1rem;
+    height: 0.75rem;
+    right: 0.25rem;
+    bottom: 0.25rem;
+    position: absolute;
+    background: url(../image/ico_video.png) no-repeat center center;
+    background-size: 100%;
+}
+.content .sort_list .sort_img .audioIco{
+     width: 1rem;
+     height: 0.75rem;
+     background: url(/web/res/image/ico_audio.png) no-repeat center center;
+     background-size: 100%;
+     right: 0.25rem;
+     bottom: 0.25rem;
+     position: absolute;
+ }
+.content .sort_list .sort_info{
+    display: inline-block;
+    vertical-align: middle;
+    width: 10.3rem;
+    padding-left: .3rem;
+}
+.content .sort_list .sort_tlt{
+    font-size: .7rem;
+    color: #28292f;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    line-height: .85rem;
+}
+.content .sort_list .sort_money{
+    font-size: .6rem;
+    margin-top: .8rem;
+}
+.content .sort_list .sort_money i{
+    display: inline-block;
+    color: #666;
+    margin-left: .6rem;
+}
+.content .sort_list .sort_money i em{
+    color: #d53c3e;
+}
+.content .sort_list .sort_time{
+    font-size: .6rem;
+    margin-top: .5rem;
+}
+.content .sort_list .sort_time span{
+    color: #9da0a5;
+}
+.content .sort_list .sort_time span:nth-child(1){
+    font-size: .55rem;
+    color: #9da0a5;
+    background: url(/web/res/image/new_time@2x.png) no-repeat left center;
+    background-size: 0.55rem 0.55rem;
+    text-indent: 0.75rem;
+    vertical-align: middle;
+    display: inline-block;
+}
+.content .sort_list .sort_time span:nth-child(2){
+    margin-left: .6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 4.5rem;
+    vertical-align: middle;
+    display: inline-block;
+    float: right;
+    text-align: right;
+}
+.content .sort_list .sort_time span .series {
+    vertical-align: middle;
+    margin-top: -0.1rem;
+    width: 0.425rem;
+    height: 0.55rem;
+    background: url(/web/res/image/series@2x.png) no-repeat center center;
+    background-size: 100%;
+    display: inline-block;
+    margin-right: 0.25rem;
+}
+.content .sort_list .sort_btn{
+    border-top: 1px solid #e1e1e1;
+    margin-top: .5rem;
+    height: 2.2rem;
+}
+.content .sort_list .sort_btn span{
+
+}
+.content .sort_list .sort_btn span:nth-child(1){
+    -webkit-box-flex: 1;
+    color: white;
+    font-size: 0.6rem;
+    background: #d53c3e;
+    text-align: center;
+    border-radius: .15rem;
+    width: 3rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    display: inline-block;
+    float: right;
+    margin: .5rem 0;
+}
+.content .sort_list .sort_btn span:nth-child(1).on{
+    background: #d0d0d0;
+}
+.content .sort_list .sort_btn span:nth-child(2){
+    display: inline-block;
+    float: right;
+    margin: .5rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    color: #666;
+}
+.content .sort_list .sort_btn span:nth-child(2) i{
+    display: inline-block;
+    color: #d53c3e;
+}
+.pullUpLabel {
+    padding: 0;
+    margin: 1.5rem auto;
+    border-top: 2px solid #e1e1e1;
+    position: relative;
+    width: 13.5rem;
+    display: none;
+}
+.pullUpLabel div {
+    background: #f0f1f4;
+    position: absolute;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    left: 50%;
+    margin-left: -3.35rem;
+    top: -0.6rem;
+}
+.pullUpLabel div img {
+    width: 1.05rem;
+    height: 1.05rem;
+    margin: 0 0.7rem;
+    margin-right: 0.45rem;
+    vertical-align: middle;
+}
+.pullUpLabel div i {
+    font-size: .6rem;
+    margin-right: 0.7rem;
+}
+/*弹出框 */
+/* CSS Document */
+.pop_wrap{
+    overflow: auto;
+    position: absolute;
+    left: 50%;
+    z-index: 111111199;
+    width:10.9rem;
+    height: 1.95rem;
+    line-height: 1.95rem;
+    margin-left:-5.45rem ;
+    border-radius: 1.95rem;
+}
+.pop_con{
+    display:-webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    -webkit-box-orient: vertical;
+    text-align: center;
+    font-size: 1.4rem;
+    color:rgba(255,255,255,0.9);
+    margin: 0 auto;
+}
+.warning{
+    background: rgba(0,0,0,0.6);
+}
+
+.warning .pop_title{
+    font-size: 1.6rem;
+    background:#67bef5;
+
+}
+.error{
+    background: rgba(0,0,0,0.6);
+
+}
+.error .classpic{
+    width: 1.4rem;
+    height: 1.4rem;
+    background: url(../image/pic_gantanhao.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-bottom: 0.4rem;
+    margin-right: 0;
+}
+.error .pop_title{
+    font-size: 1.6rem;
+}
+.normal {
+    background: rgba(0,0,0,0.6);
+}
+.normal .classpic{
+    width: 1.4rem;
+    height: 1.4rem;
+    background: url(../image/pic_duihao.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-bottom: 0.4rem;
+}
+.poptext{
+    font-size: 0.7rem;
+    color: white;
+}
+/*结束 */

@@ -1,0 +1,120 @@
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td
+	{
+	margin: 0;
+	padding: 1;
+	border: 0;
+	outline: 0
+}
+a{text-decoration: none;}
+ol,ul,li {
+	list-style: none
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0
+}
+
+.table_list{
+	/*background-color: #D9D9D9;*/
+	background-color:#fcf8e3;
+	 border-collapse: separate;
+    border-spacing: 1px;
+    font-size: 14px;
+}
+.table_list td{
+	line-height: 28px;
+	color: #000000;
+	padding: 5px 0;
+	text-align: center;
+	font-size: 12px;
+}
+.table_list th{
+	color: #000000;
+	background-color: #fff;
+	line-height: 30px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 14px;
+}
+.table_list .operate_td {
+	text-align: center;
+}
+.table_list .operate_td a:visited{
+	color: #552085;
+}
+.table_list .operate_td a:link {
+    color: #24d;
+}
+.table_list .operate_td a:link {
+    color: #24d;
+}
+.table_list tr td:last-child a:hover {
+    color: red;
+}
+.table_list thead tr th{
+	background-color: #eee;
+}
+.table_search span{
+	float: left;
+}
+
+.pageBox{margin:20px 0;clear:both;text-align:center}
+.pageLink li{margin:0px;display:inline}
+.pageLink li a{background:#fff;border:1px solid #ebebeb;height:34px;line-height:34px;padding:0 10px;font-size:14px;
+color:#0c4ed4;vertical-align:top;display:inline-block}
+.pageLink li a:hover,.pageLink a.linkOn{background: #f7f7f7;border-color: #ebebeb;color:#808080;text-decoration:none}
+.page_total{height:34px;line-height:34px;padding:0 8px;font-size:14px;vertical-align:top;display:inline-block}
+ 
+.search_table{
+	margin: 10px 0;
+    width: 100%;
+}
+.search_table input a.right_a{
+	margin-top: 5px;
+}
+.search_table input a:hover{
+	color: #fff;
+	
+}
+.search_table th,.search_table td{
+	height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    font-weight: normal;
+    text-align:left;
+    +padding-top:10px;
+}
+.search_table td:last-child{
+	text-align: right;
+    padding-right: 10px;
+}
+/*清除内容样式*/
+.clearable{
+  background: #fff url(data:image/gif;base64,R0lGODlhBwAHAIAAAP///5KSkiH5BAAAAAAALAAAAAAHAAcAAAIMTICmsGrIXnLxuDMLADs=) no-repeat right -10px center;
+  border: 1px solid #999;
+  padding: 3px 18px 3px 4px; /* Use the same right padding (18) in jQ! */
+  border-radius: 3px;
+  transition: background 0.4s;
+}
+.clearable.x  { background-position: right 5px center; }
+.clearable.onX{ cursor: pointer; }
+.Wdate{
+  height: 35px;border-radius: 3px;
+}
+select{
+  height: 26px;border-radius: 3px;
+}
+.footer{
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    line-height: 50px;
+    font-size: 12px;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    background: #ddd;
+}
+.table{width:100%;max-width:100%;margin-bottom:-30px}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.IosPayTypeMapper">
+    <resultMap id="iosMap" type="com.longlian.model.IosPayType">
+        <id column="ID" property="id"/>
+        <result column="AMOUNT"  property="amount"/>
+        <result column="LL_REALLY_AMOUNT"  property="llReallyAmount"/>
+        <result column="USER_REALLY_AMOUNT"  property="userReallyAmount"/>
+        <result column="IOS_COMMODITY_ID"  property="iosCommodityId"/>
+        <result column="IOS_COMMODITY_NAME"  property="iosCommodityName"/>
+        <result column="CREATE_TIME"  property="createTime"/>
+        <result column="REMARK"  property="remark"/>
+        <result column="STATUS"  property="status"/>
+        <result column="TYPE"  property="type"/>
+    </resultMap>
+
+    <sql id="iosPaytypeSql">
+        ID,AMOUNT,LL_REALLY_AMOUNT,USER_REALLY_AMOUNT,IOS_COMMODITY_ID,IOS_COMMODITY_NAME,CREATE_TIME,REMARK,STATUS,TYPE
+    </sql>
+
+    <select id="findIosPayTypeInfoPage" resultMap="iosMap">
+        SELECT <include refid="iosPaytypeSql"/> FROM ios_pay_type
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="iosMap">
+        SELECT <include refid="iosPaytypeSql"/> FROM ios_pay_type WHERE ID = #{id}
+    </select>
+
+    <insert id="createIosPayType">
+        INSERT INTO ios_pay_type (AMOUNT,LL_REALLY_AMOUNT,USER_REALLY_AMOUNT,IOS_COMMODITY_ID,
+        IOS_COMMODITY_NAME,CREATE_TIME,REMARK,STATUS,TYPE) VALUES (#{amount},#{llReallyAmount},#{userReallyAmount},
+        #{iosCommodityId},#{iosCommodityName},now(),#{remark},#{status},#{type})
+    </insert>
+
+    <update id="updateIosPayType">
+        UPDATE ios_pay_type SET AMOUNT = #{amount} , LL_REALLY_AMOUNT = #{llReallyAmount} ,
+        USER_REALLY_AMOUNT = #{userReallyAmount} , IOS_COMMODITY_ID = #{iosCommodityId} , IOS_COMMODITY_NAME = #{iosCommodityName},
+        REMARK = #{remark} , STATUS = #{status} , TYPE = #{type} WHERE ID = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE ios_pay_type SET STATUS = #{status} WHERE ID = #{id}
+    </update>
+
+    <select id="findAllPayInfo" resultMap="iosMap">
+        SELECT <include refid="iosPaytypeSql"/> FROM ios_pay_type WHERE TYPE = #{type}
+    </select>
+</mapper>

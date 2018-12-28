@@ -1,0 +1,7 @@
+.fixed-table-toolbar{position: absolute;}
+.fixed-table-container{    position: absolute;  margin-top: 160px;  width: 1330px}
+.contents{
+    min-height: 667px;
+    margin-left: 200px;
+    margin-top: -71px;
+}

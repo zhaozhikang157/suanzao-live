@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.MsgCancelMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.MsgCancel">
+    <id column="ID"  property="id" />
+    <result column="CHAT_ROOM_ID"  property="chatRoomId" />
+    <result column="COURSE_ID"  property="courseId" />
+    <result column="MSG_CLIENT_ID"  property="msgClientId" />
+    <result column="CREATE_TIME"  property="createTime" />
+    <result column="OPT_ID"  property="optId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, CHAT_ROOM_ID, COURSE_ID ,MSG_CLIENT_ID, CREATE_TIME,OPT_ID
+  </sql>
+
+  <insert id="insertMsgCancel">
+    insert into course_msg_cancel (CHAT_ROOM_ID,COURSE_ID,MSG_CLIENT_ID,CREATE_TIME,OPT_ID)
+    values (#{chatRoomId},#{courseId},#{msgClientId},now(),#{optId})
+  </insert>
+
+  <select id="findMsgCancel" resultType="String">
+    SELECT MSG_CLIENT_ID FROM course_msg_cancel WHERE COURSE_ID = #{courseId}
+  </select>
+
+</mapper>

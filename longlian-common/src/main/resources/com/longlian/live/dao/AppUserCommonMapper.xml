@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.AppUserCommonMapper">
+    <resultMap id="appUserMapper" type="com.longlian.model.AppUser">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="OPENID" property="openid"/>
+        <result column="MOBILE" property="mobile"/>
+        <result column="NAME" property="name"/>
+        <result column="STATUS" property="status"/>
+        <result column="LEVEL" property="level"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="LOGIN_COUNT" property="loginCount"/>
+        <result column="INVITATION_APP_ID" property="invitationAppId"/>
+        <result column="USER_PRIV" property="userPriv"/>
+        <result column="PASSWORD" property="password"/>
+        <result column="PHOTO" property="photo"/>
+        <result column="CITY" property="city"/>
+        <result column="FROM_TYPE" property="fromType"/>
+        <result column="ID_CARD" property="idCard"/>
+        <result column="ID_CARD_FRONT" property="idCardFront"/>
+        <result column="ID_CARD_REAR" property="idCardRear"/>
+        <result column="GENDER" property="gender"/>
+        <result column="BIRTHDAY" property="birthday"/>
+        <result column="YUNXIN_TOKEN" property="yunxinToken"/>
+        <result column="USER_TYPE" property="userType"/>
+        <result column="UNIONID" property="unionid"/>
+        <result column="TEACHER_CREATE_TIME" property="teacherCreateTime"/>
+        <result column="IS_VIRTUAL_USER" property="isVirtualUser"/>
+        <result column="blur_photo" property="blurPhoto"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        OPENID,UNIONID, MOBILE, NAME,USER_TYPE, GENDER, PASSWORD, BIRTHDAY, STATUS,USER_PRIV, CREATE_TIME,
+        PHOTO, FROM_TYPE, CITY ,LEVEL,INVITATION_APP_ID,ID_CARD,ID_CARD_FRONT,ID_CARD_REAR,YUNXIN_TOKEN,IS_FOLLOW_LL_WECHAT,REAL_NAME,TEACHER_CREATE_TIME,IS_VIRTUAL_USER
+    </sql>
+
+    <select id="getAllUserPartInfo" resultType="java.util.Map">
+        select ID id , OPENID openid , UNIONID unionid from app_user
+    </select>
+
+    <update id="updateYunXinToken">
+        update app_user set YUNXIN_TOKEN = #{token}  where ID = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long"
+            resultMap="appUserMapper">
+        select
+        ID ,<include refid="Base_Column_List" />
+        from app_user
+        where ID = #{id}
+    </select>
+
+    <select id="getAllVirtualUserIds"
+            resultType="map">
+        select
+        ID
+        from app_user
+        where IS_VIRTUAL_USER ='1'
+    </select>
+    <select id="queryByMobile" parameterType="java.lang.String"
+            resultMap="appUserMapper">
+        select
+        ID ,<include refid="Base_Column_List" />
+        from app_user
+        where MOBILE = #{mobile} limit 1
+    </select>
+
+    <update id="updateAppUserById">
+        update app_user
+        set
+        MOBILE = #{map.mobile},
+        PASSWORD = #{map.password},
+        ID_CARD_FRONT = #{map.idCardFront},
+        ID_CARD_REAR = #{map.idCardRear},
+        REAL_NAME = #{map.realName},
+        ID_CARD = #{map.cardNo},
+        TEACHER_CREATE_TIME = #{map.teacherCreateTime},
+        USER_TYPE = '1'
+        where ID = #{id}
+    </update>
+
+
+    <select id="getUserInfo" parameterType="long" resultType="map">
+        SELECT ID AS userId,NAME AS userName,PHOTO as headPhoto, USER_TYPE AS userType ,MOBILE AS mobile,IS_FOLLOW_LL_WECHAT as isFollowLlWechat,blur_photo as blurPhoto  FROM app_user WHERE ID = #{id}
+    </select>
+
+    <update id="updateUserType" parameterType="long">
+        UPDATE  app_user SET USER_TYPE = '1' WHERE  ID = #{id}
+    </update>
+
+    <select id="getAppIdByOpenid" parameterType="java.lang.String"
+            resultMap="appUserMapper">
+        select
+        ID ,<include refid="Base_Column_List" />
+        from app_user
+        where OPENID = #{openid}
+    </select>
+
+    <select id="getProportion" resultType="java.lang.Integer">
+        SELECT PROPORTION FROM app_user WHERE ID = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.WechatOfficialMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.WechatOfficial">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APPID" jdbcType="VARCHAR" property="appid"/>
+        <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType"/>
+        <result column="VERIFY_TYPE_INFO" jdbcType="VARCHAR" property="verifyTypeInfo"/>
+        <result column="ACCESS_TOKEN" jdbcType="VARCHAR" property="accessToken"/>
+        <result column="REFRESH_TOKEN" jdbcType="VARCHAR" property="refreshToken"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="NICK_NAME" jdbcType="VARCHAR" property="nickName"/>
+        <result column="HEAD_IMG" jdbcType="VARCHAR" property="headImg"/>
+        <result column="PRINCIPAL_NAME" jdbcType="VARCHAR" property="principalName"/>
+        <result column="QRCODE_URL" jdbcType="VARCHAR" property="qrcodeUrl"/>
+        <result column="LIVE_ID" jdbcType="BIGINT" property="liveId"/>
+        <result column="LIVE_NAME" jdbcType="VARCHAR" property="liveName"/>
+        <result column="RESERVE_REMINDER_ID" jdbcType="VARCHAR" property="reserveReminderId"/>
+        <result column="CONTACT_WECHAT" jdbcType="VARCHAR" property="contactWechat"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="CONTACT_MOBILE" jdbcType="VARCHAR" property="contactMobile"/>
+        <result column="BIND_TIME" jdbcType="VARCHAR" property="bindTime"/>
+        <result column="PAY_AMOUNT" jdbcType="DECIMAL" property="payAmount"/>
+        <result column="RESERVE_PRE_REMINDER_ID" jdbcType="VARCHAR" property="reservePreReminderId"/>
+
+        <result column="AUDIT_STATUS" jdbcType="VARCHAR" property="auditStatus"/>
+        <result column="AUDIT_TIME" jdbcType="TIMESTAMP" property="auditTime"/>
+        <result column="AUDIT_USER_ID" jdbcType="BIGINT" property="auditUserId"/>
+        <result column="AUDIT_USER_NAME" jdbcType="VARCHAR" property="auditUserName"/>
+        <result column="AUDIT_REMARK" jdbcType="VARCHAR" property="auditRemark"/>
+        <result column="MANAGER" jdbcType="BIGINT" property="manager"/>
+        <result column="FREE_DATE" jdbcType="TIMESTAMP" property="freeDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    APPID,SERVICE_TYPE,VERIFY_TYPE_INFO, ACCESS_TOKEN, REFRESH_TOKEN, USER_NAME, NICK_NAME, HEAD_IMG, PRINCIPAL_NAME,
+    QRCODE_URL, LIVE_ID,LIVE_NAME,RESERVE_REMINDER_ID, CONTACT_WECHAT, CREATE_TIME,STATUS,CONTACT_MOBILE,BIND_TIME,RESERVE_PRE_REMINDER_ID
+    ,AUDIT_STATUS,AUDIT_TIME,AUDIT_USER_ID,AUDIT_USER_NAME,AUDIT_REMARK,MANAGER,FREE_DATE
+  </sql>
+
+    <insert id="add" parameterType="WechatOfficial">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into wechat_official (
+        <include refid="Base_Column_List"></include>
+        )
+        values (#{appid},#{serviceType},#{verifyTypeInfo}, #{accessToken}, #{refreshToken}, #{userName}, #{nickName}, #{headImg}, #{principalName}, #{qrcodeUrl},#{liveId},#{liveName},
+        #{reserveReminderId} ,#{contactWechat} , #{createTime} ,#{status},#{contactMobile},#{bindTime},#{reservePreReminderId},#{auditStatus},#{auditTime},#{auditUserId},#{auditUserName},#{auditRemark},#{manager},#{freeDate})
+    </insert>
+
+    <select id="selectByAppid"  resultMap="BaseResultMap">
+        SELECT ID,
+        <include refid="Base_Column_List"></include>,pay_amount payAmount
+        FROM wechat_official WHERE  APPID = #{appid}
+    </select>
+
+    <select id="selectById"  resultMap="BaseResultMap">
+        SELECT ID,
+        <include refid="Base_Column_List"></include>
+        FROM wechat_official WHERE  ID = #{id}
+    </select>
+    <select id="selectBindListById"  resultType="java.util.Map">
+        SELECT wo.ID id,wo.BIND_TIME bindTime ,wo.LIVE_ID liveId ,lr.MESSAGE_FLAG as messageFlag,lr.NAME liveName,lr.LIVE_ROOM_NO liveRoomNo,wo.RESERVE_REMINDER_ID as reserveReminderId,wo.RESERVE_PRE_REMINDER_ID as reservePreReminderId,wo.AUDIT_STATUS as auditStatus,wo.AUDIT_REMARK as auditRemark
+        FROM wechat_official wo INNER JOIN
+        live_room lr on wo.LIVE_ID = lr.id
+        WHERE  wo.ID = #{id} and wo.LIVE_ID &gt; 0
+    </select>
+    <select id="selectLiveRoomById"  resultType="Map">
+        SELECT lr.ID as roomId,lr.MESSAGE_FLAG as messageFlag
+        FROM live_room lr
+        WHERE  lr.ID = #{roomId}
+    </select>
+
+    <update id="updateWechat"  parameterType="WechatOfficial">
+        update wechat_official set
+        ACCESS_TOKEN = #{accessToken} , REFRESH_TOKEN = #{refreshToken} , USER_NAME = #{userName} , STATUS = #{status},
+        NICK_NAME = #{nickName} , HEAD_IMG = #{headImg} , PRINCIPAL_NAME = #{principalName},APPID=#{appid},VERIFY_TYPE_INFO=#{verifyTypeInfo},
+        QRCODE_URL = #{qrcodeUrl}, CONTACT_MOBILE = #{contactMobile},BIND_TIME=#{bindTime},LIVE_ID=#{liveId},LIVE_NAME=#{liveName},RESERVE_PRE_REMINDER_ID=#{reservePreReminderId}
+        WHERE  ID = #{id}
+    </update>
+    <update id="updateForWechatOfficial"  parameterType="WechatOfficial">
+        update wechat_official set
+         RESERVE_REMINDER_ID = #{reserveReminderId},RESERVE_PRE_REMINDER_ID=#{reservePreReminderId}
+        WHERE  ID = #{id}
+    </update>
+    <update id="updateForWechatOfficialById"  parameterType="WechatOfficial">
+        update wechat_official set
+        RESERVE_REMINDER_ID = #{reserveReminderId},RESERVE_PRE_REMINDER_ID=#{reservePreReminderId}
+        WHERE  ID = #{id}
+    </update>
+    <update id="updateTokenByAppid"  parameterType="WechatOfficial">
+        update wechat_official set
+        ACCESS_TOKEN = #{accessToken} , REFRESH_TOKEN = #{refreshToken}
+        WHERE  APPID = #{appid}
+    </update>
+    <select id="selectAllOfficial" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM wechat_official u
+
+        WHERE 1 =1
+        <if test="status"></if>
+    </select>
+    <select id="selectUseList" resultMap="BaseResultMap">
+        SELECT  ID ,LIVE_ID,APPID FROM wechat_official WHERE LIVE_ID > 0 AND  STATUS = '0'
+    </select>
+
+    <select id="selectUseTokenList" resultMap="BaseResultMap">
+        SELECT  ID ,LIVE_ID,APPID FROM wechat_official WHERE  STATUS = '0'
+    </select>
+    <select id="getLiveIdByAppid" resultType="java.lang.Long">
+        SELECT LIVE_ID FROM wechat_official WHERE  APPID = #{appid}
+    </select>
+
+    <update id="updatePayAmount">
+        update wechat_official set pay_amount =#{map.payAmount} where APPID=#{map.appId}
+    </update>
+
+    <update id="unauthorized" >
+        update wechat_official set
+        STATUS = '1'
+        WHERE  APPID = #{appid}
+    </update>
+    <select id="getWechatOfficialRoomListPage"  resultType="Map">
+        SELECT
+        r.id as id,
+        w.NICK_NAME as nickName,
+        w.USER_NAME as userName,
+        r.LIVE_ID as liveId,
+        w.RESERVE_REMINDER_ID as reserveReminderId,
+        r.CONTACT_WECHAT as contactWechat,
+        r.CONTACT_MOBILE as contactMobile,
+        w.CREATE_TIME as createTime,
+        r.BIND_TIME as bindTime,
+        w.`STATUS` as status,
+        w.SERVICE_TYPE as serviceType,
+        r.AUDIT_STATUS as auditStatus,
+        r.AUDIT_TIME as auditTime,
+        r.AUDIT_USER_ID as auditUserId,
+        r.AUDIT_USER_NAME as auditUserName,
+        r.AUDIT_REMARK as auditRemark,
+        r.LIVE_NAME as liveName,
+        r.FREE_DATE as freeDate,
+        w.APPID as appid,
+        w.pay_amount payAmount
+        FROM
+        wechat_official w INNER JOIN  wechat_official_room r  on w.APPID = r.WECHAT_ID
+        <where>
+            r.LIVE_ID !=0
+            <if test="@Ognl@isNotEmpty(map.auditStatus)">
+                AND r.AUDIT_STATUS= #{map.auditStatus}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.nickName)">
+                AND w.NICK_NAME LIKE CONCAT('%',#{map.nickName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createTimeBegin)">
+                AND w.CREATE_TIME &gt; #{map.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createTimeEnd)">
+                AND w.CREATE_TIME &lt; #{map.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveId)">
+                AND r.live_id =#{map.liveId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveName)">
+                AND r.live_Name =#{map.liveName}
+            </if>
+        </where>  
+         ORDER BY w.CREATE_TIME DESC
+    </select>
+    <update id="updateAudit"  parameterType="WechatOfficial">
+        update wechat_official set
+        AUDIT_STATUS = #{auditStatus} , AUDIT_USER_ID = #{auditUserId},AUDIT_TIME = #{auditTime},AUDIT_USER_NAME = #{auditUserName},AUDIT_REMARK = #{auditRemark},MANAGER=#{manager},FREE_DATE=#{freeDate}
+        WHERE  ID = #{id}
+    </update>
+    <update id="updateManager"  parameterType="WechatOfficial">
+        update wechat_official set MANAGER=#{manager},FREE_DATE=#{freeDate} WHERE  ID = #{id}
+    </update>
+    
+    <select id="findByRoomId" resultMap="BaseResultMap">
+        SELECT ID,
+        <include refid="Base_Column_List"></include>
+        FROM wechat_official WHERE  LIVE_ID = #{roomId} AND AUDIT_STATUS = '1' limit 1
+    </select>
+
+    <select id="getAllWechat" resultMap="BaseResultMap">
+        SELECT * FROM wechat_official
+        WHERE AUDIT_STATUS = '1' AND `STATUS` = '0' AND FREE_DATE is not null AND LIVE_ID > 0
+    </select>
+
+    <update id="updateFreeDate">
+      UPDATE wechat_official SET FREE_DATE = NULL WHERE ID = #{id}
+    </update>
+
+    <select id="getContentByWechat" resultType="string">
+        SELECT content FROM system_config WHERE id = 8
+    </select>
+</mapper>

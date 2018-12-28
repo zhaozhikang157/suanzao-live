@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.LlAccountMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.LlAccount">
+        <id column="ACCOUNT_ID" property="accountId"/>
+        <result column="BALANCE" property="balance"/>
+        <result column="ADD_TOTAL_AMOUNT" property="addTotalAmount"/>
+        <result column="DEL_TOTAL_AMOUNT" property="delTotalAmount"/>
+        <result column="FORM_TRACK_ID" property="formTrackId"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="REMARK" property="remark"/>
+        <result column="TRADE_PWD" property="tradePwd"/>
+        <result column="STATUS" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ACCOUNT_ID, BALANCE, ADD_TOTAL_AMOUNT ,DEL_TOTAL_AMOUNT, FORM_TRACK_ID,CREATE_TIME,REMARK,TRADE_PWD,STATUS
+  </sql>
+
+    <select id="add" parameterType="LlAccount">
+        INSERT INTO ll_account (
+        <include refid="Base_Column_List"></include>
+        )
+        values (#{accountId} , #{balance} , #{addTotalAmount} , #{delTotalAmount} , #{formTrackId} ,#{createTime} ,
+        #{remark} , #{tradePwd} , #{status})
+    </select>
+
+
+    <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ll_account where ACCOUNT_ID= #{accountId}
+    </select>
+    <!-- 根据店铺Id行级锁  -->
+    <select id="getIdRowLockByAccountId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ll_account where ACCOUNT_ID= #{accountId} for UPDATE
+    </select>
+
+    <select id="getAccountByAppId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from ll_account
+        where ACCOUNT_ID= #{id}
+    </select>
+
+
+    <update id="addUpdateByAccountId" parameterType="LlAccount">
+    update ll_account  set
+    BALANCE = #{balance} , ADD_TOTAL_AMOUNT= #{addTotalAmount}
+    where ACCOUNT_ID = #{accountId}
+  </update>
+    <update id="delUpdateByAccountId" parameterType="LlAccount">
+    update ll_account  set
+    BALANCE = #{balance} , DEL_TOTAL_AMOUNT= #{delTotalAmount}
+    where ACCOUNT_ID = #{accountId}
+  </update>
+
+    <update id="updateTrackIdByAccountId" parameterType="LlAccount">
+    update ll_account  set
+    FORM_TRACK_ID = #{formTrackId} where ACCOUNT_ID = #{accountId}
+  </update>
+
+    <select id="findAllLLAccountIds" resultType="Long">
+    SELECT ACCOUNT_ID FROM ll_account
+  </select>
+
+    <insert id="addNoExitAppIds">
+        insert into ll_account (ACCOUNT_ID,CREATE_TIME,STATUS) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item},now(),'0')
+        </foreach>
+    </insert>
+
+    <select id="getLlAccountCount" resultType="int">
+        SELECT count(*) FROM ll_account
+    </select>
+
+    <insert id="addAppId">
+        insert into ll_account (ACCOUNT_ID,CREATE_TIME,STATUS) values (#{id},now(),'0')
+    </insert>
+
+</mapper>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.JoinCourseRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.JoinCourseRecord">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="COURSE_ID" jdbcType="BIGINT" property="courseId"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="STATUS" jdbcType="INTEGER" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+        <result column="SIGN_UP_STATUS" jdbcType="VARCHAR" property="signUpStatus"/>
+        <result column="FROM_TYPE" jdbcType="VARCHAR" property="fromType"/>
+        <result column="INVITATION_USER_ID" jdbcType="BIGINT" property="invitationUserId"/>
+        <result column="INVITATION_CODE" jdbcType="VARCHAR" property="invitationCode"/>
+        <result column="IS_FREE" jdbcType="VARCHAR" property="isFree"/>
+        <result column="IS_FIRST" jdbcType="VARCHAR" property="isFirst"/>
+        <result column="JOIN_TYPE" jdbcType="VARCHAR" property="joinType"/>
+        <result column="COURSE_TYPE" jdbcType="INTEGER" property="courseType"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, COURSE_ID, APP_ID, STATUS, CREATE_TIME, ROOM_ID, SIGN_UP_STATUS, FROM_TYPE, INVITATION_USER_ID, 
+    INVITATION_CODE,IS_FREE,IS_FIRST,JOIN_TYPE
+  </sql>
+
+    <insert id="insert" parameterType="com.longlian.model.JoinCourseRecord">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into join_course_record (COURSE_ID, APP_ID, STATUS, CREATE_TIME, ROOM_ID, SIGN_UP_STATUS,
+        FROM_TYPE, INVITATION_USER_ID, INVITATION_CODE , IS_FREE , IS_FIRST,JOIN_TYPE,COURSE_TYPE)
+        values (#{courseId}, #{appId}, #{status}, #{createTime}, #{roomId}, #{signUpStatus},
+        #{fromType}, #{invitationUserId}, #{invitationCode}, #{isFree}, #{isFirst},#{joinType},#{courseType})
+    </insert>
+
+    <update id="update" parameterType="com.longlian.model.JoinCourseRecord">
+    update join_course_record
+    set COURSE_ID = #{courseId},
+      APP_ID = #{appId},
+      STATUS = #{status},
+      CREATE_TIME = #{createTime},
+      ROOM_ID = #{roomId},
+      SIGN_UP_STATUS = #{signUpStatus},
+      FROM_TYPE = #{fromType},
+      INVITATION_USER_ID = #{invitationUserId},
+      INVITATION_CODE = #{invitationCode}
+    where ID = #{id}
+  </update>
+
+    <select id="getJoinStatus" resultType="java.lang.String">
+    select SIGN_UP_STATUS from join_course_record where APP_ID = #{appId} and COURSE_ID =  #{courseId}
+  </select>
+
+    <select id="getByAppIdAndCourseId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from join_course_record where APP_ID = #{appId} and COURSE_ID = #{courseId}
+    </select>
+
+    <select id="getListCourseId" resultType="java.util.Map">
+        select ID id , APP_ID appId , SIGN_UP_STATUS signUpStatus
+        from join_course_record where COURSE_ID = #{courseId};
+    </select>
+
+    <!-- 目前没用-->
+    <select id="getCourseRecordCount" parameterType="long" resultType="long">
+    SELECT  COUNT(1) FROM join_course_record WHERE INVITATION_USER_ID=#{id} AND STATUS ='0' AND SIGN_UP_STATUS = '1'
+  </select>
+    <!-- 目前没用-->
+    <select id="getFirstJoinByAppId" parameterType="long" resultType="long">
+    SELECT  COUNT(1) FROM join_course_record WHERE APP_ID=#{id}
+  </select>
+
+
+    <!--获取支付成功记录数量  by 课程ID-->
+    <select id="getPaySuccessRecordCount" resultType="int">
+        SELECT COUNT(1) c FROM join_course_record WHERE COURSE_ID=#{courseId}
+        <if test='payStatus == "1"'>AND SIGN_UP_STATUS = '1' and IS_FREE = '0'</if>
+    </select>
+    <!--获取首次支付成功记录数量  by主播间ID 目前没用-->
+    <select id="getFirstPaySuccessRecordCount" resultType="int">
+        SELECT COUNT(1) FROM join_course_record WHERE
+        ROOM_ID=#{roomId}
+        AND IS_FIRST = '0'
+        <!--  <if test='payStatus == "1"'>AND SIGN_UP_STATUS = '1' and IS_FREE = '1'</if>-->
+    </select>
+
+    <select id="getCourseRecordList" parameterType="long" resultType="map">
+      SELECT a.`NAME` as name,a.PHOTO as photo,(SELECT COUNT(1) FROM join_course_record WHERE INVITATION_USER_ID = a.ID) as count
+      FROM join_course_record j
+      LEFT JOIN app_user a ON j.APP_ID = a.ID
+      WHERE j.COURSE_ID = #{id} AND j.STATUS = '0' AND  SIGN_UP_STATUS = '1' AND  a.PHOTO IS NOT NULL
+      ORDER BY count DESC
+  </select>
+
+    <select id="getMyBuyCourseListPage" resultType="map">
+    SELECT DISTINCT j.COURSE_ID AS id,c.COVERSS_ADDRESS AS coverssAddress, c.LIVE_TOPIC AS liveTopic,IF(c.LIVE_WAY=0,'视频直播','语音直播') AS liveWay,c.START_TIME AS startTime,a.NAME AS name,
+    c.VISIT_COUNT AS visitCount,c.JOIN_COUNT AS joinCount,(CASE WHEN c.START_TIME  &gt; now() AND c.END_TIME IS NULL THEN 1 ELSE 0 END ) AS timeStatus,c.CHARGE_AMT AS chargeAmt , c.IS_SERIES_COURSE isSeriesCourse
+    , c.UPDATED_COUNT updatedCount ,  (c.COURSE_PLAN_COUNT - c.UPDATED_COUNT) noUpdatedCount , c.SERIES_COURSE_ID seriesId
+    FROM join_course_record j
+    INNER JOIN course c ON c.ID = j.COURSE_ID
+    LEFT JOIN app_user a ON a.ID = c.APP_ID
+    WHERE j.STATUS ='0' AND j.SIGN_UP_STATUS = '1'  AND c.IS_DELETE = '0'  AND j.APP_ID = #{appId}  AND  c.IS_SERIES_COURSE = '0' AND c.SERIES_COURSE_ID = 0
+        <if test="@Ognl@isNotEmpty(isRecorded)">
+            AND c.IS_RECORDED = #{isRecorded}
+        </if>
+    ORDER BY j.CREATE_TIME desc
+  </select>
+
+    <select id="getMyBuyCourseListV2Page" resultType="map">
+        SELECT DISTINCT j.COURSE_ID AS id,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress, c.LIVE_TOPIC AS liveTopic,IF(c.LIVE_WAY=0,'视频直播','语音直播') AS liveWay,c.START_TIME AS startTime,a.NAME AS name,
+        c.VISIT_COUNT AS visitCount,c.JOIN_COUNT AS joinCount,(CASE WHEN c.START_TIME  &gt; now() AND c.END_TIME IS NULL THEN 1 ELSE 0 END ) AS timeStatus,c.CHARGE_AMT AS chargeAmt , c.IS_SERIES_COURSE isSeriesCourse,c.END_TIME as endTime
+        , c.UPDATED_COUNT updatedCount ,  (c.COURSE_PLAN_COUNT - c.UPDATED_COUNT) noUpdatedCount , c.SERIES_COURSE_ID seriesId
+        FROM join_course_record j
+        INNER JOIN course c ON c.ID = j.COURSE_ID
+        LEFT JOIN app_user a ON a.ID = c.APP_ID
+        WHERE j.STATUS ='0' AND j.SIGN_UP_STATUS = '1'  AND c.IS_DELETE = '0'  AND j.APP_ID = #{appId} AND c.SERIES_COURSE_ID = 0
+        <if test="@Ognl@isNotEmpty(isRecorded)">
+          AND c.IS_RECORDED = #{isRecorded}
+        </if>
+        ORDER BY j.CREATE_TIME desc
+    </select>
+
+
+    <select id="getMyBuyCourseListV3Page" resultType="map">
+        SELECT DISTINCT j.COURSE_ID AS id,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress,
+        c.LIVE_TOPIC AS liveTopic,IF(c.LIVE_WAY=0,'视频直播','语音直播') AS liveWay,c.START_TIME AS startTime,a.NAME AS name,
+        c.VISIT_COUNT AS visitCount,c.JOIN_COUNT AS joinCount,(CASE WHEN c.START_TIME  &gt; now() AND c.END_TIME IS NULL THEN 1 ELSE 0 END ) AS timeStatus,
+        c.CHARGE_AMT AS chargeAmt , c.IS_SERIES_COURSE isSeriesCourse,c.END_TIME as endTime
+        , c.UPDATED_COUNT updatedCount ,  (c.COURSE_PLAN_COUNT - c.UPDATED_COUNT) noUpdatedCount , c.SERIES_COURSE_ID seriesId,j.CREATE_TIME createTime
+        FROM join_course_record j
+        INNER JOIN course c ON c.ID = j.COURSE_ID
+        LEFT JOIN app_user a ON a.ID = c.APP_ID
+        WHERE j.STATUS ='0' AND j.SIGN_UP_STATUS = '1'  AND j.APP_ID = #{appId} AND c.SERIES_COURSE_ID = 0
+        <if test="@Ognl@isNotEmpty(isRecorded)">
+            AND c.IS_RECORDED = #{isRecorded}
+        </if>
+        ORDER BY j.CREATE_TIME desc
+    </select>
+
+    <select id="getMyBuyCourseListH5Page" resultType="map">
+        SELECT DISTINCT j.COURSE_ID AS id,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress,
+        c.LIVE_TOPIC AS liveTopic,IF(c.LIVE_WAY=0,'视频直播','语音直播') AS liveWay,c.START_TIME AS startTime,a.NAME AS name,
+        c.visitCount,c.joinCount,(CASE WHEN c.START_TIME  &gt; now() AND c.END_TIME IS NULL THEN 1 ELSE 0 END ) AS timeStatus,
+        c.CHARGE_AMT AS chargeAmt , c.IS_SERIES_COURSE isSeriesCourse,c.END_TIME as endTime,c.isRelay
+        , c.UPDATED_COUNT updatedCount ,  (c.COURSE_PLAN_COUNT - c.UPDATED_COUNT) noUpdatedCount , c.SERIES_COURSE_ID seriesId,j.CREATE_TIME createTime
+        FROM join_course_record j
+        INNER JOIN
+        (
+        select *,id cId,app_id appId,is_delete isDelete,visit_Count visitCount,join_Count joinCount,0 isRelay from course
+        union all
+        select c.*,cr.id cId,cr.app_id appId,cr.is_delete isDelete,cr.visit_Count visitCount,cr.join_Count joinCount,1 isRelay from course_relay cr
+        left join course c on cr.ori_course_id=c.id
+        )
+        c ON c.cId = j.COURSE_ID
+        LEFT JOIN app_user a ON a.ID = c.appId
+        WHERE j.STATUS ='0' AND j.SIGN_UP_STATUS = '1'  AND j.APP_ID = #{appId} AND c.SERIES_COURSE_ID = 0
+        <if test="@Ognl@isNotEmpty(isRecorded)">
+            AND c.IS_RECORDED = #{isRecorded}
+        </if>
+        ORDER BY j.CREATE_TIME desc
+    </select>
+
+    <update id="updateSignUpStatusById">
+    UPDATE  join_course_record set SIGN_UP_STATUS = #{signUpStatus} , INVITATION_USER_ID = #{invitationAppId}
+    where ID = #{id}
+  </update>
+
+    <update id="updateSignUpStatusByCourseIdAndAppId">
+        UPDATE  join_course_record set SIGN_UP_STATUS = #{signUpStatus} , INVITATION_USER_ID = #{invitationAppId}
+        where COURSE_ID = #{courseId} and APP_ID = #{appId}
+    </update>
+
+    <select id="getCourseIdById" resultType="java.lang.Long">
+    select COURSE_ID from join_course_record where ID  = #{id}
+   </select>
+
+    <select id="getJoinCourseUser" resultType="map">
+    select j.APP_ID, j.CREATE_TIME , u.NAME , u.PHOTO , u.IS_VIRTUAL_USER from join_course_record j LEFT JOIN  app_user u on u.id = j.APP_ID where COURSE_ID  = #{courseId} and  j.STATUS='0' AND j.SIGN_UP_STATUS = '1'
+  </select>
+
+    <select id="getCourseMessageTaskPage" resultType="map">
+    SELECT j.APP_ID AS appId,j.COURSE_ID as courseId,a.NAME as name,
+    c.LIVE_TOPIC AS liveTopic,c.START_TIME as startTime,c.ROOM_ID as roomId
+    FROM join_course_record j
+    LEFT JOIN course c ON c.ID = j.COURSE_ID
+    LEFT JOIN app_user a ON a.ID = j.APP_ID
+    WHERE j.STATUS='0' AND j.SIGN_UP_STATUS = '1'  AND c.STATUS = '0'  AND c.IS_DELETE = '0'  AND c.START_TIME &gt; now() AND c.END_TIME is null
+
+  </select>
+
+    <select id="getPayCourseNum" parameterType="long" resultType="int">
+    SELECT count(*)
+    FROM join_course_record jcr LEFT JOIN app_user au ON au.ID = jcr.APP_ID
+     WHERE jcr.COURSE_ID = #{courseId} AND  jcr.STATUS = '0' AND  jcr.SIGN_UP_STATUS = '1' AND au.IS_VIRTUAL_USER = '0'
+  </select>
+
+    <update id="updateCourseJoinCount">
+        UPDATE  course set JOIN_COUNT = #{joinCount}
+        where ID = #{courseId}
+    </update>
+
+    <update id="updateCourseRelayJoinCount">
+        UPDATE  course_relay set JOIN_COUNT = #{joinCount}
+        where ID = #{courseId}
+    </update>
+
+    <select id="getPaySourceNum" parameterType="long" resultType="map">
+       select
+        IFNULL(sum(case when j.FROM_TYPE='0' OR j.FROM_TYPE IS NULL then 1 else 0 end),0) as normalPay,
+        IFNULL(sum(case when j.FROM_TYPE='1' then 1 else 0 end),0) as invitationCardPay,
+        IFNULL(sum(case when j.FROM_TYPE='2' then 1 else 0 end),0) as shareLinkPay
+        from join_course_record j
+        WHERE j.STATUS = '0' AND j.SIGN_UP_STATUS = '1' AND j.COURSE_ID = #{courseId}
+    </select>
+
+
+    <select id="getHandlerPayingJoinCourse" resultType="map">
+        select ID id from join_course_record WHERE SIGN_UP_STATUS = '0' and  CREATE_TIME  &lt;  #{date}
+    </select>
+    <update id="handlerPayingJoinCourse">
+        update join_course_record set SIGN_UP_STATUS = '2' where  ID = #{id}
+    </update>
+
+    <select id="getCountByLiveId" resultType="java.lang.Long">
+        select sum(a.c) c from (select count(1) c from join_course_record where ROOM_ID = #{roomId} UNION ALL select sum(n.count) c from course_base_num n where n.ROOM_ID = #{roomId} and n.type = '0') a
+    </select>
+</mapper>

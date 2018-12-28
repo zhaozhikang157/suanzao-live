@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.CoursePrivateCardMapper">
+    <resultMap id="bankMap" type="com.longlian.model.course.CourseCard">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="model_url"  property="modelUrl" jdbcType="VARCHAR"/>
+        <result column="card_url"  property="cardUrl" jdbcType="VARCHAR"/>
+        <result column="flag"  property="flag" jdbcType="VARCHAR"/>
+        <result column="course_id"  property="courseId" jdbcType="BIGINT"/>
+        <result column="create_time"  property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time"  property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="baseSql">
+        id,user_id,card_url,flag,course_id,create_time,update_time
+    </sql>
+    <sql id="usedSql">
+        model_url,card_url,flag,course_id,create_time,update_time
+    </sql>
+    <!-- 查询课程是否在白名单中 -->
+    <select id="findCourseIsExist" resultType="int">
+       select count(id) from course_private_card where course_id=#{courseId}
+    </select>
+    <!-- 插入生成邀请卡 -->
+    <insert id="insertCourseCard" parameterType="com.longlian.model.course.CourseCard"  keyProperty="id" useGeneratedKeys="true">
+        insert into course_card(<include refid="usedSql"></include>) values(#{modelUrl,jdbcType=VARCHAR},#{cardUrl,jdbcType=VARCHAR},'0',#{courseId,jdbcType=BIGINT},now(),now())
+    </insert>
+    <!-- 更新邀请卡 -->
+    <update id="updateCourseCard" parameterType="com.longlian.model.course.CourseCard">
+        update course_card set update_time=now(),model_url=#{modelUrl}
+        <if test="cardUrl != null and cardUrl != ''">
+          ,card_url=#{cardUrl,jdbcType=VARCHAR}
+        </if>
+        where course_id=#{courseId,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteCourseCard">
+        delete from course_card where course_id=#{courseId,jdbcType=BIGINT}
+    </delete>
+    <!-- 根据课程id查询邀请卡 -->
+    <select id="findCardUrlByCourseId" resultMap="bankMap">
+        select id,model_url,card_url from course_card where flag='0' and course_id=#{courseId}
+    </select>
+</mapper>

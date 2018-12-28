@@ -1,0 +1,96 @@
+.wrap{
+    padding: 30px;
+}
+.detailstitle{
+    height: 30px;
+    line-height: 30px;
+    border-left:6px solid #67a17d;
+    padding-left: 24px;
+    font-size: 18px;
+    margin-bottom: 38px;
+}
+.detailscont p{
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+.detailscont label{
+    width: 80px;
+    text-align: left;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 38px;
+    font-weight: bold;
+}
+.detailscont p i{
+    display: inline-block;
+    font-size: 16px;
+    padding-left: 12px;
+}
+.evaluate{
+    display: inline-block;
+    background: #f2f2f2;
+    width: 92%;
+    padding-top: 10px;
+    padding-left: 10px;
+    float: right;
+    margin-bottom: 10px;
+}
+.evaluate img{
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    overflow: hidden;
+    margin-right: 8px;
+    display: inline-block;
+    float: left;
+}
+.livemessage{
+    display: inline-block;
+    width: 96%;
+}
+.livemessage i{
+    display: block !important;
+}
+.tableDiv{
+    margin-top: 8px;
+}
+.tableDiv table{
+    width: 100%;
+}
+.tableDiv table thead{
+    font-size: 18px;
+}
+.tableDiv table thead tr{
+    background: #d1e3d7;
+    height: 40px;
+}
+.tableDiv table thead tr td{
+    font-size: 18px;
+}
+.tableDiv tbody{
+    background: white;
+}
+.tableDiv table tr{
+    height: 40px;
+}
+.tableDiv table td{
+    color: #333;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ececec;
+    font-size: 16px;
+}
+.btns{
+    width:100px;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    color: white;
+    background: #67a17d;
+    margin:20px auto;
+    border-radius:4px ;
+}
+#fm_pic{
+    width: 200px;
+    height: 100px;
+}

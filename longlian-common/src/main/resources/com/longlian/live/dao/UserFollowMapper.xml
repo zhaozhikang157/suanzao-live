@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.UserFollowMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.UserFollow">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="STATUS" jdbcType="INTEGER" property="status"/>
+        <result column="IS_READED" property="isReaderd"/>
+        <result column="THIRD_OPENID" property="thirdOpenId"/>
+        <result column="THIRD_WECHAT_APPID" property="thirdWechatAppId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, APP_ID, ROOM_ID, CREATE_TIME, STATUS,IS_READED,THIRD_OPENID,THIRD_WECHAT_APPID
+  </sql>
+
+    <insert id="insert" parameterType="com.longlian.model.UserFollow">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user_follow (APP_ID, ROOM_ID, CREATE_TIME, STATUS,IS_READED,THIRD_OPENID,THIRD_WECHAT_APPID)
+        values (#{appId}, #{roomId}, #{createTime}, #{status},#{isReaderd}, #{thirdOpenId},#{thirdWechatAppId})
+    </insert>
+
+    <update id="update" parameterType="com.longlian.model.UserFollow">
+    update user_follow
+    set APP_ID = #{appId},
+      ROOM_ID = #{roomId},
+      CREATE_TIME = #{createTime},
+      STATUS = #{status},
+      THIRD_OPENID = #{thirdOpenId},
+      THIRD_WECHAT_APPID = #{thirdWechatAppId},
+      IS_READED = #{isReaderd}
+    where ID = #{id}
+  </update>
+
+    <select id="getCountUserFollow" parameterType="long" resultType="map">
+    select a.`NAME` AS name,a.PHOTO AS photo,DATE_FORMAT(u.CREATE_TIME,'%Y-%m-%d %H:%i')  AS createTime,u.IS_READED AS isReaderd,u.ID AS id
+    FROM user_follow u
+    LEFT JOIN app_user a ON a.ID = u.APP_ID
+    WHERE u.ROOM_ID = #{roomId}
+    ORDER BY u.IS_READED , u.ID  DESC
+   </select>
+
+    <select id="getCountByRoomId" parameterType="long" resultType="long">
+    SELECT count(1) FROM user_follow WHERE ROOM_ID =  #{liveRoomId} AND STATUS = '0'
+  </select>
+
+  <select id="followLiveRoomPage" resultType="map">
+    SELECT DISTINCT u.ID AS uId,a.photo as photo,  l.ID AS id,l.NAME AS name,l.REMARK AS remark,l.COVERSS_ADDRESS AS coverssAddress
+    FROM user_follow u
+    LEFT JOIN live_room l ON l.ID =u.ROOM_ID
+    LEFT JOIN app_user a ON a.Id= l.APP_ID
+    WHERE u.STATUS='0' AND u.APP_ID=#{appId}
+    ORDER BY u.ID DESC
+  </select>
+
+  <select id="followLiveRoomNewPage" resultType="map">
+    SELECT DISTINCT u.ID AS uId,a.photo as photo,  l.ID AS id,l.NAME AS name,l.REMARK AS remark,l.COVERSS_ADDRESS AS coverssAddress,u.`STATUS` AS status,cc.count count
+    FROM user_follow u
+    LEFT JOIN live_room l ON l.ID =u.ROOM_ID
+    LEFT JOIN app_user a ON a.Id= l.APP_ID
+    LEFT JOIN (select count(1) count,ROOM_ID from user_follow where `STATUS` = '0' group by ROOM_ID) cc on u.ROOM_ID = cc.ROOM_ID
+    WHERE  u.STATUS='0' AND  u.APP_ID= #{appId}
+    ORDER BY u.ID DESC
+  </select>
+
+    <select id="selectUserFollowByRoomId" parameterType="long" resultMap="BaseResultMap">
+    SELECT
+    *
+    FROM user_follow u
+    WHERE u.ROOM_ID=#{roomId} and u.STATUS = '0'
+  </select>
+
+    <select id="getOpenIdByLiveRoomId" parameterType="long" resultType="java.util.Map">
+        SELECT au.OPENID openid ,au.NAME name,au.IS_FOLLOW_LL_WECHAT  isFollowLlWechat  ,u.THIRD_OPENID thirdOpenid
+        FROM user_follow u
+        INNER  JOIN  app_user au on au.ID = u.APP_ID
+        WHERE u.ROOM_ID=#{roomId} and u.STATUS = '0'
+    </select>
+
+    <select id="selectFollowByRoomId" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM user_follow u
+        WHERE u.ROOM_ID=#{roomId} and u.STATUS = '0'
+        ORDER BY u.ID DESC
+    </select>
+
+    <select id="getAppIdByLiveRoomId" parameterType="long" resultType="java.lang.Long">
+        SELECT APP_ID
+        FROM   live_room au
+        WHERE au.id = #{roomId}
+    </select>
+
+    <select id="getUserFollowListByApp" resultType="map">
+        select a.`NAME` AS name,a.PHOTO AS photo,DATE_FORMAT(u.CREATE_TIME,'%Y-%m-%d %H:%i')  AS createTime,u.IS_READED AS isReaderd,u.ID AS id
+        FROM user_follow u
+        LEFT JOIN app_user a ON a.ID = u.APP_ID
+        WHERE u.ROOM_ID = #{roomId} AND u.IS_READED = '0' AND u.STATUS='0'
+        ORDER BY u.ID  DESC
+    </select>
+
+    <select id="getUserFollowListByAppPage" resultType="map">
+        select a.`NAME` AS name,a.PHOTO AS photo,DATE_FORMAT(u.CREATE_TIME,'%Y-%m-%d %H:%i')  AS createTime,u.IS_READED AS isReaderd,u.ID AS id
+        FROM user_follow u
+        LEFT JOIN app_user a ON a.ID = u.APP_ID
+        <where>
+            u.ROOM_ID = #{roomId} AND u.IS_READED = '1' AND u.STATUS='0'
+            <if test="@Ognl@isNotEmpty(createTime)">
+                AND DATE_FORMAT(u.CREATE_TIME,'%Y-%m-%d %H:%i') &lt; #{createTime}
+            </if>
+        </where>
+        ORDER BY u.ID  DESC
+    </select>
+
+
+    <select id="getUserFollowList" resultType="map">
+         select a.`NAME` AS name,a.PHOTO AS photo,DATE_FORMAT(u.CREATE_TIME,'%Y-%m-%d %H:%i')  AS createTime,u.IS_READED AS isReaderd,u.ID AS id
+        FROM user_follow u
+        LEFT JOIN app_user a ON a.ID = u.APP_ID
+        <where>
+            u.ROOM_ID = #{roomId} AND u.IS_READED = '1' AND u.STATUS='0'
+            <if test="@Ognl@isNotEmpty(createTime)">
+                AND DATE_FORMAT(u.CREATE_TIME,'%Y-%m-%d %H:%i') &gt;= #{createTime}
+            </if>
+        </where>
+        ORDER BY u.ID  DESC
+    </select>
+</mapper>

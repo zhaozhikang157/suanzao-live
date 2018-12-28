@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.PushMsgMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.PushMsg">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="SEND_OBJ" jdbcType="INTEGER" property="sendObj" />
+    <result column="SEND_APPOINT_OBJ" jdbcType="VARCHAR" property="sendAppointObj" />
+    <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="SEND_TIME" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_USER_ID" jdbcType="BIGINT" property="createUserId" />
+    <result column="PUSH_URL" jdbcType="VARCHAR" property="pushUrl" />
+    <result column="PUSH_TYPE" jdbcType="VARCHAR" property="pushType" />
+    <result column="PUSH_USER" jdbcType="VARCHAR" property="pushUser" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, TITLE, SEND_OBJ, SEND_APPOINT_OBJ, CONTENT, STATUS, SEND_TIME, CREATE_TIME, CREATE_USER_ID,PUSH_URL,PUSH_TYPE,PUSH_USER
+  </sql>
+
+
+  <insert id="insert" parameterType="com.longlian.model.PushMsg">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into push_msg (TITLE, SEND_OBJ, SEND_APPOINT_OBJ, CONTENT, STATUS, SEND_TIME, 
+      CREATE_TIME, CREATE_USER_ID,PUSH_URL,PUSH_TYPE,PUSH_USER)
+    values (#{title}, #{sendObj}, #{sendAppointObj}, #{content}, #{status}, #{sendTime}, 
+      #{createTime}, #{createUserId},#{pushUrl}, #{pushType},#{pushUser})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.longlian.model.PushMsg">
+    update push_msg
+    set TITLE = #{title},
+      SEND_OBJ = #{sendObj},
+      SEND_APPOINT_OBJ = #{sendAppointObj},
+      CONTENT = #{content},
+      STATUS = #{status},
+      SEND_TIME = #{sendTime},
+      CREATE_TIME = #{createTime},
+      CREATE_USER_ID = #{createUserId},
+      PUSH_URL = #{pushUrl},
+      PUSH_TYPE = #{pushType},
+      PUSH_USER = #{pushUser}
+    where ID = #{id}
+  </update>
+
+  <select id="getPushMsgListPage" resultType="map">
+     SELECT ID as id, CONTENT as content ,SEND_TIME as sendTime FROM push_msg WHERE STATUS = '0' ORDER BY SEND_TIME DESC
+  </select>
+
+  <select id="getPushMsgById" resultType="map">
+     SELECT CONTENT as content ,SEND_TIME as sendTime FROM push_msg WHERE ID = #{id}
+  </select>
+  <!--H5推送记录-->
+  <select id="getH5PushMsgListPage" resultMap="BaseResultMap">
+    SELECT
+        ID,CONTENT,PUSH_URL,PUSH_USER,SEND_TIME
+    FROM
+        push_msg pm
+    WHERE
+        STATUS = '0' AND PUSH_TYPE='1'
+        <if test="@Ognl@isNotEmpty(map.pushUser)">
+          AND pm.PUSH_USER LIKE CONCAT('%', #{map.pushUser}, '%')
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sendTime)">
+          AND pm.SEND_TIME &gt;'${map.sendTime}'
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sendTimeEnd)">
+          AND pm.SEND_TIME &lt;= '${map.sendTimeEnd}'
+        </if>
+        ORDER BY
+	          SEND_TIME DESC
+  </select>
+  <!--H5推送记录数量-->
+  <select id="getH5PushMsgCount" resultType="map">
+    SELECT
+	COUNT(*)totalCount
+    FROM
+        push_msg pm
+    WHERE
+        STATUS = '0' AND PUSH_TYPE='1'
+        <if test="@Ognl@isNotEmpty(map.pushUser)">
+          AND pm.PUSH_USER LIKE CONCAT('%', #{map.pushUser}, '%')
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sendTime)">
+          AND pm.SEND_TIME &gt;'${map.sendTime}'
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sendTimeEnd)">
+          AND pm.SEND_TIME &lt;= '${map.sendTimeEnd}'
+        </if>
+    ORDER BY
+        SEND_TIME DESC
+  </select>
+
+</mapper>

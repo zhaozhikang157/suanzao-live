@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.MobileVersionMapper">
+
+    <resultMap id="mobileVersionResultMap" type="com.longlian.dto.MobileVersionDto">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="VERSION_TYPE" jdbcType="VARCHAR" property="versionType"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="VERSION_NUM" jdbcType="VARCHAR" property="versionNum"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="DOWNLOAD_ADDRESS" jdbcType="VARCHAR" property="downloadAddress"/>
+        <result column="ONLINE_TIME" jdbcType="TIMESTAMP" property="onlineTime"/>
+        <result column="OFFLINE_TIME" jdbcType="TIMESTAMP" property="offlineTime"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="IS_FOCE_UPDATE" jdbcType="VARCHAR" property="isFoceUpdate"/>
+        <result column="VERSION_BRIEF" jdbcType="VARCHAR" property="versionBrief"/>
+    </resultMap>
+    <sql id="mobileVersionColumnList">
+        VERSION_TYPE, NAME, VERSION_NUM, STATUS, DOWNLOAD_ADDRESS, ONLINE_TIME, OFFLINE_TIME,USER_NAME,IS_FOCE_UPDATE,VERSION_BRIEF
+    </sql>
+
+    <select id="getListPage" resultMap="mobileVersionResultMap">
+
+        select id,
+        <include refid="mobileVersionColumnList"/>
+        from mobile_version_records
+        <where>
+            <if test="@Ognl@isNotEmpty(mobileVersion.versionType)">
+                and VERSION_TYPE = #{mobileVersion.versionType}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobileVersion.status)">
+                and STATUS = #{mobileVersion.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobileVersion.versionNum)">
+                and VERSION_NUM = #{mobileVersion.versionNum}
+            </if>
+        </where>
+        order by ONLINE_TIME desc
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="mobileVersionResultMap">
+        select id,
+        <include refid="mobileVersionColumnList"></include>
+        from
+        mobile_version_records
+        WHERE
+        id= #{id}
+    </select>
+
+    <update id="updateByVersionType" parameterType="String">
+        update mobile_version_records
+        set
+        STATUS = '0',
+        OFFLINE_TIME = sysdate()
+        where  VERSION_TYPE= #{versionType}  and   STATUS = '1'
+    </update>
+
+    <insert id="create" parameterType="com.longlian.model.MobileVersion">
+
+        insert into
+        mobile_version_records(
+
+        <include refid="mobileVersionColumnList"/>
+        )
+        values
+        (#{versionType}, #{name}, #{versionNum}, #{status}, #{downloadAddress}, #{onlineTime},now(), #{userName},
+        #{isFoceUpdate}, #{versionBrief})
+    </insert>
+    <insert id="createOnline" parameterType="com.longlian.model.MobileVersion">
+        insert into
+        mobile_version_records(
+
+        <include refid="mobileVersionColumnList"/>
+        )
+        values (#{versionType}, #{name}, #{versionNum}, #{status}, #{downloadAddress}, now(), #{offlineTime},
+        #{userName}, #{isFoceUpdate}, #{versionBrief})
+    </insert>
+
+
+    <update id="update" parameterType="com.longlian.model.MobileVersion">
+
+        update mobile_version_records
+        <set>
+            <if test="@Ognl@isNotEmpty(versionType)">
+                VERSION_TYPE = #{versionType},
+            </if>
+            <if test="@Ognl@isNotEmpty(name)">
+                NAME = #{name},
+            </if>
+            <if test="@Ognl@isNotEmpty(versionNum)">
+                VERSION_NUM = #{versionNum},
+            </if>
+            <if test="@Ognl@isNotEmpty(status)">
+                STATUS = #{status},
+            </if>
+            <if test="@Ognl@isNotEmpty(downloadAddress)">
+                DOWNLOAD_ADDRESS = #{downloadAddress},
+            </if>
+            <if test="status == 1 ">
+                ONLINE_TIME =sysdate(),
+            </if>
+            <if test="status == 0 ">
+                OFFLINE_TIME = sysdate(),
+            </if>
+            <if test="@Ognl@isNotEmpty(userName)">
+                USER_NAME = #{userName},
+            </if>
+            <if test="@Ognl@isNotEmpty(isFoceUpdate)">
+                IS_FOCE_UPDATE = #{isFoceUpdate},
+            </if>
+            <if test="@Ognl@isNotEmpty(versionBrief)">
+                VERSION_BRIEF = #{versionBrief},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+    <select id="selectMaxVersion" parameterType="java.lang.String" resultMap="mobileVersionResultMap">
+        select
+        <include refid="mobileVersionColumnList" />
+        from mobile_version_records
+        where VERSION_TYPE = #{versionType} and IS_FOCE_UPDATE = '1' and VERSION_NUM &lt;= (select VERSION_NUM from mobile_version_records where VERSION_TYPE = #{versionType} and STATUS ='1' ) order by VERSION_NUM desc limit 1
+    </select>
+
+
+    <select id="getSuperVersion" resultMap="mobileVersionResultMap">
+        select  <include refid="mobileVersionColumnList" /> from mobile_version_records where VERSION_TYPE = #{versionType} and STATUS ='1'
+    </select>
+</mapper>

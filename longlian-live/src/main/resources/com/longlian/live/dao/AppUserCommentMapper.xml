@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.AppUserCommentMapper">
+    <resultMap id="appUserCommentMap" type="com.longlian.model.AppUserComment">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID"  property="appId"/>
+        <result column="MOBILE"  property="mobile"/>
+        <result column="REMARKS"  property="remarks"/>
+        <result column="CREATE_TIME"  property="createTime"/>
+        <result column="STATUS"  property="status"/>
+        <result column="HAND_STATUS"  property="handStatus"/>
+        <result column="COURSE_ID"  property="courseId"/>
+    </resultMap>
+    <sql id="appUserCommentSql">
+        APP_ID,MOBILE,REMARKS,CREATE_TIME,STATUS,HAND_STATUS
+    </sql>
+
+    <insert id="createAppUserComment" parameterType="AppUserComment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_user_comment(APP_ID,MOBILE,REMARKS,CREATE_TIME)
+        VALUES (#{appId},#{mobile},#{remarks},#{createTime})
+    </insert>
+
+    <insert id="insert" parameterType="AppUserComment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_user_comment(APP_ID,MOBILE,REMARKS,CREATE_TIME,STATUS,HAND_STATUS,COURSE_ID)
+        VALUES (#{appId},#{mobile},#{remarks},now(),'0','0',#{courseId})
+    </insert>
+</mapper>

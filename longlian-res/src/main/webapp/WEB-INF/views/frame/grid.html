@@ -1,0 +1,136 @@
+
+<html>
+<head>
+    <title></title>
+
+    <style type="text/css">
+        .default-layout{
+            position:absolute;
+            top:0px;left:0px;
+            right:0px;bottom:0px;
+        }
+        ul.ztree {
+            margin-top: 10px;
+            border: 1px solid #CCC;
+            background: #ffffff;
+            width:220px;height:240px;
+            overflow-y:scroll;
+            overflow-x:auto;
+            /* border-radius: 4px;
+             box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;*/
+        }
+    </style>
+
+    <script type="text/javascript">
+        var TOP_HEIGHT = 40;
+        function doInit(){
+            $('#table-bootstrap').bootstrapTable({
+                method: 'post',
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                url: contextPath+"/user/getAllUserManage.do",
+                classes: 'table table-hover',
+                height:getHeight(),
+                toolbar:"#toolbar",
+                queryParams: queryParams,
+                columns: [
+                    {
+                        field: 'userId',
+                        title: '用户名',
+                        align: 'center',
+                        valign: 'middle',
+                        sortable:true
+                    },
+                    {
+                        field: 'userName',
+                        title: '姓名',
+                        align: 'center',
+                        valign: 'middle'
+                    }, {
+                        field: 'sex',
+                        title: '性别',
+                        align: 'center',
+                        valign: 'middle'
+                    },
+                    {
+                        field: 'mobilePhone',
+                        title: '手机',
+                        align: 'center',
+                        valign: 'middle'
+                    },
+                    {
+                        field: 'status',
+                        title: '状态',
+                        align: 'center',
+                        valign: 'middle',
+                        formatter:function(value,row){
+                            if(value=="OPEN"){
+                                return "<span style='color:green'>启用</span>"
+                            }else{
+                                return "<span style='color:red'>关闭</span>"
+                            }
+                        }
+                    },{
+                        field: '_opt_',
+                        title: '操作',
+                        align: 'center',
+                        valign: 'middle',
+                        formatter:function(value,row){
+                            return "<a href='javascript:void(0)' onclick='edit("+row.sid+")'>编辑</a>&nbsp;&nbsp;<a href='javascript:void(0)' onclick='del("+row.sid+")'>删除</a>";
+                        }
+                    }]
+            });
+
+            getParentDeptTree(0);
+        }
+        $(window).resize(function () {
+            $('#table-bootstrap').bootstrapTable('resetView', {
+                height: (tools.getHeight()-TOP_HEIGHT)
+            });
+        });
+
+        //传递的参数
+        function queryParams(params) {
+            params["test2"] = "sss";
+            return params;
+
+        }
+        function getHeight() {
+            return $(window).height() - $('h1').outerHeight(true);
+        }
+        function refresh(){
+            $('#table-bootstrap').bootstrapTable('refresh', {query:{a:1,b:2}});
+        }
+    </script>
+
+</head>
+<body onload="doInit();" >
+
+<div  class="default-layout" style="width: 100%;height: 40px;padding: 10px;">
+    <form class="form-horizontal" id="form1">
+        <label class="control-label" style="padding-right: 15px; " >用户:</label>
+        <input type="text" class="form-control" id="deptName" name="deptName" autocomplete="off" placeholder="输入用户名/用户姓名" placeholder="" style="width: 200px;display: inline-block;">
+        <label class="control-label"  style="padding-right: 15px ;">部门:</label>
+        <input type="hidden" class="form-control" id="parentId"  name="parentId" placeholder=""  >
+
+        <button class="btn btn-info btn-sm" onclick="add()" >
+            <i class=" glyphicon glyphicon-search"></i> 查询
+        </button>
+
+    </form>
+</div>
+
+<div class="GridContainer default-layout" style="top:40px;">
+    <div id="toolbar">
+        <button class="btn btn-success btn-sm" onclick="add()" >
+            <i class="glyphicon glyphicon-plus"></i> 添加用户
+        </button>
+    </div>
+    <table id="table-bootstrap"
+           data-pagination="true"
+           data-side-pagination="server"
+           data-page-list="[10, 20, 50, 100]"
+           data-show-refresh="true"
+           data-show-columns="true" ></table>
+</div>
+</body>
+</html>

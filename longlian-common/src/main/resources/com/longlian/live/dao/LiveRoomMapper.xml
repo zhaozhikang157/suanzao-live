@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.LiveRoomMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.LiveRoom">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="STATUS" jdbcType="INTEGER" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="INVITE_TMP" jdbcType="VARCHAR" property="inviteTmp"/>
+        <result column="BG_ADDRESS" jdbcType="VARCHAR" property="bgAddress"/>
+        <result column="COVERSS_ADDRESS" jdbcType="VARCHAR" property="coverssAddress"/>
+        <result column="AUTH_TIME" jdbcType="TIMESTAMP" property="authTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="AUTH_USER_ID" jdbcType="BIGINT" property="authUserId"/>
+        <result column="AUTH_USER_NAME" jdbcType="VARCHAR" property="authUserName"/>
+        <result column="AUTH_REMARK" jdbcType="VARCHAR" property="authRemark"/>
+        <result column="WEIXIN_NUM" jdbcType="VARCHAR" property="weixinNum"/>
+        <result column="INVITE_ADDR" jdbcType="VARCHAR" property="inviteAddr"/>
+        <result column="LIVE_ROOM_NO" property="liveRoomNo"/>
+        <result column="MESSAGE_FLAG" property="messageFlag"/>
+        <result column="DATA_COUNT" property="dataCount" />
+        <result column="REDUCE_DATA_COUNT" property="reduceDataCount"/>
+        <result column="ROOM_STATUS" property="roomStatus"/>
+        <result column="DISABLE_REMARK" property="disableRemark"/>
+        <result column="REVIEW_COUNT" property="reviewCount"/>
+        <result column="AUTO_CLOSE_TIME" property="autoCloseTime"/>
+        <result column="IS_SHOW" property="isShow"/>
+    </resultMap>
+
+    <resultMap id="LiveRoomMapDto" type="com.longlian.dto.LiveRoomDto" extends="BaseResultMap">
+        <result column="appName" property="appName"/>
+        <result column="mobile" property="mobile"/>
+        <result column="idCardFront" property="idCardFront"/>
+        <result column="idCardRear" property="idCardRear"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+      l.ID, APP_ID, CONCAT(a.NAME,'的直播间') AS NAME , l.STATUS, l.CREATE_TIME, l.REMARK, l.INVITE_TMP, l.BG_ADDRESS, l.COVERSS_ADDRESS,l.REDUCE_DATA_COUNT,l.AUTO_CLOSE_TIME,
+      l.AUTH_TIME, UPDATE_TIME, l.AUTH_USER_ID, l.AUTH_USER_NAME, l.AUTH_REMARK, l.WEIXIN_NUM ,l.INVITE_ADDR, l.LIVE_ROOM_NO,l.MESSAGE_FLAG , l.DATA_COUNT ,l.REDUCE_DATA_COUNT,l.ROOM_STATUS,l.DISABLE_REMARK
+    </sql>
+
+    <select id="findByAppId" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM live_room l left join app_user a on l.APP_ID = a.ID WHERE l.APP_ID = #{appId}
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+          <include refid="Base_Column_List"></include>
+        FROM live_room l left join app_user a on l.APP_ID = a.ID WHERE l.ID = #{id}
+    </select>
+
+
+    <insert id="insert" parameterType="com.longlian.model.LiveRoom">
+
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into live_room (APP_ID, NAME, STATUS, CREATE_TIME, REMARK, INVITE_TMP, BG_ADDRESS,
+        COVERSS_ADDRESS, AUTH_TIME, UPDATE_TIME, AUTH_USER_ID, AUTH_USER_NAME,
+        AUTH_REMARK, WEIXIN_NUM, LIVE_ROOM_NO)
+        values (#{appId}, #{name}, #{status},now(), #{remark}, #{inviteTmp}, #{bgAddress},
+        #{coverssAddress}, #{authTime}, #{updateTime}, #{authUserId}, #{authUserName},
+        #{authRemark}, #{weixinNum}, #{liveRoomNo})
+    </insert>
+
+    <update id="update" parameterType="com.longlian.model.LiveRoom">
+    update live_room
+    set APP_ID = #{appId},
+    NAME = #{name},
+    STATUS = #{status},
+    REMARK = #{remark},
+    INVITE_TMP = #{inviteTmp},
+    BG_ADDRESS = #{bgAddress},
+    COVERSS_ADDRESS = #{coverssAddress},
+    AUTH_TIME = #{authTime},
+    AUTH_USER_ID = #{authUserId},
+    AUTH_USER_NAME = #{authUserName},
+    AUTH_REMARK = #{authRemark},
+    WEIXIN_NUM = #{weixinNum},
+    UPDATE_TIME = now()
+    where ID = #{id}
+  </update>
+
+    <update id="updateLiveRoom">
+    UPDATE live_room SET INVITE_TMP = #{tempCode} WHERE APP_ID = #{appId}
+  </update>
+
+    <update id="updateinviCardAddress">
+    UPDATE live_room SET INVITE_ADDR = #{address} WHERE APP_ID = #{appId}
+  </update>
+
+    <update id="updateLiveRoomRemark">
+        UPDATE live_room SET REMARK = #{remark} , STATUS = '1'  WHERE APP_ID = #{appId}
+    </update>
+    
+    <select id="getFollowRoom" parameterType="long" resultType="map">
+     SELECT ID as id,COVERSS_ADDRESS as converAddress,NAME as name,REMARK as  remark FROM live_room WHERE APP_ID = #{appId}
+  </select>
+
+    <update id="setLiveRoom" parameterType="com.longlian.model.LiveRoom">
+        update live_room
+        <set>
+            <!--<if test="@Ognl@isNotEmpty(name)">
+                NAME = #{name},
+            </if>-->
+            <if test="@Ognl@isNotEmpty(remark)">
+                REMARK = #{remark},
+            </if>
+            <if test="@Ognl@isNotEmpty(bgAddress)">
+                BG_ADDRESS = #{bgAddress},
+            </if>
+            <if test="@Ognl@isNotEmpty(coverssAddress)">
+                COVERSS_ADDRESS = #{coverssAddress}
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+
+    <update id="updateByLive" parameterType="com.longlian.model.LiveRoom">
+    update live_room
+    set APP_ID = #{appId},
+    NAME = #{name},
+    STATUS = #{status},
+    REMARK = #{remark},
+    WEIXIN_NUM = #{weixinNum},
+    UPDATE_TIME = now()
+    where ID = #{id}
+  </update>
+
+    <select id="getCourseIncomeDetailsPage" resultType="Map">
+    select   sum(`at`.AMOUNT) AS amount ,c.LIVE_TOPIC as topic,  c.cid AS courseId ,c.LIVE_WAY as live_way,c.IS_RELAY as IsRelay,
+    c.COVERSS_ADDRESS AS address,c.VISIT_COUNT AS visitCount , count(jcr.id) as joinCount , max(at.CREATE_TIME) creteTime
+    from account_track  at
+    INNER JOIN orders o on o.ID = at.ORDER_ID
+    INNER JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+    INNER JOIN
+    (
+        select * ,app_id appId,id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+    ) c
+    ON c.cid = jcr.COURSE_ID and jcr.JOIN_TYPE = '0'
+    WHERE
+    `at`.TO_ACCOUNT_ID = #{appId} and
+    `at`.TYPE = '0' AND
+    `at`.RETURN_MONEY_LEVEL = '0'
+    GROUP BY jcr.COURSE_ID
+    ORDER BY creteTime DESC
+  </select>
+
+    <select id="getRelayCourseIncomeDetailsPage" resultType="Map">
+        SELECT
+            t2.ID,
+            t2.LIVE_TOPIC,
+            t2.COVERSS_ADDRESS,
+            sum(t.CHARGE) INCOME_TOTAL,
+            sum(t.RELAYER_CNT) RELAYER_CNT,
+            t2.LIVE_WAY liveWay
+        FROM
+            (
+                SELECT
+                    t0.ID,
+                    t0.ORI_APP_ID,
+                    t0.ORI_COURSE_ID,
+                    t0.REL_COURSE_ID,
+                    t0.CHARGE,
+                    IF(t0.TYPE = 1, 1, 0) RELAYER_CNT,
+                    t0.CREATE_TIME
+                FROM
+                    relay_income t0
+            ) t
+        LEFT JOIN course t2 on t.ORI_COURSE_ID = t2.ID
+        WHERE
+            t.ORI_APP_ID = #{appId}
+        GROUP BY
+            t.ORI_COURSE_ID
+        ORDER BY
+	        t.CREATE_TIME DESC
+    </select>
+
+    <select id="getRelayCourseIncomeTotal" resultType="java.math.BigDecimal">
+        SELECT
+        IFNULL(sum(t0.CHARGE), 0) TOTAL
+        FROM
+            relay_income t0
+        WHERE
+            t0.ORI_APP_ID = #{appId}
+            <if test="today">
+               AND DATE_FORMAT(t0.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+            </if>
+    </select>
+
+  <select id="getCourseIncomeTodayDetailsPage" resultType="Map">
+    select   sum(`at`.AMOUNT) AS amount ,c.LIVE_TOPIC as topic,  c.ID AS courseId ,c.LIVE_WAY as live_way,c.isRelay as IsRelay,
+    c.COVERSS_ADDRESS AS address,c.VISIT_COUNT AS visitCount , count(jcr.id) as joinCount , max(at.CREATE_TIME) creteTime
+    from account_track  at
+    INNER JOIN orders o on o.ID = at.ORDER_ID
+    INNER JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+    INNER JOIN
+    (
+        select * ,app_id appId,id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+    )c
+     ON c.cid = jcr.COURSE_ID and jcr.JOIN_TYPE = '0'
+    WHERE
+    `at`.TO_ACCOUNT_ID = #{appId} and
+    `at`.TYPE = '0' AND
+    `at`.RETURN_MONEY_LEVEL = '0'
+    and DATE_FORMAT(`at`.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+    GROUP BY jcr.COURSE_ID
+    ORDER BY creteTime DESC
+  </select>
+
+  <select id="getTodayCourseIncome" resultType="java.math.BigDecimal">
+    select sum(`at`.AMOUNT) AS amount
+    from account_track  at
+    WHERE
+    `at`.TO_ACCOUNT_ID = #{appId} and
+    `at`.TYPE = '0' AND
+    `at`.RETURN_MONEY_LEVEL = '0'
+    and DATE_FORMAT(`at`.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+  </select>
+
+    <select id="getdisIncomeDetailsPage" resultType="Map">
+    select   sum(`at`.AMOUNT) AS amount ,c.LIVE_TOPIC as topic,  c.cid AS courseId ,c.LIVE_WAY as live_way,
+    c.COVERSS_ADDRESS AS address,c.START_TIME AS startTime , max(at.CREATE_TIME) creteTime
+    from account_track  at
+    INNER JOIN orders o on o.ID = at.ORDER_ID
+    INNER JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+    INNER JOIN
+    (
+        select * ,app_id appId,id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+    ) c
+    ON c.cid = jcr.COURSE_ID
+    WHERE
+    `at`.TO_ACCOUNT_ID = #{appId} and
+    `at`.TYPE = '0' AND
+    `at`.RETURN_MONEY_LEVEL = '1'
+    GROUP BY jcr.COURSE_ID
+    ORDER BY creteTime DESC
+  </select>
+
+    <select id="getdisIncomeTodayDetailsPage" resultType="Map">
+        select   sum(`at`.AMOUNT) AS amount ,c.LIVE_TOPIC as topic,  c.ID AS courseId ,c.LIVE_WAY as liveWay,
+        c.COVERSS_ADDRESS AS address,c.START_TIME AS startTime , max(at.CREATE_TIME) creteTime
+        from account_track  at
+        INNER JOIN orders o on o.ID = at.ORDER_ID
+        INNER JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+        INNER JOIN
+        (
+        select * ,app_id appId,id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+
+        ) c
+        ON c.cid = jcr.COURSE_ID
+        WHERE
+        `at`.TO_ACCOUNT_ID = #{appId} and
+        `at`.TYPE = '0' AND
+        `at`.RETURN_MONEY_LEVEL = '1'
+        and DATE_FORMAT(`at`.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+        GROUP BY jcr.COURSE_ID
+        ORDER BY creteTime DESC
+    </select>
+
+    <select id="getTodayDisIncome" resultType="java.math.BigDecimal">
+        select   sum(`at`.AMOUNT) AS disAmount
+        from account_track  at
+        WHERE
+        `at`.TO_ACCOUNT_ID = #{appId} and
+        `at`.TYPE = '0' AND
+        `at`.RETURN_MONEY_LEVEL = '1'
+        and DATE_FORMAT(`at`.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+    </select>
+
+    <select id="getTodayRelayIncome" resultType="java.math.BigDecimal">
+        select  sum(`at`.CHARGE) AS relayAmount
+        from relay_income  at
+        WHERE
+        `at`.ORI_APP_ID = #{appId}
+        and DATE_FORMAT(`at`.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+    </select>
+
+    <select id="getLiveRoomId" resultType="Long">
+        SELECT ID FROM live_room WHERE LIVE_ROOM_NO = #{liveRoomNo} AND STATUS = 1
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM live_room
+    </select>
+    <update id="updateLiveRoomNo" >
+        update live_room
+        set LIVE_ROOM_NO = #{uuid}
+        where ID = #{id}
+    </update>
+
+    <update id="updateTemp" >
+        update live_room
+        set INVITE_TMP = #{code}
+        where ID = #{id}
+    </update>
+    <update id="updateMessageFlag" >
+        update live_room
+        set MESSAGE_FLAG = #{messageFlag}
+        where ID = #{roomId}
+    </update>
+
+    <update id="updateReduceDataCountById">
+         update live_room set REDUCE_DATA_COUNT = #{balance} where ID = #{roomId}
+    </update>
+
+
+    <update id="updateSize">
+        UPDATE live_room SET DATA_COUNT = DATA_COUNT + #{size} , DAY_DATA_COUNT = 0
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateDaySize">
+        UPDATE live_room SET DAY_DATA_COUNT = #{size} WHERE ID = #{id}
+    </update>
+
+    <update id="updateReviewCount">
+        UPDATE live_room SET REVIEW_COUNT = REVIEW_COUNT + #{size}
+        WHERE ID = #{id}
+    </update>
+
+    <select id="getCourseCount" resultType="Map">
+        SELECT  c.ROOM_ID AS roomId , lr.FOLLOW_COUNT AS followCount ,  SUM(c.JOIN_COUNT) AS joinCount ,
+        COUNT(*) AS courseCount , lr.APP_ID  AS appId
+        FROM course c
+        LEFT JOIN live_room lr ON c.ROOM_ID = lr.ID
+        WHERE lr.STATUS = '1' AND c.STATUS = '0'
+        GROUP BY lr.ID
+    </select>
+
+    <select id="getPendingListPage" resultMap="LiveRoomMapDto">
+        SELECT l.ID,l.NAME,l.CREATE_TIME,l.REMARK,l.WEIXIN_NUM,a.`NAME` AS appName,a.MOBILE AS mobile
+        FROM  live_room l
+        LEFT JOIN app_user a ON a.ID = l.APP_ID
+        <where>
+            l.`STATUS`='0'
+            <if test="@Ognl@isNotEmpty(liveRoom.beginTime)">
+                AND l.CREATE_TIME &gt; #{liveRoom.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.endTime)">
+                AND l.CREATE_TIME &lt; #{liveRoom.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.mobile)">
+                AND a.MOBILE =  #{liveRoom.mobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.name)">
+                AND l.NAME  LIKE  CONCAT('%',#{liveRoom.name},'%' )
+            </if>
+            ORDER BY l.CREATE_TIME DESC
+        </where>
+    </select>
+
+    <select id="getAuditedListPage" resultMap="LiveRoomMapDto">
+        SELECT l.ID,l.APP_ID, l.NAME,l.AUTH_USER_NAME,l.AUTH_REMARK,l.AUTH_TIME,l.STATUS,
+        a.MOBILE AS mobile,a.OPENID AS openId
+        FROM  live_room l
+        LEFT JOIN app_user a ON  a.ID = l.APP_ID
+        <where>
+            l.`STATUS`!='0'
+            <if test="@Ognl@isNotEmpty(liveRoom.beginTime)">
+                AND l.AUTH_TIME &gt; #{liveRoom.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.endTime)">
+                AND l.AUTH_TIME &lt; #{liveRoom.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.type)">
+                AND l.STATUS =  #{liveRoom.type}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.mobile)">
+                AND a.MOBILE =  #{liveRoom.mobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.name)">
+                AND l.NAME  LIKE CONCAT('%',#{liveRoom.name},'%' )
+            </if>
+            ORDER BY l.AUTH_TIME DESC
+        </where>
+    </select>
+
+    <update id="updateHand" parameterType="com.longlian.dto.LiveRoomDto">
+        update live_room
+        set
+        STATUS = #{status},
+        AUTH_USER_ID = #{authUserId},
+        AUTH_USER_NAME = #{authUserName},
+        AUTH_REMARK = #{authRemark},
+        AUTH_TIME = now()
+        where ID = #{id}
+    </update>
+
+    <select id="findDtoById" parameterType="long" resultMap="LiveRoomMapDto">
+        SELECT l.ID,l.NAME,l.CREATE_TIME,l.REMARK,l.WEIXIN_NUM,l.APP_ID,
+        a.`NAME` AS appName,a.MOBILE AS mobile,a.ID_CARD_FRONT as idCardFront,a.ID_CARD_REAR as idCardRear
+        FROM  live_room l
+        LEFT JOIN app_user a ON a.ID = l.APP_ID
+        WHERE l.ID = #{id}
+    </select>
+
+
+    <select id="getAllUseRoom" resultType="java.util.Map">
+        select ID id , APP_ID appId from live_room where STATUS = '1'
+    </select>
+
+    <select id="getLiveRoomListPage" resultMap="LiveRoomMapDto">
+        SELECT l.ID,l.NAME,l.APP_ID,l.DATA_COUNT,l.REVIEW_COUNT,
+        l.REDUCE_DATA_COUNT ,l.LIVE_ROOM_NO,l.STATUS, l.AUTO_CLOSE_TIME,
+        a.`NAME` AS appName,a.MOBILE AS mobile,l.IS_SHOW
+        FROM  live_room l    LEFT JOIN app_user a ON  a.ID = l.APP_ID
+        <where>
+            l.`STATUS`='1'
+            <if test="@Ognl@isNotEmpty(liveRoom.name)">
+                AND l.NAME  LIKE CONCAT('%',#{liveRoom.name},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.id)">
+              <if test="liveRoom.id>0">
+                AND l.id  = #{liveRoom.id}
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(liveRoom.mobile)">
+                AND a.MOBILE =  #{liveRoom.mobile}
+            </if>
+        </where>
+        <if test="@Ognl@isNotEmpty(liveRoom.sortType)">
+            <if test="liveRoom.sortType==1">
+                ORDER BY l.DATA_COUNT DESC
+            </if>
+            <if test="liveRoom.sortType==2">
+                ORDER BY l.REVIEW_COUNT DESC
+            </if>
+            <if test="liveRoom.sortType==3">
+                ORDER BYl.REDUCE_DATA_COUNT DESC
+            </if>
+        </if>
+    </select>
+    <update id="disableRoom">
+        UPDATE live_room SET ROOM_STATUS = #{roomStatus},DISABLE_REMARK = #{disableRemark} WHERE ID = #{roomId}
+    </update>
+
+    <select id="findAllRoomId" resultType="String">
+        SELECT ID FROM live_room WHERE STATUS = '1' AND ROOM_STATUS = '0'
+    </select>
+
+    <update id="setAutoCloseTime">
+        update live_room
+        set AUTO_CLOSE_TIME =#{autoCloseTime}
+        WHERE ID = #{id}
+    </update>
+    <!--设置隐藏和显示-->
+    <update id="updateIsShow">
+        update live_room
+        set IS_SHOW =#{isShow}
+        WHERE ID = #{id}
+    </update>
+    <!--修改昵称后修改直播间名称-->
+    <update id="updateRoomByAppId">
+        update live_room
+        set NAME =#{name}
+        WHERE APP_ID = #{appId}
+    </update>
+
+</mapper>

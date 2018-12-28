@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longlian.mq.dao.SystemLogMapper" >
+
+
+    <resultMap id="SystemLogMap" type="com.longlian.model.SystemLog">
+        <id column="ID" property="id"></id>
+        <result column="SYSTEM_TYPE" property="systemType"></result>
+        <result column="USER_ID" property="userId"></result>
+        <result column="USER_NAME" property="userName"></result>
+        <result column="IP_ADDRESS" property="ipAddress"></result>
+        <result column="LOG_TYPE" property="logType"></result>
+        <result column="OBJECT" property="object"></result>
+        <result column="CONTENT" property="content"></result>
+        <result column="LOG_TIME" property="logTime"></result>
+        <result column="TABLE_TYPE" property="tableType"></result>
+        <result column="TABLE_ID" property="tableId"></result>
+        <result column="DEVICE_NO" property="deviceNo"></result>
+
+    </resultMap>
+
+
+    <sql id="SystemLogColumnSql">
+        SYSTEM_TYPE,USER_ID,USER_NAME,IP_ADDRESS,LOG_TYPE,OBJECT,CONTENT,LOG_TIME,TABLE_TYPE,TABLE_ID,DEVICE_NO
+    </sql>
+
+    <insert id="insert" parameterType="SystemLog">
+        INSERT  INTO  system_log(
+        SYSTEM_TYPE,USER_ID,USER_NAME,IP_ADDRESS,LOG_TYPE,OBJECT,CONTENT,LOG_TIME,TABLE_TYPE,TABLE_ID,DEVICE_NO
+        )  VALUES (#{systemType} , #{userId} , #{userName} ,#{ipAddress} , #{logType} , #{object}
+        ,#{content} , #{logTime} , #{tableType} , #{tableId},#{deviceNo}
+        )
+    </insert>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-4.2.xsd">
+
+    <!-- enable autowire -->
+    <context:annotation-config/>
+	<import resource="classpath*:spring/**.xml" />
+
+    <bean id="properties" class="com.huaxin.util.spring.CustomizedPropertyConfigurer" >
+	    <property name="locations">  
+	        <list>  
+	            <value>classpath*:sysconfig.properties</value>  
+	        </list>  
+	    </property>  
+    </bean>
+
+    <context:component-scan base-package="com.longlian"/>
+    <context:component-scan base-package="com.huaxin">
+
+    </context:component-scan>
+
+    <!-- 启用aop注解 -->
+    <aop:aspectj-autoproxy expose-proxy="true"/>
+
+    <!-- 查询缓存 -->
+    <bean id="StorageMethodResult" class="com.huaxin.util.spring.StorageMethodResult"></bean>
+    <bean id="updateSeriesCourseTimeInterceptor" class="com.longlian.live.interceptor.UpdateSeriesCourseTimeInterceptor"></bean>
+
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames">
+            <list>
+                <value>*Service</value>
+            </list>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <idref bean="StorageMethodResult" />
+                <idref bean="updateSeriesCourseTimeInterceptor" />
+            </list>
+        </property>
+    </bean>
+    <!-- 全局异常配置  -->
+    <bean id="exceptionHandler" class="com.huaxin.exception.GlobalExceptionHandler">
+        <property name="receive">
+            <value>${exception.receive}</value>
+        </property>
+        <property name="mobile">
+            <value>${exception.mobile.receive}</value>
+        </property>
+    </bean>
+
+    <bean id="remoteService" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>com.longlian.live.util.RibbonConfig</value>
+        </property>
+        <property name="targetMethod">
+            <value>chatMsgRemote</value>
+        </property>
+    </bean>
+
+    <bean id="remoteService2" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>com.longlian.live.util.RibbonConfig</value>
+        </property>
+        <property name="targetMethod">
+            <value>appMsgRemote</value>
+        </property>
+    </bean>
+
+</beans>

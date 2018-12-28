@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.CourseImgMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.CourseImg">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="COURSE_ID" jdbcType="BIGINT" property="courseId"/>
+        <result column="ADDRESS" jdbcType="VARCHAR" property="address"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="CONTENT" jdbcType="TIMESTAMP" property="content"/>
+        <result column="ORDER_SORT" jdbcType="TIMESTAMP" property="orderSort"/>
+        <result column="LOCAL_IDS" property="localIds"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+              ID, COURSE_ID, ADDRESS, STATUS, CREATE_TIME,CONTENT,ORDER_SORT,LOCAL_IDS
+       </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_img
+        where ID = #{id}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+              delete from course_img
+              where ID = #{id}
+       </delete>
+
+    <insert id="insert" parameterType="com.longlian.model.CourseImg">
+
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into course_img (COURSE_ID, ADDRESS, STATUS, CREATE_TIME,CONTENT,ORDER_SORT,LOCAL_IDS)
+        values (#{courseId}, #{address}, #{status}, #{createTime},#{content},#{orderSort},#{localIds})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.longlian.model.CourseImg">
+        update course_img
+        <set>
+            <if test="@Ognl@isNotEmpty(courseId)">
+                COURSE_ID = #{courseId},
+            </if>
+            <if test="@Ognl@isNotEmpty(address)">
+                ADDRESS = #{address},
+            </if>
+            <if test="@Ognl@isNotEmpty(status)">
+                STATUS = #{status},
+            </if>
+            <if test="@Ognl@isNotEmpty(createTime)">
+                CREATE_TIME = #{createTime},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.longlian.model.CourseImg">
+              update course_img
+              set COURSE_ID = #{courseId},
+              ADDRESS = #{address},
+              STATUS = #{status},
+              CREATE_TIME = #{createTime}
+              where ID = #{id}
+       </update>
+
+    <insert id="insertList">
+        insert into course_img(COURSE_ID, ADDRESS, STATUS, CREATE_TIME) values
+        <foreach collection="list" item="item" separator=",">
+            (#{courseId}, #{item},0,now())
+        </foreach>
+    </insert>
+    
+    <select id="getCourseImgList" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM course_img WHERE STATUS = '0' AND COURSE_ID = #{courseId}
+        ORDER BY ORDER_SORT ASC
+    </select>
+
+    <select id="getRelayCourseImgList" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM course_img WHERE STATUS = '0' AND COURSE_ID = (select ORI_COURSE_ID from course_relay where ID = #{courseId})
+        ORDER BY ORDER_SORT ASC
+    </select>
+
+    <delete id="deleteByCourseId" parameterType="long">
+              delete from course_img
+              where COURSE_ID = #{courseId}
+    </delete>
+</mapper>

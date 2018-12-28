@@ -1,0 +1,27 @@
+/*评价内容*/
+.comment-content > div{
+    margin: 10px 0;
+}
+.user-box > div{
+    margin: 0 auto;
+}
+.user-box > div span{
+    margin-right: 20px;
+}
+.user-box > div p{
+    display: inline-block;
+    overflow: hidden;
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    background: pink;
+    border-radius: 30px;
+}
+.user-box > div p img{
+    width: 100%;
+    height: 100%;
+}
+.text-box p{
+    display: inline-block;
+
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.CourseTypeMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.CourseType">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <!--<result column="PIC_ADDRESS" jdbcType="VARCHAR" property="picAddress" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />-->
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="ORDER_SORT" jdbcType="INTEGER" property="orderSort" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, NAME, parent_id,PATH,<!--PIC_ADDRESS, REMARK,--> STATUS, ORDER_SORT
+  </sql>
+
+  <insert id="insert" parameterType="com.longlian.model.CourseType" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_type (NAME,PARENT_ID,PATH,<!-- PIC_ADDRESS, REMARK,--> STATUS, ORDER_SORT,create_time,update_time)
+    values (#{name},#{parentId},#{path}, <!--#{picAddress}, #{remark},--> #{status}, #{orderSort},#{createTime},#{updateTime})
+  </insert>
+
+  <update id="update" parameterType="com.longlian.model.CourseType" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    update course_type
+    set NAME = #{name},
+     <!-- PIC_ADDRESS = #{picAddress},
+      REMARK = #{remark}, -->
+      PARENT_ID=#{parentId},
+      PATH=#{path},
+      STATUS = #{status},
+     <!-- ORDER_SORT = #{orderSort},-->
+      update_time = #{updateTime}
+    where ID = #{id}
+  </update>
+
+  <select id="getList" resultMap="BaseResultMap">
+    SELECT   ID, NAME,parent_id,path,<!-- PIC_ADDRESS, REMARK,--> ORDER_SORT,
+    ( CASE WHEN STATUS=0 THEN '正常' ELSE '禁用' END ) as STATUS
+    FROM course_type
+    <where>
+      1=1
+      <if test="@Ognl@isNotEmpty(courseType.name)">
+        and NAME LIKE CONCAT('%',#{courseType.name},'%' )
+      </if>
+      ORDER BY ORDER_SORT ASC ,update_time desc
+    </where>
+  </select>
+
+  <select id="findById" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"></include>
+    FROM course_type
+    WHERE ID = #{id}
+  </select>
+
+
+  <update id="toOrder" parameterType="java.util.List">
+
+    update course_type
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="ORDER_SORT =case" suffix="end,">
+        <foreach collection="list" item="i" index="index">
+          when ID=#{i.id} then #{i.sortOrder}
+        </foreach>
+      </trim>
+    </trim>
+    where
+    <foreach collection="list" separator="or" item="i" index="index">
+      ID=#{i.id}
+    </foreach>
+
+  </update>
+
+  <delete id="deleteById" >
+    delete from course_type
+    where ID = #{id}
+  </delete>
+
+  <select id="getCourseType" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM course_type WHERE  STATUS = '0'
+    ORDER BY ORDER_SORT,update_time desc
+  </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.newdao.RoomFuncMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.RoomFunc">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ROOM_ID" jdbcType="BIGINT" property="roomId" />
+    <result column="FUNC_CODE" jdbcType="VARCHAR" property="funcCode" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+    <delete id="deleteRoomFunc">
+      delete FROM room_func WHERE ROOM_ID = #{roomId} AND FUNC_CODE = #{code}
+    </delete>
+
+    <select id="getRoomFuncList" resultMap="BaseResultMap">
+    SELECT
+    *
+    FROM room_func 
+    WHERE ROOM_ID = #{roomId}
+  </select>
+
+  <select id="findRoomFunc" resultType="String">
+    SELECT FUNC_CODE FROM room_func WHERE ROOM_ID = #{roomId}
+  </select>
+
+  <select id="isRoomFunc" resultType="int">
+    SELECT count(1) FROM room_func WHERE ROOM_ID = #{roomId} AND FUNC_CODE = #{code}
+  </select>
+</mapper>

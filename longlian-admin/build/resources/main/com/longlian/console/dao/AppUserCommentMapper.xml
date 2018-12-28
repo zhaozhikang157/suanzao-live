@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.AppUserCommentMapper">
+
+    <resultMap id="appUserCommentMap" type="com.longlian.model.AppUserComment">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" property="appId"/>
+        <result column="MOBILE" property="mobile"/>
+        <result column="REMARKS" property="remarks"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="STATUS" property="status"/>
+        <result column="HAND_STATUS" property="handStatus"/>
+        <result column="COURSE_ID" property="courseId"/>
+    </resultMap>
+
+    <resultMap id="appUserCommentDtoMap" type="com.longlian.dto.AppUserCommentDto" extends="appUserCommentMap">
+        <result column="HAND_REMARKS" property="handRemarks"/>
+        <result column="HAND_USER_ID" property="handUserId"/>
+        <result column="appName" property="appName"/>
+        <result column="liveTopic" property="liveTopic"/>
+        <result column="courseRemark" property="courseRemark"/>
+    </resultMap>
+
+    <resultMap id="commentRecordMap" type="com.longlian.model.CommentRecord">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="COMMENT_ID" property="commentId"/>
+        <result column="HAND_USER_ID" property="handUserId"/>
+        <result column="REMARKS" property="remarks"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="HAND_STATUS" property="handStatus"/>
+    </resultMap>
+
+    <sql id="appUserCommentSql">
+      APP_ID,MOBILE,REMARKS,CREATE_TIME,STATUS,HAND_STATUS,COURSE_ID
+    </sql>
+    <sql id="commentRecordSql">
+        COMMENT_ID,HAND_USER_ID,REMARKS,CREATE_TIME,HAND_STATUS,COURSE_ID
+    </sql>
+
+    <select id="getPendingCommentListPage" resultMap="appUserCommentDtoMap">
+        SELECT au.ID,au.MOBILE,au.CREATE_TIME,au.REMARKS,au.HAND_STATUS,au.APP_ID,au.COURSE_ID,a.NAME AS appName
+        FROM app_user_comment au
+        LEFT JOIN app_user a ON a.ID = au.APP_ID
+        <where>
+            au.HAND_STATUS='0' AND au.STATUS='0'
+            <if test="@Ognl@isNotEmpty(appUserComment.beginTime)">
+                AND au.CREATE_TIME &gt; #{appUserComment.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(appUserComment.endnTime)">
+                AND au.CREATE_TIME &lt; #{appUserComment.endnTime}
+            </if>
+        </where>
+        ORDER BY au.CREATE_TIME DESC
+    </select>
+
+    <select id="getInHandOrAlreadyHandCommentListPage" resultMap="appUserCommentDtoMap">
+        SELECT auc.ID,auc.MOBILE,cr.CREATE_TIME,auc.REMARKS,auc.HAND_STATUS
+        ,auc.APP_ID
+        ,a.NAME AS appName
+        ,cr.REMARKS AS HAND_REMARKS
+        ,cr.HAND_USER_ID
+        ,cr.HAND_STATUS
+        FROM app_user_comment AS auc
+        LEFT JOIN comment_record AS cr ON cr.COMMENT_ID=auc.ID
+        LEFT JOIN app_user a ON a.ID = auc.APP_ID
+        <where>
+            auc.STATUS='0' AND auc.HAND_STATUS=#{appUserComment.handStatus} AND
+            cr.HAND_STATUS=#{appUserComment.handStatus}
+            <if test="@Ognl@isNotEmpty(appUserComment.beginTime)">
+                AND auc.CREATE_TIME &gt; #{appUserComment.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(appUserComment.endnTime)">
+                AND auc.CREATE_TIME &lt; #{appUserComment.endnTime}
+            </if>
+        </where>
+        ORDER BY cr.CREATE_TIME DESC
+    </select>
+
+
+    <insert id="createCommentRecord">
+        INSERT INTO comment_record(
+        <include refid="commentRecordSql"></include>
+        )
+        VALUES
+        (#{commentRecord.commentId},#{commentRecord.handUserId},#{commentRecord.remarks},#{commentRecord.createTime},#{commentRecord.handStatus},#{commentRecord.courseId})
+    </insert>
+
+    <update id="setHandComment">
+        UPDATE app_user_comment
+        SET HAND_STATUS=#{appUserComment.handStatus}
+        WHERE  ID=#{appUserComment.id}
+    </update>
+
+    <select id="getCommentByCommentId" resultMap="commentRecordMap">
+        SELECT ID,
+        <include refid="commentRecordSql"></include>
+        FROM comment_record
+        WHERE COMMENT_ID = #{commentId}
+    </select>
+
+    <select id="getPendingHandle" resultType="long">
+      SELECT COUNT(1) FROM app_user_comment WHERE `STATUS` = '0' AND HAND_STATUS = '0'
+    </select>
+
+    <select id="getAlreadyHandle" resultType="long">
+      SELECT COUNT(1) FROM app_user_comment WHERE `STATUS` = '0' AND HAND_STATUS = '2'
+    </select>
+
+    <select id="getAppUserCommentById" parameterType="long" resultMap="appUserCommentDtoMap">
+        SELECT
+          a.APP_ID,a.MOBILE,a.REMARKS,a.CREATE_TIME,a.STATUS,a.HAND_STATUS,a.COURSE_ID,c.LIVE_TOPIC AS liveTopic,c.REMARK AS courseRemark
+        FROM app_user_comment a
+        LEFT JOIN course c  ON c.ID = a.COURSE_ID
+        WHERE  a.ID = #{id}
+    </select>
+
+</mapper>

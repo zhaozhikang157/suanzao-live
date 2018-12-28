@@ -1,0 +1,48 @@
+Manifest-Version: 1.0
+Class-Path: libs/commons-collections-3.2.1.jar libs/jboss-logging-3.2.
+ 1.Final.jar libs/httpcore-4.4.3.jar libs/pagehelper-4.1.3.jar libs/my
+ sql-connector-java-5.1.31.jar libs/spring-context-support-4.2.8.RELEA
+ SE.jar libs/spring-tx-4.2.8.RELEASE.jar libs/aliyun-sdk-oss-2.5.0.jar
+  libs/aliyun-java-sdk-cdn-2.3.1.jar libs/commons-fileupload-1.3.1.jar
+  libs/jackson-databind-2.6.1.jar libs/core-3.1.0.jar libs/jstl-1.2.ja
+ r libs/commons-httpclient-3.1.jar libs/spring-data-redis-1.7.4.RELEAS
+ E.jar libs/slf4j-log4j12-1.6.1.jar libs/spring-context-4.2.8.RELEASE.
+ jar libs/dubbo-2.5.3.jar libs/aliyun-java-sdk-core-3.0.7.jar libs/aop
+ alliance-1.0.jar libs/spring-aop-4.2.8.RELEASE.jar libs/mail-1.4.7.ja
+ r libs/joda-money-0.10.0.jar libs/jackson-annotations-2.6.0.jar libs/
+ poi-ooxml-3.13.jar libs/spring-data-commons-1.12.4.RELEASE.jar libs/f
+ astjson-1.2.8.jar libs/jackson-core-2.6.1.jar libs/spring-beans-4.2.8
+ .RELEASE.jar libs/mchange-commons-java-0.2.10.jar libs/c3p0-0.9.1.1.j
+ ar libs/commons-io-2.4.jar libs/jdom-1.1.jar libs/standard-1.1.2.jar
+ libs/netty-all-5.0.0.Alpha2.jar libs/httpasyncclient-4.1.jar libs/ali
+ yun-sdk-mns-1.1.8.jar libs/commons-beanutils-1.9.2.jar libs/okhttp-2.
+ 4.0.jar libs/guava-18.0.jar libs/logback-core-1.1.7.jar libs/aliyun-j
+ ava-sdk-mts-2.1.7.jar libs/spring-core-4.2.8.RELEASE.jar libs/netty-3
+ .10.6.Final.jar libs/logback-classic-1.1.7.jar libs/logback-redis-app
+ ender-1.1.5.jar libs/spring-expression-4.2.8.RELEASE.jar libs/mybatis
+ -3.4.1.jar libs/classmate-1.1.0.jar libs/zkclient-0.1.jar libs/spring
+ -webmvc-4.2.5.RELEASE.jar libs/httpclient-4.5.1.jar libs/spring-jdbc-
+ 4.2.5.RELEASE.jar libs/poi-3.13.jar libs/jcl-over-slf4j-1.7.21.jar li
+ bs/validation-api-1.1.0.Final.jar libs/javassist-3.20.0-GA.jar libs/j
+ line-0.9.94.jar libs/stax-api-1.0.1.jar libs/jsqlparser-0.9.4.jar lib
+ s/hibernate-validator-5.2.1.Final.jar libs/commons-lang3-3.4.jar libs
+ /quartz-2.2.3.jar libs/druid-1.0.18.jar libs/jedis-2.9.0.jar libs/com
+ mons-pool2-2.4.2.jar libs/aliyun-java-sdk-green-2.6.0.jar libs/dom4j-
+ 1.6.1.jar libs/itext-asian-5.2.0.jar libs/zookeeper-3.4.6.jar libs/co
+ mmons-lang-2.5.jar libs/spring-oxm-4.2.8.RELEASE.jar libs/junit-3.8.1
+ .jar libs/itextpdf-5.5.5.jar libs/activation-1.1.jar libs/netty-3.2.5
+ .Final.jar libs/xmlbeans-2.6.0.jar libs/commons-codec-1.10.jar libs/h
+ ttpcore-nio-4.4.1.jar libs/spring-messaging-4.2.5.RELEASE.jar libs/po
+ i-ooxml-schemas-3.13.jar libs/spring-data-keyvalue-1.1.4.RELEASE.jar
+ libs/joda-time-2.8.1.jar libs/okio-1.4.0.jar libs/json-lib-2.4-jdk15.
+ jar libs/jpush-client-3.2.8.jar libs/javax.servlet-api-3.1.0.jar libs
+ /mybatis-spring-1.3.0.jar libs/commons-collections4-4.0.jar libs/xml-
+ apis-1.0.b2.jar libs/spring-web-4.2.5.RELEASE.jar libs/gson-2.6.2.jar
+  libs/log4j-1.2.17.jar libs/jjwt-0.6.0.jar libs/json-20160212.jar lib
+ s/slf4j-api-1.7.21.jar libs/commons-logging-1.2.jar libs/aliyun-java-
+ sdk-sts-2.1.6.jar libs/c3p0-0.9.5.1.jar libs/ezmorph-1.0.6.jar libs/a
+ spectjweaver-1.8.9.jar libs/imgscalr-lib-4.2.jar libs/huaxin-util.jar
+  libs/longlian-model.jar libs/longlian-common.jar libs/servlet-api.ja
+ r libs/spring-retry-1.2.0.RELEASE.jar
+Main-Class: com.longlian.mq.Main
+

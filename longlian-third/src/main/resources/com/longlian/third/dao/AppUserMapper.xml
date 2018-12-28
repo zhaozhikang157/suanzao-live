@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.third.dao.AppUserMapper">
+	<resultMap id="BaseResultMap" type="com.longlian.model.AppUser">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="OPENID" jdbcType="VARCHAR" property="openid" />
+		<result column="UNIONID" jdbcType="VARCHAR" property="unionid" />
+		<result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="GENDER" jdbcType="VARCHAR" property="gender" />
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+		<result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+		<result column="STATUS" jdbcType="VARCHAR" property="status" />
+		<result column="USER_PRIV" jdbcType="VARCHAR" property="userPriv" />
+		<result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="PHOTO" jdbcType="INTEGER" property="photo" />
+		<result column="FROM_TYPE" jdbcType="VARCHAR" property="fromType" />
+		<result column="CITY" jdbcType="VARCHAR" property="city" />
+		<result column="LEVEL" jdbcType="INTEGER" property="level" />
+		<result column="INVITATION_APP_ID" jdbcType="BIGINT" property="invitationAppId" />
+		<result column="ID_CARD" jdbcType="VARCHAR" property="idCard" />
+		<result column="ID_CARD_FRONT" property="idCardFront" />
+		<result column="ID_CARD_REAR"  property="idCardRear" />
+		<result column="YUNXIN_TOKEN"  property="yunxinToken" />
+		<result column="IS_FOLLOW_LL_WECHAT"  property="isFollowLlWechat" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	   OPENID,UNIONID, MOBILE, NAME, GENDER, PASSWORD, BIRTHDAY, STATUS,USER_PRIV, CREATE_TIME,
+		PHOTO, FROM_TYPE, CITY ,LEVEL,INVITATION_APP_ID,ID_CARD,ID_CARD_FRONT,ID_CARD_REAR,YUNXIN_TOKEN,IS_FOLLOW_LL_WECHAT
+	</sql>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+		where ID = #{id}
+	</select>
+
+	<select id="getAppIdByOpenid" parameterType="java.lang.String" resultType="java.lang.Long">
+		select
+		ID
+		from app_user
+		where OPENID = #{openid} limit 1
+	</select>
+
+
+	<select id="queryUserLiveRoomByUnitionId" resultType="Map" parameterType="java.lang.String">
+				SELECT
+			l.id as liveId,l.name as liveName ,l.LIVE_ROOM_NO as liveRoomNo
+		FROM
+			app_user a
+		INNER JOIN live_room l ON a.id = l.APP_ID
+		WHERE
+			a.UNIONID = #{unitionId}
+	</select>
+</mapper>
+

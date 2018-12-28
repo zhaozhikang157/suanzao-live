@@ -1,0 +1,265 @@
+apply plugin: 'java'
+
+allprojects {
+
+    //Put instructions for all projects
+
+}
+def env = System.getProperty("profile") ?: "dev"
+
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+
+
+
+repositories {
+    mavenCentral()
+}
+
+
+subprojects {
+    //Put instructions for each sub project
+    apply plugin: 'java'
+
+
+    repositories {
+        mavenCentral()
+        maven { url 'http://repo1.maven.org/maven2/' }
+    }
+
+
+    dependencies {
+        def springVersion = '4.3.13.RELEASE'
+        def mybatisVersion = '3.4.1'
+        def mybatisSpringVersion = '1.3.0'
+        def jacksonVersion = '2.9.3'
+        compile "org.springframework:spring-webmvc:$springVersion",
+                "org.springframework:spring-web:$springVersion",
+                "org.springframework:spring-context-support:$springVersion",
+                "org.springframework:spring-jdbc:$springVersion",
+                "org.springframework:spring-aop:$springVersion",
+                "org.springframework:spring-tx:$springVersion",
+                "org.springframework:spring-messaging:$springVersion",
+                "org.springframework:spring-beans:$springVersion",
+                "org.springframework:spring-expression:$springVersion",
+                "org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE",
+                "org.springframework.boot:spring-boot-starter-actuator:1.5.9.RELEASE",
+                'io.github.openfeign:feign-core:9.5.1',
+                'io.github.openfeign:feign-slf4j:9.5.1',
+                'io.github.openfeign:feign-hystrix:9.5.1',
+                'io.github.openfeign:feign-ribbon:9.5.1',
+                'io.github.openfeign:feign-jackson:9.5.1',
+                "org.mybatis:mybatis:$mybatisVersion",
+                "org.mybatis:mybatis-spring:$mybatisSpringVersion",
+                "tk.mybatis:mapper:3.4.0",
+                "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
+                "org.slf4j:slf4j-api:1.7.21",
+                'org.slf4j:jcl-over-slf4j:1.7.21',
+                'ch.qos.logback:logback-core:1.1.7',
+                'ch.qos.logback:logback-classic:1.1.7',
+                'com.google.guava:guava:18.0',
+                'com.getsentry.raven:raven-logback:8.0.3',
+                'org.apache.commons:commons-lang3:3.4',
+                'org.apache.commons:commons-collections4:4.0',
+                'commons-fileupload:commons-fileupload:1.3.1',
+                'commons-io:commons-io:2.4',
+                'redis.clients:jedis:2.8.0',
+                'org.hibernate:hibernate-validator:5.2.1.Final',
+                'com.mchange:c3p0:0.9.5.1',
+                'mysql:mysql-connector-java:5.1.31',
+                'joda-time:joda-time:2.8.1',
+                'org.joda:joda-money:0.10.0',
+                'dom4j:dom4j:1.6.1',
+                'org.apache.httpcomponents:httpclient:4.5.2',
+                'org.apache.httpcomponents:httpmime:4.5.2',
+                'org.apache.poi:poi:3.13',
+                'org.apache.poi:poi-ooxml:3.13',
+                'org.apache.poi:poi-ooxml-schemas:3.13',
+                'stax:stax-api:1.0.1',
+                'org.apache.xmlbeans:xmlbeans:2.6.0',
+                'com.itextpdf:itextpdf:5.5.5',
+                'com.itextpdf:itext-asian:5.2.0',
+                'commons-httpclient:commons-httpclient:3.1',
+                'cn.jpush.api:jpush-client:3.2.8',
+                'javax.servlet:jstl:1.2',
+                'taglibs:standard:1.1.2',
+                'com.alibaba:fastjson:1.2.8',
+                'javax.mail:mail:1.4.7',
+                'commons-codec:commons-codec:1.10',
+                'org.aspectj:aspectjweaver:1.8.9',
+                'com.alibaba:druid:1.0.18',
+                'com.github.pagehelper:pagehelper:4.1.3',
+
+                'org.imgscalr:imgscalr-lib:4.2',
+                'commons-beanutils:commons-beanutils:1.9.2',
+                'org.json:json:20160212',
+
+                'com.google.zxing:core:3.1.0',
+                'com.aliyun:aliyun-java-sdk-core:3.2.8',
+                'com.aliyun:aliyun-java-sdk-mts:2.2.0',
+                'com.aliyun.mns:aliyun-sdk-mns:1.1.8',
+                'com.aliyun:aliyun-java-sdk-cdn:2.3.1',
+                'com.aliyun:aliyun-java-sdk-sts:2.1.6',
+                'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0',
+                'org.javassist:javassist:3.20.0-GA',
+                'org.apache.commons:commons-pool2:2.4.2',
+                'com.qiniu:qiniu-java-sdk:7.2.+',
+                //'org.springframework.data:spring-data-redis:1.7.4.RELEASE',
+                'redis.clients:jedis:2.9.0',
+                'com.aliyun:aliyun-java-sdk-green:2.6.0',
+                'xml-resolver:xml-resolver:1.1',
+                'xml-apis:xml-apis:1.3.03',
+                'xerces:xercesImpl:2.8.1',
+                'com.adobe.xmp:xmpcore:5.1.2',
+                'com.drewnoakes:metadata-extractor:2.6.2',
+                'org.springframework.retry:spring-retry:1.2.1.RELEASE',
+                'org.apache.ant:ant-launcher:1.10.1',
+                'org.apache.ant:ant:1.10.1',
+                "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
+                'org.elasticsearch:elasticsearch:5.4.1',
+                'org.elasticsearch.client:transport:5.4.1',
+                'org.apache.logging.log4j:log4j-api:2.6.2',
+//                'org.apache.logging.log4j:log4j-core:2.6.2',
+                'org.elasticsearch.plugin:transport-netty4-client:5.4.1',
+                'org.apache.httpcomponents:httpcore:4.4.5',
+                'com.aliyun:aliyun-java-sdk-vod:2.3.1',
+
+//                'com.mangofactory:swagger-springmvc:1.0.2',
+//                'com.mangofactory:swagger-models:1.0.2',
+//                'com.wordnik:swagger-annotations:1.3.13',
+                "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+                'com.fasterxml:classmate:1.3.4',
+                'io.springfox:springfox-swagger2:2.7.0',
+                'io.springfox:springfox-swagger-ui:2.7.0',
+                'io.springfox:springfox-spring-web:2.7.0',
+                'com.dangdang:sharding-jdbc-core:1.5.4.1',
+                'org.bouncycastle:bcprov-jdk16:1.46',
+                'com.netflix.eureka:eureka-client:1.6.2',
+                'org.springframework.cloud:spring-cloud-commons:1.3.2.RELEASE',
+                 'com.squareup.okhttp3:okhttp:3.2.0',
+                'com.google.code.gson:gson:2.6.2'
+
+        //热部署,只要是不改变方法或者类情况
+        //,"org.springframework:springloaded:1.2.8.RELEASE"
+        //热部署 支持改变方法和添加类
+        // "org.springframework.boot:spring-boot-devtools:1.5.9.RELEASE"
+
+
+        // dubbo
+        compile ('com.aliyun.oss:aliyun-sdk-oss:2.5.0') {
+            exclude(module: 'commons-collections')
+        }
+
+
+        // dubbo
+        compile ('com.alibaba:dubbo:2.5.3') {
+            exclude(module: 'spring')
+            exclude(module: 'netty')
+
+        }
+        compile ('com.github.sgroschupf:zkclient:0.1') {
+            exclude(module: 'slf4j-log4j12')
+        }
+        compile ('org.apache.zookeeper:zookeeper:3.4.6') {
+            exclude(module: 'slf4j-log4j12')
+        }
+        /*    compile ('com.alibaba:dubbo:2.5.3') {
+                exclude(module: 'commons-pool')
+            }*/
+        compile( 'com.squareup.okhttp:okhttp:2.4.0') {
+            exclude(module: 'bcprov-jdk15on')
+        }
+        compile( 'org.quartz-scheduler:quartz:2.2.3') {
+            exclude(module: 'c3p0')
+        }
+
+
+        compile('io.jsonwebtoken:jjwt:0.6.0') {
+            exclude(module: 'jackson-databind')
+        }
+
+        compile('com.cwbase:logback-redis-appender:1.1.5') {
+            exclude(module: 'jedis')
+        }
+
+        testCompile "junit:junit:4.12",
+                'org.mockito:mockito-all:1.10.19',
+                "javax.servlet:javax.servlet-api:3.1.0",
+                "org.springframework:spring-test:$springVersion",
+                "com.jayway.jsonpath:json-path:2.0.0"
+
+        testCompile( 'com.squareup.okhttp:mockwebserver:2.7.5') {
+            exclude(module: 'bcprov-jdk15on')
+        }
+    }
+
+    sourceSets {
+        main {
+            resources {
+                srcDirs = ["src/main/resources", "src/main/prop/$env"]
+            }
+        }
+    }
+}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+//
+//task helloWorld << {
+//    println "Hello World!"
+//}
+//task hello << {
+//    println 'hello21'
+//}
+//
+//
+//task hello2 {
+//    doLast {
+//        println 'hello2'}
+//}
+//
+//task hello3 {
+//    doFirst {
+//        println 'hello3'}
+//}
+//
+//task hello5(dependsOn:hello3) << {
+//    println 'hello5'
+//}
+//
+//task hello6 << {
+//    println 'hello6'
+//}
+//
+//hello6.dependsOn hello5
+//
+//tasks.create(name: 'hello4') << {
+//    println 'hello4'
+//}
+//
+//task hello8 << {
+//    description1 = "this is hello8"
+//    println description1
+//}
+//
+//task showDescription1 << {
+//    description = 'this is task showDescription'
+//    println description
+//}
+//
+//
+//task showDescription2 << {
+//    println description
+//}
+//showDescription2.description = 'this is task showDescription'
+//
+//
+//task showDescription3 << {
+//    println description
+//}
+//
+//showDescription3 {
+//    description = 'this is task showDescription'
+//}

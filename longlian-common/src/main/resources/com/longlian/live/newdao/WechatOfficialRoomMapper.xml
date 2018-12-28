@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.newdao.WechatOfficialRoomMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.WechatOfficialRoom">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="WECHAT_ID" jdbcType="VARCHAR" property="wechatId" />
+    <result column="LIVE_ID" jdbcType="BIGINT" property="liveId" />
+    <result column="LIVE_NAME" jdbcType="VARCHAR" property="liveName" />
+    <result column="AUDIT_STATUS" jdbcType="VARCHAR" property="auditStatus" />
+    <result column="AUDIT_TIME" jdbcType="TIMESTAMP" property="auditTime" />
+    <result column="AUDIT_USER_ID" jdbcType="BIGINT" property="auditUserId" />
+    <result column="AUDIT_USER_NAME" jdbcType="VARCHAR" property="auditUserName" />
+    <result column="AUDIT_REMARK" jdbcType="VARCHAR" property="auditRemark" />
+    <result column="MANAGER" jdbcType="BIGINT" property="manager" />
+    <result column="FREE_DATE" jdbcType="TIMESTAMP" property="freeDate" />
+    <result column="BIND_TIME" jdbcType="TIMESTAMP" property="bindTime" />
+    <result column="CONTACT_MOBILE" jdbcType="VARCHAR" property="contactMobile" />
+    <result column="CONTACT_WECHAT" jdbcType="VARCHAR" property="contactWechat" />
+  </resultMap>
+
+
+  <select id="getBindRoomListByWechatByIdPage"  resultType="java.util.Map">
+    SELECT wo.ID id,wo.BIND_TIME bindTime ,wo.LIVE_ID liveId ,lr.NAME liveName,lr.LIVE_ROOM_NO liveRoomNo,wo.AUDIT_STATUS as auditStatus,wo.AUDIT_REMARK as auditRemark
+    FROM wechat_official_room wo INNER JOIN
+    live_room lr on wo.LIVE_ID = lr.id
+    WHERE  wo.WECHAT_ID = #{wechatId} and wo.LIVE_ID &gt; 0
+  </select>
+  <select id="getBindRoomListByWechatById"  resultType="java.util.Map">
+    SELECT wo.ID id,wo.BIND_TIME bindTime ,wo.LIVE_ID liveId ,lr.NAME liveName,lr.LIVE_ROOM_NO liveRoomNo,wo.AUDIT_STATUS as auditStatus,wo.AUDIT_REMARK as auditRemark
+    FROM wechat_official_room wo INNER JOIN
+    live_room lr on wo.LIVE_ID = lr.id
+    WHERE  wo.WECHAT_ID = #{wechatId} and wo.LIVE_ID &gt; 0
+  </select>
+  <select id="isBindedRoom" resultType="int">
+   SELECT count(id) from wechat_official_room WHERE
+    1=1
+    <if test="@Ognl@isNotEmpty(wechatId)">
+      AND WECHAT_ID = #{wechatId}
+    </if>
+    <if test="@Ognl@isNotEmpty(liveId)">
+      AND LIVE_ID = #{liveId}
+    </if>
+  </select>
+  <select id="findByRoomId" resultMap="BaseResultMap">
+    SELECT *
+    FROM wechat_official_room WHERE  LIVE_ID = #{roomId} AND AUDIT_STATUS = '1' limit 1
+  </select>
+  <update id="updateAudit"  parameterType="WechatOfficialRoom">
+    update wechat_official_room set
+    AUDIT_STATUS = #{auditStatus} , AUDIT_USER_ID = #{auditUserId},AUDIT_TIME = #{auditTime},AUDIT_USER_NAME = #{auditUserName},AUDIT_REMARK = #{auditRemark},MANAGER=#{manager},FREE_DATE=#{freeDate}
+    WHERE  ID = #{id}
+  </update>
+  <select id="selectUseList" resultMap="BaseResultMap">
+ SELECT  r.ID as id ,r.LIVE_ID as liveId,r.WECHAT_ID as wechatId FROM wechat_official_room  r INNER JOIN wechat_official w  WHERE r.LIVE_ID > 0 and w.`STATUS` = '0'
+</select>
+  <update id="updateManager"  parameterType="WechatOfficialRoom">
+    update wechat_official_room set MANAGER=#{manager},FREE_DATE=#{freeDate} WHERE  ID = #{id}
+  </update>
+  <update id="updateMobile">
+    update wechat_official_room set MOBILE=#{mobile}  WHERE  ID = #{id}
+  </update>
+  <update id="deleteBindRoom">
+    DELETE from wechat_official_room WHERE  ID = #{id}
+  </update>
+
+  <update id="updateManagerInfo"  parameterType="WechatOfficialRoom">
+    update wechat_official_room set MANAGER=#{manager},FREE_DATE=#{freeDate} ,mobile=#{mobile} WHERE  ID = #{id}
+  </update>
+</mapper>

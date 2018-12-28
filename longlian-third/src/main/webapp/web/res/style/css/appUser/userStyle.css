@@ -1,0 +1,90 @@
+html,body{
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	font-size: 62.5%;
+	font-family: "微软雅黑";
+}
+/*------------------------会员资料-----------------------*/
+.userVipList{
+	width: 360px;
+	height: 320px;
+}
+.userVipList h1{
+	width: 100%;
+	height: 70px;
+	line-height: 50px;
+	text-align: center;
+	font-size: 18px;
+}
+.userVipList .form-group label{
+	display: inline-block;
+	width: 150px;
+	text-align: right;
+}
+.userVipList .form-group > div{
+	display: inline-block;
+}
+.userVipList .form-group > div span{
+	margin-right: 6px;
+}
+
+/*---------------------会员资料----完----------------------*/
+
+/*------------------------团队详情-----------------------*/
+.teamDetails{
+	width: 100%;
+	height: auto;
+	padding: 0 2%;
+}
+.teamDetails .form-group{
+	display: inline-block;
+	margin-right: 40px;
+}
+.teamDetails .form-group label{
+	display: inline-block;
+	width: auto;
+	text-align: right;
+	font-weight: normal;
+}
+.tableBox{
+	width: 100%;
+}
+.tableBox table{
+	width: 100%;
+}
+.tableBox table thead{
+	background: #00BB9D;
+}
+.tableBox table tr{
+	height: 32px;
+}
+.tableBox table th{
+	height: 32px;
+	line-height: 32px;
+	text-align: center;
+	border: 1px solid #000;
+}
+.tableBox table td{
+	height: 32px;
+	line-height: 32px;
+	border: 1px solid #000;
+}
+
+/*---------------------团队详情----完----------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

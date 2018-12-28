@@ -1,0 +1,13 @@
+group 'com.longlian'
+
+apply plugin: 'java'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

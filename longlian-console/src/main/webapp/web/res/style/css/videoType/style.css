@@ -1,0 +1,162 @@
+.tableBox{
+
+}
+.tableBox tr{
+	height: 38px;
+	line-height: 38px;
+}
+.tableBox th{
+	border: 1px solid #000000;
+	text-align: center;
+}
+.tableBox td{
+	padding: 0 20px;
+	border: 1px solid #000000;
+	text-align: center;
+}
+.tableBox td:first-child{
+	width: 100px;
+}
+	.moveBtn span{
+		display: inline-block;
+		width: 26px;
+		height: 26px;
+		border-radius: 26px;
+		border: none;
+		background: red;
+		color: #000;
+	}
+	.moveBtn span:first-child{
+		background: green;
+	}
+
+#src span{
+	display: inline-block;
+	width: 120px;
+	height: 80px;
+	margin: 2px;
+
+}
+#src img{
+	width: 100%;
+	height: 100%;
+}
+.imgShow2 span{
+	display: inline-block;
+	width: 120px;
+	height: 80px;
+	margin: 2px;
+}
+.imgShow2 span img{
+	width: 100%;
+	height: 100%;
+}
+.delBtn{
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: none;
+	width: 24px;
+	height: 24px;
+	border-radius: 24px;
+}
+.delBtn i{
+	position: absolute;
+	top:10px;
+	left:8px;
+	margin: -4px;
+	color: #c9302c;
+}
+
+.btn-upload{
+	position: relative;
+}
+.btn-upload > div{
+	position: relative;
+	color: #555;
+}
+.btn-upload > div label{
+	display: inline-block;
+	width: 46px;
+	font-size: 12px;
+}
+.shade-box{
+	display: block;
+	position: relative;
+	width: 120px;
+	height: 32px;
+	text-align: center;
+	line-height: 32px;
+	color: #FF5500;
+	background: transparent;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+.shade-text{
+	position: absolute;
+	left: 140px;
+	top: 0;
+	width: 300px;
+	height: 32px;
+	line-height: 32px;
+	color: #747474;
+	font-size: 12px;
+}
+.file-btn{
+	position: absolute;
+	top: 0;
+	left: 50px;
+	opacity: 0;
+	width: 120px;
+	height: 32px;
+	cursor: pointer;
+}
+#remark{
+	resize: none;
+}
+.tishiTex{
+	text-align: right;
+	margin-bottom: 20px;
+}
+.studySH input{
+	display: inline-block;
+	width: 48%;
+	margin: 2px 0;
+}
+
+
+/*index*/
+.sort{
+	display: none;
+	width: 68px;
+}
+.sort span{
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	margin: 0 4px;
+	text-align: center;
+	color: #fff;
+	vertical-align: middle;
+	cursor: pointer;
+}
+	.videoTypeUp{
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		background: url("../../img/videoTypeUp.png") no-repeat;
+		background-size: 100% 100%;
+	}
+	.videoTypeDown{
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		background: url("../../img/videoTypeDown.png") no-repeat;
+		background-size: 100% 100%;
+	}
+.resetName input{
+	display: none;
+	width: 180px;
+	height: 30px;
+	margin: 4px;
+}

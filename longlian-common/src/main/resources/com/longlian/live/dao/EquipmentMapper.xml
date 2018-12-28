@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.EquipmentMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.Equipment">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="EQUIPMENT_TYPE" jdbcType="VARCHAR" property="equipmentType"/>
+        <result column="EQUIPMENT_ID" jdbcType="VARCHAR" property="equipmentId"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID id, name,APP_ID appId,CREATE_TIME createTime,EQUIPMENT_TYPE equipmentType,EQUIPMENT_ID equipmentId
+   </sql>
+
+    <insert id="insert">
+        insert into EQUIPMENT (NAME,APP_ID,EQUIPMENT_TYPE,EQUIPMENT_ID,CREATE_TIME) values
+        (
+        #{name},#{appId},#{equipmentType},#{equipmentId},#{createTime}
+        )
+    </insert>
+
+    <update id="update">
+        update EQUIPMENT set  NAME=#{name},APP_ID=#{appId},EQUIPMENT_TYPE=#{equipmentType},CREATE_TIME=#{createTime}
+        where EQUIPMENT_ID=#{equipmentId}
+    </update>
+
+    <select id="queryEquipmentListPage" resultType="map">
+        select <include refid="Base_Column_List"/> from EQUIPMENT
+        <where>
+            <if test="@Ognl@isNotEmpty(map.beginTime)"> and create_Time &gt; #{map.beginTime}</if>
+            <if test="@Ognl@isNotEmpty(map.endTime)"> and create_Time &lt;#{map.endTime}</if>
+            <if test="@Ognl@isNotEmpty(map.equipmentType)"> and equipment_Type=#{map.equipmentType}</if>
+            <if test="@Ognl@isNotEmpty(map.name)"> and name=#{map.name}</if>
+        </where>
+        order by create_Time desc
+    </select>
+
+    <select id="queryEquipmentList" resultType="com.longlian.model.Equipment">
+        select <include refid="Base_Column_List"/> from EQUIPMENT
+        <where>
+            <if test="@Ognl@isNotEmpty(map.beginTime)"> and create_Time &gt; #{map.beginTime}</if>
+            <if test="@Ognl@isNotEmpty(map.endTime)"> and create_Time &lt;#{map.endTime}</if>
+            <if test="@Ognl@isNotEmpty(map.equipmentType)"> and equipment_Type=#{map.equipmentType}</if>
+            <if test="@Ognl@isNotEmpty(map.name)"> and name=#{map.name}</if>
+        </where>
+        order by create_Time desc
+    </select>
+
+    <select id="selectByEquipmentId"  resultType="com.longlian.model.Equipment">
+        select <include refid="Base_Column_List"/> from EQUIPMENT where equipment_id=#{equipmentId}
+    </select>
+
+</mapper>

@@ -1,0 +1,28 @@
+group 'com.longlian'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':longlian-common'),fileTree(dir: 'libs', include: '*.jar')
+    compile project(':longlian-api')
+    compile project(':longlian-res-model')
+
+    compile   'com.rabbitmq:amqp-client:4.0.3',
+            'com.rabbitmq:http-client:1.1.1.RELEASE',
+            'org.springframework.amqp:spring-rabbit:1.7.5.RELEASE',
+            'org.springframework.amqp:spring-amqp:1.7.5.RELEASE',
+            'com.dangdang:elastic-job-common-core:2.1.5'
+    compile('com.dangdang:elastic-job-lite-spring:2.1.5') {
+          exclude(module: 'elastic-job-common-core')
+    }
+    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
+}
+war {
+    archiveName "longlian-console.war"
+}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

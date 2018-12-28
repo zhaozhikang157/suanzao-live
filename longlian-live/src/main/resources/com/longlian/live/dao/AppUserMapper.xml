@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.AppUserMapper">
+	<resultMap id="BaseResultMap" type="com.longlian.model.AppUser">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="OPENID" jdbcType="VARCHAR" property="openid" />
+		<result column="UNIONID" jdbcType="VARCHAR" property="unionid" />
+		<result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="GENDER" jdbcType="VARCHAR" property="gender" />
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+		<result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+		<result column="STATUS" jdbcType="VARCHAR" property="status" />
+		<result column="USER_PRIV" jdbcType="VARCHAR" property="userPriv" />
+		<result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="PHOTO" jdbcType="INTEGER" property="photo" />
+		<result column="FROM_TYPE" jdbcType="VARCHAR" property="fromType" />
+		<result column="CITY" jdbcType="VARCHAR" property="city" />
+		<result column="LEVEL" jdbcType="INTEGER" property="level" />
+		<result column="INVITATION_APP_ID" jdbcType="BIGINT" property="invitationAppId" />
+		<result column="ID_CARD" jdbcType="VARCHAR" property="idCard" />
+		<result column="ID_CARD_FRONT" property="idCardFront" />
+		<result column="ID_CARD_REAR"  property="idCardRear" />
+		<result column="YUNXIN_TOKEN"  property="yunxinToken" />
+		<result column="IS_FOLLOW_LL_WECHAT"  property="isFollowLlWechat" />
+		<result column="REAL_NAME"  property="realName" />
+		<result column="USER_TYPE"  property="userType" />
+		<result column="TEACHER_CREATE_TIME"  property="teacherCreateTime" />
+		<result column="DEVICE_ID" jdbcType="VARCHAR" property="deviceId" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	OPENID,UNIONID, MOBILE, NAME,USER_TYPE, GENDER, PASSWORD, BIRTHDAY, STATUS,USER_PRIV, CREATE_TIME,
+	PHOTO, FROM_TYPE, CITY ,LEVEL,INVITATION_APP_ID,ID_CARD,ID_CARD_FRONT,ID_CARD_REAR,YUNXIN_TOKEN,IS_FOLLOW_LL_WECHAT,REAL_NAME,TEACHER_CREATE_TIME,DEVICE_ID
+</sql>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+		where ID = #{id}
+	</select>
+
+	<select id="queryByOpenid" parameterType="java.lang.String"
+			resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+		where OPENID = #{openid} limit 1
+	</select>
+
+	<select id="queryByUnionid" parameterType="java.lang.String"
+			resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+		where UNIONID = #{unionid} limit 1
+	</select>
+
+
+	<insert id="insert" parameterType="AppUser">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into app_user (
+			<include refid="Base_Column_List" />
+		)
+		values (#{openid},#{unionid},#{mobile}, #{name},#{userType}, #{gender}, #{password}, #{birthday},
+		#{status},#{userPriv}, #{createTime},#{photo}, #{fromType}, #{city} ,#{level},#{invitationAppId},
+		#{idCard},#{idCardFront},#{idCardRear},#{yunxinToken} ,#{isFollowLlWechat},#{realName},#{teacherCreateTime},#{deviceId})
+	</insert>
+
+	<update id="updateUser">
+		 update app_user set NAME = #{name}  where ID = #{id}
+	</update>
+
+
+	<update id="updatePhone">
+		update app_user set PHOTO = #{photo}  where ID = #{id}
+	</update>
+	<update id="updateMobile">
+		update app_user set MOBILE = #{mobile}  where ID = #{id}
+	</update>
+	<update id="updateYunXinToken">
+		update app_user set YUNXIN_TOKEN = #{token}  where ID = #{id}
+	</update>
+
+	<update id="updateWechatInfo">
+		update app_user set PHOTO = #{photo},NAME = #{name},GENDER = #{gender},UNIONID = #{unionid},OPENID = #{openid},IS_FOLLOW_LL_WECHAT = #{isFollowLlWechat} where ID = #{id}
+	</update>
+
+	<update id="update" parameterType="com.longlian.model.AppUser">
+		update app_user
+		set OPENID = #{openid},
+		UNIONID = #{unionid},
+		MOBILE = #{mobile},
+		NAME = #{name},
+		STATUS = #{status},
+		LEVEL = #{level},
+		CREATE_TIME = #{createTime},
+		LOGIN_COUNT = #{loginCount},
+		INVITATION_APP_ID = #{invitationAppId},
+		USE_PRIV = #{userPriv},
+		PASSWORD = #{password},
+		PHOTO = #{photo},
+		CITY = #{city},
+		FROM_TYPE = #{fromType},
+		ID_CARD = #{idCard},
+		ID_CARD_FRONT = #{idCardFront},
+		ID_CARD_REAR = #{idCardRear},
+		GENDER = #{gender},
+		BIRTHDAY = #{birthday},
+		YUNXIN_TOKEN = #{yunxinToken},
+		where ID = #{id}
+	</update>
+
+	<update id="setPassword">
+		update app_user set PASSWORD = #{password}  where MOBILE = #{mobile}
+	</update>
+
+	<update id="updateForAppUserById">
+	update app_user
+	set
+	REAL_NAME = #{map.realName},
+	ID_CARD = #{map.cardNo},
+	TEACHER_CREATE_TIME = #{map.teacherCreateTime},
+	USER_TYPE = '1'
+	where ID = #{id}
+</update>
+	
+	<select id="getAllUser"
+			resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+  	</select>
+
+	<select id="getCourseListByAppIdPage" resultType="map">
+		SELECT IFNULL(c.crId,c.id)  AS id,c.LIVE_TOPIC AS liveTopic,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress,c.START_TIME as startTime,c.END_TIME as endTime,
+		c.CHARGE_AMT as chargeAmt,IF(LIVE_WAY=0,'视频直播','语音直播') AS liveWay,c.LIVE_TYPE as liveType,c.LIVE_PWD AS livePwd,
+		c.visitCount,c.joinCount,a.NAME AS userName ,c.isMyCourse
+		FROM app_user a
+		,
+		(
+		select c.*,c.VISIT_COUNT visitCount,c.JOIN_COUNT joinCount,#{id} ori_app_id,0 isMyCourse,null crId from course c where c.app_id=#{id}
+		 AND c.STATUS = '0' AND c.IS_DELETE = '0'  AND c.SERIES_COURSE_ID = 0 and c.IS_SERIES_COURSE ='0'
+		union all
+		select c.*,cr.VISIT_COUNT visitCount,cr.JOIN_COUNT joinCount,#{id} ori_app_id,1 isMyCourse,cr.id crId from course_relay cr
+		 , course c where c.id=cr.ori_course_id
+		 AND cr.STATUS = '0' AND cr.IS_DELETE = '0'  AND cr.SERIES_COURSE_ID = 0 and cr.IS_SERIES_COURSE ='0'
+		 and cr.app_id=#{id}
+		)c
+		WHERE a.ID = #{id}
+		ORDER BY c.START_TIME desc
+	</select>
+
+	<select id="getSeriesCoursePage" resultType="map">
+		SELECT IFNULL(c.crId,c.id)  AS id,c.LIVE_TOPIC AS liveTopic,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress,IFNULL(c.START_TIME,c.CREATE_TIME) startTime,
+		c.CHARGE_AMT as chargeAmt,c.END_TIME as endTime,
+		c.VISIT_COUNT visitCount,c.JOIN_COUNT joinCount  , c.IS_SERIES_COURSE isSeriesCourse ,
+		c.UPDATED_COUNT updatedCount , (c.COURSE_PLAN_COUNT -   c.ENDED_COUNT) notStartedCount ,c.isMyCourse
+		FROM app_user a
+		,
+		(
+		select c.*,#{id} ori_app_id,0 isMyCourse,null crId from course c where c.app_id=#{id}
+		AND c.STATUS = '0' AND c.IS_DELETE = '0'   and c.IS_SERIES_COURSE ='1'
+		union all
+		select c.*,#{id} ori_app_id,1 isMyCourse,cr.id crId from course_relay cr
+		, course c where c.id=cr.ori_course_id
+		AND c.STATUS = '0' AND c.IS_DELETE = '0'   and c.IS_SERIES_COURSE ='1'
+		and cr.app_id=#{id}
+		)c
+		WHERE a.ID = #{id}
+		ORDER BY ABS(c.START_TIME-NOW())
+	</select>
+
+	<select id="getSeriesCourseListByAppIdPage" resultType="map">
+		SELECT c.ID AS id,c.LIVE_TOPIC AS liveTopic,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress,IFNULL(c.START_TIME,c.CREATE_TIME) startTime,
+		c.CHARGE_AMT as chargeAmt,c.END_TIME as endTime,
+		c.CR_VISIT_COUNT visitCount,c.CR_JOIN_COUNT joinCount  , c.IS_SERIES_COURSE isSeriesCourse , c.UPDATED_COUNT updatedCount , (c.COURSE_PLAN_COUNT -   c.ENDED_COUNT) notStartedCount
+		FROM  (
+			SELECT
+				t.ID,
+				t.LIVE_TOPIC,
+				t.COL_IMG_ADDRESS,
+				t.COVERSS_ADDRESS,
+				t.START_TIME,
+				t.CREATE_TIME,
+				t.CHARGE_AMT,
+				t.END_TIME,
+				t.VISIT_COUNT,
+				t.JOIN_COUNT,
+				t.IS_SERIES_COURSE,
+				t.UPDATED_COUNT,
+				t.COURSE_PLAN_COUNT,
+				t.ENDED_COUNT,
+				t.ROOM_ID,
+				t.`STATUS`,
+				t.IS_DELETE,
+				t.SERIES_COURSE_ID,
+				t.IS_RECORDED,
+				t.VISIT_COUNT CR_VISIT_COUNT,
+				t.JOIN_COUNT CR_JOIN_COUNT
+			FROM
+				course t
+		<if test='isQueryRelay != null and isQueryRelay == 1'>
+		   UNION
+			SELECT
+				t2.ID,
+				t3.LIVE_TOPIC,
+				t3.COL_IMG_ADDRESS,
+				t3.COVERSS_ADDRESS,
+				t3.START_TIME,
+				t2.CREATE_TIME,
+				t3.CHARGE_AMT,
+				t3.END_TIME,
+				t2.VISIT_COUNT,
+				t2.JOIN_COUNT,
+				t2.IS_SERIES_COURSE,
+				t3.UPDATED_COUNT,
+				t3.COURSE_PLAN_COUNT,
+				t3.ENDED_COUNT,
+				t2.ROOM_ID,
+				t2.`STATUS`,
+				t2.IS_DELETE,
+				t2.SERIES_COURSE_ID,
+				t3.IS_RECORDED,
+				t2.VISIT_COUNT CR_VISIT_COUNT,
+				t2.JOIN_COUNT CR_JOIN_COUNT
+			FROM
+				course_relay t2
+			LEFT JOIN course t3 ON t2.ORI_APP_ID = t3.APP_ID
+			AND t2.ORI_COURSE_ID = t3.ID
+			AND t2.IS_SERIES_COURSE = 1
+			AND t2.SERIES_COURSE_ID = 0
+			WHERE
+				t2.ROOM_ID = #{roomId}
+		  </if>
+		) c
+		WHERE  c.ROOM_ID = #{roomId}  AND c.STATUS = '0'
+		AND c.IS_DELETE = '0'   AND c.SERIES_COURSE_ID = 0
+		and c.IS_SERIES_COURSE ='1'
+		<if test="@Ognl@isNotEmpty(isRecorded)">
+			AND c.IS_RECORDED = #{isRecorded}
+		</if>
+		ORDER BY  c.CREATE_TIME desc
+	</select>
+
+	<!--去掉 AND c.UPDATED_COUNT > 0-->
+	<select id="getSeriesCourseListByOtherAppIdPage" resultType="map">
+		SELECT c.ID AS id,c.LIVE_TOPIC AS liveTopic,IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) AS coverssAddress,IFNULL(c.START_TIME,c.CREATE_TIME) startTime,
+		c.CHARGE_AMT as chargeAmt,c.END_TIME as endTime,
+		c.CR_VISIT_COUNT visitCount,c.CR_JOIN_COUNT joinCount  , c.IS_SERIES_COURSE isSeriesCourse , c.UPDATED_COUNT updatedCount , (c.COURSE_PLAN_COUNT -   c.ENDED_COUNT) notStartedCount
+		FROM  (
+			SELECT
+				t.ID,
+				t.LIVE_TOPIC,
+				t.COL_IMG_ADDRESS,
+				t.COVERSS_ADDRESS,
+				t.START_TIME,
+				t.CREATE_TIME,
+				t.CHARGE_AMT,
+				t.END_TIME,
+				t.VISIT_COUNT,
+				t.JOIN_COUNT,
+				t.IS_SERIES_COURSE,
+				t.UPDATED_COUNT,
+				t.COURSE_PLAN_COUNT,
+				t.ENDED_COUNT,
+				t.ROOM_ID,
+				t.`STATUS`,
+				t.IS_DELETE,
+				t.SERIES_COURSE_ID,
+				t.IS_RECORDED,
+				t.VISIT_COUNT CR_VISIT_COUNT,
+				t.JOIN_COUNT CR_JOIN_COUNT
+			FROM
+				course t
+		 <if test='isQueryRelay != null and isQueryRelay == 1'>
+			UNION
+			SELECT
+				t2.ID,
+				t3.LIVE_TOPIC,
+				t3.COL_IMG_ADDRESS,
+				t3.COVERSS_ADDRESS,
+				t3.START_TIME,
+				t2.CREATE_TIME,
+				t3.CHARGE_AMT,
+				t3.END_TIME,
+				t2.VISIT_COUNT,
+				t2.JOIN_COUNT,
+				t2.IS_SERIES_COURSE,
+				t3.UPDATED_COUNT,
+				t3.COURSE_PLAN_COUNT,
+				t3.ENDED_COUNT,
+				t2.ROOM_ID,
+				t2.`STATUS`,
+				t2.IS_DELETE,
+				t2.SERIES_COURSE_ID,
+				t3.IS_RECORDED,
+				t2.VISIT_COUNT CR_VISIT_COUNT,
+			 	t2.JOIN_COUNT CR_JOIN_COUNT
+			FROM
+				course_relay t2
+			LEFT JOIN course t3 ON t2.ORI_APP_ID = t3.APP_ID
+			AND t2.ORI_COURSE_ID = t3.ID
+			AND t2.IS_SERIES_COURSE = 1
+			AND t2.SERIES_COURSE_ID = 0
+			WHERE
+				t2.ROOM_ID = #{roomId}
+		 </if>
+		) c
+		WHERE  c.ROOM_ID = #{roomId}  AND c.STATUS = '0'  AND c.IS_DELETE = '0'   AND c.SERIES_COURSE_ID = 0 and c.IS_SERIES_COURSE ='1'
+		<if test="@Ognl@isNotEmpty(isRecorded)">
+			AND c.IS_RECORDED = #{isRecorded}
+		</if>
+		ORDER BY  c.CREATE_TIME desc
+	</select>
+
+
+	<select id="getAppIdByOpenid" resultType="java.lang.Long">
+		SELECT ID from app_user where OPENID = #{openid}
+	</select>
+
+	<update id="updateMobileAndPassword">
+		UPDATE app_user SET MOBILE = #{mobile} , PASSWORD = #{password} WHERE ID = #{id}
+	</update>
+	<!-- 更新用户模糊背景图 -->
+	<update id="updateUserBlurPhoto">
+		update app_user set blur_photo=#{blurPhoto} WHERE  ID = #{id}
+	</update>
+	<select id="getNameAndPhoto" resultType="map" >
+		SELECT ID id , NAME name , PHOTO photo,blur_photo blurPhoto from app_user where ID = #{id}
+	</select>
+
+	<select id="getSystemVision" resultType="map">
+		select content,data from system_config where id = 6
+	</select>
+
+	<!--获取游客信息-->
+	<select id="selectByTouristDeviceId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+		where DEVICE_ID = #{deviceId} and FROM_TYPE = 1
+	</select>
+</mapper>
+

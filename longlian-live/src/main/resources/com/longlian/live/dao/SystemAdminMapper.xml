@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.SystemAdminMapper">
+    <resultMap id="systemAdminMapper" type="com.longlian.model.system.SystemAdmin">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="admin_id" property="adminId"/>
+        <result column="admin_name" property="adminName"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="findSystemAdminByUserId" resultType="int">
+        select count(1) from system_admin where admin_id=#{adminId}
+    </select>
+
+</mapper>

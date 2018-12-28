@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.AdvertisingDisplayMapper">
+    <resultMap id="advertisingMap" type="com.longlian.model.AdvertisingDisplay">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="ADVERT_TYPE" jdbcType="VARCHAR" property="advertType"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="SORT_ORDER" jdbcType="INTEGER" property="sortOrder"/>
+        <result column="OPEN_URL" jdbcType="VARCHAR" property="openUrl"/>
+        <result column="PIC_ADDRESS" jdbcType="VARCHAR" property="picAddress"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="REMARKS" jdbcType="VARCHAR" property="remarks"/>
+        <result column="SYSTEM_TYPE" jdbcType="VARCHAR" property="systemType"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="COURSE_ID" property="courseId"/>
+        <result column="COURSE_INFO" property="courseInfo"/>
+        <result column="IS_SERIES_COURSE" property="isSeriesCourse"/>
+    </resultMap>
+
+    <sql id="advertisingSql">
+    ID, NAME, ADVERT_TYPE, STATUS, SORT_ORDER, OPEN_URL, PIC_ADDRESS, CREATE_TIME, REMARKS,SYSTEM_TYPE,TYPE,COURSE_ID,COURSE_INFO,IS_SERIES_COURSE
+   </sql>
+
+    <select id="getListPage" resultMap="advertisingMap">
+        select
+        <include refid="advertisingSql"/>
+        from advertising_display
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(advertising.type)">
+                and TYPE = #{advertising.type}
+            </if>
+            order by CREATE_TIME desc
+        </where>
+    </select>
+
+    <delete id="deleteById">
+        delete from advertising_display WHERE id = #{id}
+    </delete>
+
+    <select id="findById" parameterType="long" resultMap="advertisingMap">
+        select id,
+        <include refid="advertisingSql"></include>
+        from
+        advertising_display
+        WHERE
+        id= #{id}
+    </select>
+
+
+    <insert id="create" parameterType="com.longlian.model.AdvertisingDisplay">
+        insert into advertising_display (
+        <include refid="advertisingSql"></include>
+        )
+        values(#{id},#{name},#{advertType},#{status},#{sortOrder},#{openUrl},#{picAddress},now(),#{remarks},
+        #{systemType},#{type},#{courseId},#{courseInfo},#{isSeriesCourse})
+    </insert>
+
+    <update id="update" parameterType="com.longlian.model.AdvertisingDisplay">
+        update  advertising_display
+        SET  NAME=#{name},ADVERT_TYPE=#{advertType},STATUS=#{status},SORT_ORDER= #{sortOrder},OPEN_URL=#{openUrl},
+        PIC_ADDRESS=#{picAddress},REMARKS=#{remarks},SYSTEM_TYPE=#{systemType},TYPE=#{type},
+        COURSE_ID=#{courseId},COURSE_INFO=#{courseInfo},IS_SERIES_COURSE=#{isSeriesCourse}
+        where id = #{id}
+    </update>
+
+
+    <select id="getList4App" resultMap="advertisingMap">
+        select
+        <include refid="advertisingSql"/>
+        from advertising_display
+        where STATUS = '0' ORDER BY SORT_ORDER
+    </select>
+
+</mapper>

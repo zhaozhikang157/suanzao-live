@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.BankCardMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.BankCard">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="CARD_NO" jdbcType="VARCHAR" property="cardNo"/>
+        <result column="BANK_NAME" jdbcType="VARCHAR" property="bankName"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="ID_CARD" jdbcType="VARCHAR" property="idCard"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="MOBILE" jdbcType="VARCHAR" property="mobile"/>
+        <result column="BANK_ID" jdbcType="VARCHAR" property="bankId"/>
+    </resultMap>
+
+    <resultMap id="DtoBaseResultMap" type="com.longlian.dto.BankCardDto" extends="BaseResultMap">
+        <result column="PIC_ADDRESS" property="picAddress"/>
+        <result column="BACKGROUND_START" property="backgroundStart"/>
+        <result column="BACKGROUND_END" property="backgroundEnd"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    ID, APP_ID, CARD_NO, BANK_NAME, NAME, ID_CARD, REMARK, CREATE_TIME, MOBILE ,BANK_ID
+  </sql>
+    <select id="getBankCardById" parameterType="java.lang.Long" resultMap="DtoBaseResultMap">
+        select
+          bank_card.ID , bank_card.BANK_NAME , bank_card.CARD_NO , bank_card.NAME ,
+           bank_card.ID_CARD , bank.PIC_ADDRESS , bank_card.APP_ID , bank_card.BANK_ID ,
+           bank.BACKGROUND_START , bank.BACKGROUND_END
+        from bank_card
+        LEFT JOIN bank ON bank.ID = bank_card.BANK_ID
+        where bank_card.ID = #{id}
+    </select>
+
+    <!--删除 解除绑定业务-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from bank_card
+    where ID = #{id}
+  </delete>
+
+    <!--新增 绑定银行卡业务-->
+    <insert id="insertBankCard" parameterType="com.longlian.model.BankCard">
+    insert into bank_card (APP_ID, CARD_NO, BANK_NAME, NAME, ID_CARD, REMARK, CREATE_TIME,
+      MOBILE,BANK_ID)
+    values (#{appId}, #{cardNo}, #{bankName}, #{name}, #{idCard}, #{remark}, #{createTime},
+      #{mobile},#{bankId})
+  </insert>
+
+
+    <select id="getMyBankCard" parameterType="java.lang.Long" resultType="Map">
+    select bank_card.ID as id,bank_card.BANK_NAME as bankName,bank_card.CARD_NO as cardNo,
+    bank.PIC_ADDRESS AS picAddress,
+    bank.BACKGROUND_START AS backgroundStart,
+    bank.BACKGROUND_END AS backgroundEnd
+    from bank_card
+    LEFT JOIN bank ON bank.ID = bank_card.BANK_ID
+    WHERE
+      bank_card.APP_ID = #{appId} AND bank.`STATUS` = 0
+    ORDER BY bank_card.ID DESC
+  </select>
+
+    <select id="findCardsByAppId" parameterType="long" resultMap="DtoBaseResultMap">
+        select bank_card.ID , bank_card.BANK_NAME , bank_card.CARD_NO , bank.PIC_ADDRESS ,
+        bank.BACKGROUND_START , bank.BACKGROUND_END
+        from bank_card
+        LEFT JOIN bank ON bank.ID = bank_card.BANK_ID
+        where APP_ID = #{appId}
+    </select>
+
+    <select id="findByAppIdAndCardId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_card
+        where APP_ID = #{appId} AND ID = #{cardId}
+    </select>
+
+    <select id="findBankCardByCardNo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_card
+        where CARD_NO = #{cardNo}
+    </select>
+
+    <select id="getBankCardByAppId" parameterType="long" resultType="int">
+    SELECT count(*) FROM bank_card WHERE APP_ID = #{appId}
+  </select>
+
+</mapper>

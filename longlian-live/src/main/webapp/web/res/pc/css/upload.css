@@ -1,0 +1,61 @@
+.btn-upload{
+    position: relative;
+}
+.btn-upload > div{
+    position: relative;
+    color: #555;
+}
+.btn-upload > div label{
+    display: inline-block;
+    width: 46px;
+    font-size: 12px;
+}
+.shade-box{
+    display: block;
+    position: relative;
+    width:80px;
+    height: 32px;
+    text-align: center;
+    line-height: 32px;
+    color: #FF5500;
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.shade-text{
+    position: absolute;
+    left: 100px;
+    top: 0;
+    width: 410px;
+    height: 32px;
+    line-height: 32px;
+    color: #747474;
+    font-size: 12px;
+}
+.file-btn{
+    opacity: 0;
+    width: 289px;
+    height: 190px;
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+.btn-upload{
+    width: 289px;
+    height: 190px;
+    background: url("/web/res/image/backpicnew.png") no-repeat center center;
+    padding: 0;
+    overflow: hidden;
+    margin-left: 12px;
+}
+.coverssAddressImg{
+    display: block;
+    width: 293px;
+    height: 193px;
+    border: none;
+    margin-left: -2px;
+    margin-top: -2px;
+}

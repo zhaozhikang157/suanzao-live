@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.MSystemLogMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.longlian.dto.MSystemLogDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="object" jdbcType="VARCHAR" property="object"/>
+        <result column="comment" jdbcType="VARCHAR" property="comment"/>
+        <result column="log_time" jdbcType="TIMESTAMP" property="logTime"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+     user_id, user_name, object, comment, log_time, ip, type
+  </sql>
+
+
+    <select id="getListPage" resultMap="BaseResultMap">
+        select id,
+        <include refid="Base_Column_List"/>
+        from m_system_log
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(mSystemLog.userName)">
+                AND user_name LIKE  concat('%',#{mSystemLog.userName},'%')
+            </if>
+            <if test="@Ognl@isNotEmpty(mSystemLog.type)">
+                AND type = #{mSystemLog.type}
+            </if>
+            <if test="@Ognl@isNotEmpty(mSystemLog.createTimeBegin)">
+                AND log_time &gt; #{mSystemLog.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(mSystemLog.createTimeEnd)">
+                AND log_time &lt; #{mSystemLog.createTimeEnd}
+            </if>
+        </where>
+         order by log_time desc
+    </select>
+
+    <delete id="deleteById">
+    delete from m_system_log
+    WHERE id IN (${ids} )
+  </delete>
+
+    <select id="findById" parameterType="long" resultMap="BaseResultMap">
+        select id,
+        <include refid="Base_Column_List"/>
+        from
+        m_system_log
+        WHERE
+        id= #{id}
+    </select>
+
+    <insert id="create" parameterType="com.longlian.dto.MSystemLogDto">
+
+        insert into
+        m_system_log
+        (<include refid="Base_Column_List"/>)
+        values
+        (#{userId}, #{userName}, #{object}, #{comment}, sysdate(), #{ip}, #{type} )
+    </insert>
+    <update id="update" parameterType="com.longlian.dto.MSystemLogDto">
+
+        update m_system_log
+        <set>
+            <if test="@Ognl@isNotEmpty(userId)">
+                user_id = #{userId},
+            </if>
+            <if test="@Ognl@isNotEmpty(userName)">
+                user_name = #{userName},
+            </if>
+            <if test="@Ognl@isNotEmpty(object)">
+                object = #{object},
+            </if>
+            <if test="@Ognl@isNotEmpty(comment)">
+                comment = #{comment},
+            </if>
+            log_time = sysdate(),
+            <if test="@Ognl@isNotEmpty(ip)">
+                ip = #{ip},
+            </if>
+            <if test="@Ognl@isNotEmpty(type)">
+                type = #{type},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

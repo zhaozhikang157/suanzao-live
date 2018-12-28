@@ -1,0 +1,70 @@
+
+.btn-primary-img-upload {
+    color: #fff;
+    padding:6px 12px 6px 38px;
+    background: #337ab7 url("../imgs/upload.png") no-repeat 8px center;
+    border-color: #2e6da4;
+}
+
+
+.btn-primary-img-pass {
+    padding:6px 12px 6px 38px;
+    color: #fff;
+    background: #337ab7 url("../imgs/pass.png") no-repeat left center;
+    border-color: #2e6da4;
+}
+.btn-primary-img-pass:focus,
+.btn-primary-img-pass.focus {
+    color: #fff;
+    background-color: #286090;
+    border-color: #122b40;
+}
+
+.btn-primary-img-no-pass  {
+    color: #fff;
+    background: #f0ad4e url("../imgs/no_pass.png") no-repeat left center;
+    border-color: #eea236;
+}
+.btn-primary-img-no-pass :focus,
+.btn-primary-img-no-pass .focus {
+    color: #fff;
+    background-color: #ec971f;
+    border-color: #985f0d;
+}
+.btn-primary-img-no-pass :hover {
+    color: #fff;
+    background-color: #ec971f;
+    border-color: #d58512;
+}
+.btn-primary-img-pass {
+    color: #fff;
+    background: #337ab7 url("../imgs/pass.png") no-repeat left center;
+    border-color: #2e6da4;
+}
+.btn-primary-img-pass:focus,
+.btn-primary-img-pass.focus {
+    color: #fff;
+    background-color: #286090;
+    border-color: #122b40;
+}
+.btn-primary-img-pass:hover {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+}
+.btn-primary-img-no-pass  {
+    color: #fff;
+    background: #f0ad4e url("../imgs/no_pass.png") no-repeat left center;
+    border-color: #eea236;
+}
+.btn-primary-img-no-pass :focus,
+.btn-primary-img-no-pass .focus {
+    color: #fff;
+    background-color: #ec971f;
+    border-color: #985f0d;
+}
+.btn-primary-img-no-pass :hover {
+    color: #fff;
+    background-color: #ec971f;
+    border-color: #d58512;
+}

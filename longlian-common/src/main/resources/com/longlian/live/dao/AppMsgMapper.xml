@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.AppMsgMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.AppMsg">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="TYPE" jdbcType="INTEGER" property="type"/>
+        <result column="TABLE_ID" jdbcType="BIGINT" property="tableId"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="STATUS" jdbcType="BIGINT" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="READ_TIME" jdbcType="TIMESTAMP" property="readTime"/>
+        <result column="C_ACT" jdbcType="VARCHAR" property="cAct"/>
+        <result column="COURSE_STATUS" jdbcType="VARCHAR" property="courseStatus"/>
+        <result column="TEACHER_ID" jdbcType="BIGINT" property="teacherId"/>
+        <result column="IS_SERIES_COURSE" jdbcType="VARCHAR" property="isSeriesCourse"/>
+        <result column="SERIES_COURSE_ID" jdbcType="BIGINT" property="seriesCourseId"/>
+        <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, APP_ID, TYPE, TABLE_ID, CONTENT, STATUS, CREATE_TIME, READ_TIME, C_ACT , COURSE_STATUS , TEACHER_ID , IS_SERIES_COURSE , SERIES_COURSE_ID , ROOM_ID
+  </sql>
+
+
+    <update id="update" parameterType="com.longlian.model.AppMsg">
+    update app_msg
+    set APP_ID = #{appId},
+      TYPE = #{type},
+      TABLE_ID = #{tableId},
+      CONTENT = #{content},
+      STATUS = #{status},
+      CREATE_TIME = #{createTime},
+      READ_TIME = #{readTime},
+      C_ACT = #{cAct}
+    where ID = #{id}
+  </update>
+
+    <select id="getAppMsgListPage" parameterType="long" resultType="map">
+    SELECT DISTINCT ID AS id,TYPE AS type,TABLE_ID AS tableId,
+    CONTENT AS content,STATUS AS status,CREATE_TIME AS createTime,
+    READ_TIME AS readTime,C_ACT AS cAct ,COURSE_STATUS AS courseStatus ,
+    TEACHER_ID AS teacherId ,IS_SERIES_COURSE AS isSeriesCourse ,
+    SERIES_COURSE_ID AS seriesCourseId , ROOM_ID as roomId
+    FROM app_msg WHERE  (STATUS = '1' or `STATUS` = '0')  AND APP_ID = #{id}
+    ORDER BY CREATE_TIME DESC
+  </select>
+
+    <select id="getAppMsg" parameterType="long" resultType="map">
+    SELECT CONTENT AS content,STATUS AS status,CREATE_TIME AS createTime,
+           READ_TIME AS readTime
+    FROM   app_msg   WHERE  ID = #{id}
+  </select>
+
+    <update id="updateReadTime" parameterType="long">
+    UPDATE app_msg SET STATUS = '1', READ_TIME = now() WHERE  ID = #{id}
+  </update>
+
+    <update id="deleteAppMsg">
+    update app_msg SET STATUS='2'
+    WHERE ID IN (${ids})
+  </update>
+
+    <select id="getIsAppMsg" parameterType="long" resultType="long">
+    SELECT COUNT(1) FROM app_msg WHERE  STATUS = '0' and  APP_ID = #{appId}
+  </select>
+
+    <update id="readAllMessage" parameterType="long">
+        UPDATE app_msg SET STATUS = '1', READ_TIME = now() WHERE STATUS = '0' AND APP_ID = #{appId}
+  </update>
+
+    <update id="deleteAllAppMsg">
+    update app_msg SET STATUS='2'
+    WHERE (STATUS = '1' or `STATUS` = '0')  AND APP_ID = #{appId}
+  </update>
+
+    <update id="updateMsgCourseStatus">
+    UPDATE app_msg SET COURSE_STATUS = #{status} WHERE TABLE_ID = #{courseId} AND ROOM_ID =  #{roomId}
+  </update>
+
+    <!--批处理-->
+    <update id="updateMsgCourseStatues">
+        UPDATE app_msg SET COURSE_STATUS = '1' WHERE TABLE_ID IN
+        <foreach collection="courses" item="course" open="(" separator="," close=")">
+            #{course.id}
+        </foreach>
+    </update>
+
+    <update id="updateParam">
+    update app_msg SET TEACHER_ID = #{teacherId} , IS_SERIES_COURSE = #{isSeriesCourse} ,
+    SERIES_COURSE_ID = #{seriesCourseId} , ROOM_ID = #{roomId} , COURSE_STATUS = #{status}
+    WHERE TYPE IN ('1','4','11','15' , '14','16') and TABLE_ID = #{courseId}
+  </update>
+    <delete id="delAppMsgBefore">
+    DELETE  FROM  app_msg WHERE CREATE_TIME &lt; #{createTime} AND TYPE =  #{type}
+
+  </delete>
+
+    <select id="findOrderId" resultMap="BaseResultMap">
+    SELECT ID , TABLE_ID FROM app_msg
+    WHERE TYPE IN ('14','16') AND IS_UPDATE = '0' limit #{offset} , #{pageSize}
+  </select>
+
+    <update id="updateTableId">
+    UPDATE app_msg SET TABLE_ID = #{courseId} , IS_UPDATE = '1' WHERE ID = #{msgId}
+  </update>
+
+    <select id="findAllMsg" resultMap="BaseResultMap">
+    SELECT ID , TABLE_ID FROM app_msg
+  </select>
+
+    <update id="setRoomIdById">
+    UPDATE app_msg SET ROOM_ID = #{roomId} WHERE ID = #{id}
+  </update>
+
+    <select id="findAllMsgP" resultMap="BaseResultMap">
+    SELECT ID , TABLE_ID FROM app_msg limit #{offset} , #{pageSize}
+  </select>
+
+    <select id="findTypeMsg" resultMap="BaseResultMap">
+    SELECT ID , TABLE_ID FROM app_msg
+    WHERE ROOM_ID IS NULL AND TYPE NOT IN ( 13 , 90 , 88 , 100 )
+    limit #{offset} , #{pageSize}
+  </select>
+
+    <update id="updateInfo">
+    UPDATE app_msg SET TABLE_ID = #{courseId} , ROOM_ID = #{roomId} WHERE ID = #{id}
+  </update>
+
+    <update id="bateUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update app_msg SET TABLE_ID = ${item.cousreId} , IS_UPDATE = '1' where id = ${item.id}
+        </foreach>
+    </update>
+
+    <insert id="insert" parameterType="com.longlian.model.AppMsg">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into app_msg (APP_ID, TYPE, TABLE_ID, CONTENT, STATUS, CREATE_TIME, READ_TIME,
+        C_ACT , TEACHER_ID ,IS_SERIES_COURSE , SERIES_COURSE_ID , ROOM_ID )
+        values (#{appId}, #{type}, #{tableId}, #{content}, #{status}, #{createTime}, #{readTime},
+        #{cAct},
+        #{teacherId},
+        #{isSeriesCourse},
+        #{seriesCourseId},
+        #{roomId}
+        )
+    </insert>
+
+</mapper>

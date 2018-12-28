@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.CourseDataUseMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.CourseDataUse">
+    <id column="ID"  property="id" />
+    <result column="COURSE_ID"  property="courseId" />
+    <result column="LIVE_DATA_USE"  property="liveDataUse" />
+    <result column="REVIEW_USE"  property="reviewUse" />
+    <result column="UPDATE_TIME"  property="updateTime" />
+
+    <result column="START_USE_TIME"  property="startUseTime" />
+
+    <result column="END_USE_TIME"  property="endUseTime" />
+
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    COURSE_ID, LIVE_DATA_USE, REVIEW_USE ,UPDATE_TIME , START_USE_TIME , END_USE_TIME
+  </sql>
+
+  <insert id="insert" parameterType="CourseDataUse">
+    INSERT INTO course_data_use (<include refid="Base_Column_List"/>) VALUES (#{courseId},#{liveDataUse},#{reviewUse},#{updateTime},#{startUseTime},#{endUseTime})
+  </insert>
+
+  <select id="findAllCourseId" resultType="String">
+    SELECT COURSE_ID FROM course_data_use
+  </select>
+
+  <update id="updateUseSize" parameterType="CourseDataUse">
+    UPDATE course_data_use SET LIVE_DATA_USE = LIVE_DATA_USE + #{liveDataUse} , REVIEW_USE = REVIEW_USE + #{reviewUse},
+    UPDATE_TIME = #{updateTime}
+    <if test="@Ognl@isNotEmpty(endUseTime)">
+    ,END_USE_TIME = #{endUseTime}
+    </if>
+    WHERE COURSE_ID = #{courseId}
+  </update>
+
+
+</mapper>

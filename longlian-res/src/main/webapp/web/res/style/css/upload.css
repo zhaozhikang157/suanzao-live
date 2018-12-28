@@ -1,0 +1,43 @@
+.btn-upload{
+    position: relative;
+}
+.btn-upload > div{
+    position: relative;
+    color: #555;
+}
+.btn-upload > div label{
+    display: inline-block;
+    width: 46px;
+    font-size: 12px;
+}
+.shade-box{
+    display: block;
+    position: relative;
+    width:80px;
+    height: 32px;
+    text-align: center;
+    line-height: 32px;
+    color: #FF5500;
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.shade-text{
+    position: absolute;
+    left: 100px;
+    top: 0;
+    width: 410px;
+    height: 32px;
+    line-height: 32px;
+    color: #747474;
+    font-size: 12px;
+}
+.file-btn{
+    position: absolute;
+    top: 0;
+    left: 50px;
+    opacity: 0;
+    width: 120px;
+    height: 32px;
+    cursor: pointer;
+}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longlian.live.newdao.DataChargeLevelMapper" >
+  <resultMap id="BaseResultMap" type="com.longlian.model.DataChargeLevel" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="AMOUNT" property="amount" jdbcType="BIGINT" />
+    <result column="ORIG_PRICE" property="origPrice" jdbcType="DECIMAL" />
+    <result column="PREF_PRICE" property="prefPrice" jdbcType="DECIMAL" />
+    <result column="INVALID_DATE" property="invalidDate" jdbcType="INTEGER" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="INVALID_DATE_UNIT" property="invalidDateUnit" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="UNIT_PRICE" property="unitPrice" jdbcType="DECIMAL" />
+    <result column="IS_RETAIL" property="isRetail" jdbcType="VARCHAR" />
+      <result column="IS_HOT" property="isHot" jdbcType="VARCHAR" />
+  </resultMap>
+    
+  <select id="getDataChargeLevelListPage"  resultType="Map">
+    SELECT
+   d.ID as id,
+   d.AMOUNT as amount,
+   d.ORIG_PRICE as origPrice,
+   d.PREF_PRICE as prefPrice,
+   d.INVALID_DATE as invalidDate,
+   d.CREATE_TIME as createTime,
+   d.INVALID_DATE_UNIT as invalidDateUnit,
+   d.IS_RETAIL  as isRetail,
+   d.IS_HOT as isHot
+    FROM
+    data_charge_level d
+    WHERE
+    d.STATUS = '1'
+  </select>
+    <select id="getDataChargeLevelList"  resultMap="BaseResultMap">
+        SELECT
+        d.*
+        FROM
+        data_charge_level d
+        WHERE
+        d.STATUS = '1'
+    </select>
+    <update id="deleteByIds" parameterType="String">
+        UPDATE data_charge_level SET STATUS = 2 WHERE ID IN (${item})
+    </update>
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.CourseManagerMapper">
+    <resultMap id="baseMap" type="CourseManager">
+        <id column="ID" property="id"/>
+        <result column="TEACHER_ID" property="teacherId"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="ROOM_ID" property="roomId"/>
+        <result column="CREATE_TIME" property="createTime"/>
+    </resultMap>
+
+    <sql id="sql">
+        ID , TEACHER_ID , USER_ID , ROOM_ID , CREATE_TIME
+    </sql>
+
+    <select id="findAllManagersPage" resultType="Map">
+        SELECT au.NAME as appUserName , au.ID AS userId , cm.ID AS id , au.PHOTO AS photo
+        FROM course_manager cm LEFT JOIN app_user au ON au.ID = cm.USER_ID
+        WHERE au.STATUS = '0' AND cm.TEACHER_ID = #{teacherId} ORDER BY cm.CREATE_TIME DESC
+    </select>
+
+    <select id="findAppUserByIdPage" resultType="Map">
+        SELECT `NAME` appUserName , ID userId , PHOTO photo , STATUS status , '0' isManager FROM app_user
+        <where>
+            ID LIKE CONCAT(#{id},'%') AND STATUS = '0' AND ID != #{appId} AND YUNXIN_TOKEN != ''
+        </where>
+    </select>
+
+    <select id="findManagerByTeacherIdAndUserId" resultType="int">
+        SELECT count(*) FROM course_manager WHERE TEACHER_ID = #{teacherId} AND USER_ID = #{userId}
+    </select>
+
+    <insert id="creatrManager">
+        INSERT INTO course_manager (TEACHER_ID , USER_ID  , ROOM_ID , CREATE_TIME)
+        VALUES (#{teacherId} , #{userId}  , #{roomId} , #{createTime})
+    </insert>
+
+    <delete id="delCourseManagerById">
+        DELETE FROM course_manager WHERE ID = #{id}
+    </delete>
+
+    <select id="findAllManager" resultMap="baseMap">
+        SELECT <include refid="sql"/> FROM course_manager WHERE TEACHER_ID = #{teacherId}
+    </select>
+
+    <select id="findManagereByTeacherId" resultType="Map">
+        SELECT au.NAME as appUserName , au.ID AS userId , cm.ID AS id , au.PHOTO AS photo
+        FROM course_manager cm LEFT JOIN app_user au ON au.ID = cm.USER_ID
+        WHERE cm.TEACHER_ID = #{teacherId}
+    </select>
+
+    <select id="findById" resultMap="baseMap">
+        SELECT <include refid="sql"/> FROM course_manager WHERE ID = #{id}
+    </select>
+
+
+</mapper>

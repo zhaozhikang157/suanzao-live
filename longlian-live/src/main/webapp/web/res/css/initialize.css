@@ -1,0 +1,693 @@
+﻿/* 清除内外边距 */
+body,html,header,footer,section,span,p,h1,h2,h3,h4,h5,ul,ol,li,select,input,button,textarea,aside,article,dl,dt,dd{margin: 0;padding: 0;font-style: normal;list-style-type:none}
+/* 设置默认字体 */
+body,button,input,select,textarea{ font: 62.5%/1 "微软雅黑", Tahoma, Helvetica, Arial, sans-serif;outline: none; color: #333;}
+/* 重置列表元素 */
+ul, ol { list-style: none; }
+
+/* 重置文本格式元素 */
+a { text-decoration: none; color: #333333;}
+a:focus { outline:none; }
+i{font-style: normal;}
+img{width:100%;border:none;vertical-align:middle;}
+/* 重置表格元素 */
+table {border-collapse: collapse;border-spacing: 0;}
+/* ========================= 页面常用样式 CSS样式 =========================== */  
+html,body{width:100%; min-height:100%;height: 100%; overflow-x:hidden; }
+html{background: #f5f5f5 }
+body{-text-size-adjust:text;-webkit-user-select:text;/*不允许用户选择文本*/-webkit-tap-highlight-color:rgba(0,0,0,0);}
+div,p{max-height: 999999px;}
+/*清除浮动*/
+.clearfix:after{display:block;clear:both;height:0;visibility:hidden;content:" ";}
+.fl{float:left;}
+.fr{float:right;}
+/*input,select{-webkit-appearance:none;}*/
+/*初始化，改变手机默认对表单的样式*/
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { color: #a9a9a9; } 
+input:-moz-placeholder, textarea:-moz-placeholder { color: #a9a9a9; } 
+input::-moz-placeholder, textarea::-moz-placeholder { color: #a9a9a9; } 
+input:-ms-input-placeholder, textarea:-ms-input-placeholder { color: #a9a9a9; } 
+p ,p a{color:#333;}
+em{font-style: normal;}
+i,b{display: block;font-weight: normal;}
+input[type="button"]{cursor: pointer;}
+
+/*加载动画*/
+.LoadingBox{
+    width: 100%;
+    height: 100%;
+    background: white;
+    margin: 0 auto;
+    z-index: 11111111;
+    position: absolute;
+    will-change: transform;
+}
+.newloading{
+    width: 200px;
+    height: 120px;
+    margin:auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    text-align: center;
+}
+.newloading > div {
+    background-color: #ec323c;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    border-radius: 9px;
+    margin-right: 2px;
+    -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+    animation: stretchdelay 1.2s infinite ease-in-out;
+}
+.newloading > div:last-child{
+    margin-right: 0;
+}
+.newloading .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+
+.newloading .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+.newloading .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+.newloading .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+.newloading .rect6 {
+    -webkit-animation-delay: -0.7s;
+    animation-delay: -0.7s;
+}
+@-webkit-keyframes stretchdelay {
+    0%, 40%, 100% { -webkit-transform: scaleY(0.5) }
+    20% { -webkit-transform: scaleY(1.2) }
+}
+
+@keyframes stretchdelay {
+    0%, 40%, 100% {
+        transform: scaleY(0.5);
+        -webkit-transform: scaleY(0.5);
+    }  20% {
+           transform: scaleY(1.2);
+           -webkit-transform: scaleY(1.2);
+       }
+}
+/*公共头部1*/
+.header_1 h3{width: 100%;height:2.2rem ;background:white;line-height: 2.2rem;font-weight: normal;border-bottom: 1px solid #e8e8e8;text-align: center;font-size: 0.75rem;color: #333333;}
+.line{width: 100%;height: 0.5rem;background: #f0f0f0;}
+/*颜色+边框+宽高+边距+填充*/
+/*公用页脚导航*/
+.footer{
+    background: white;
+    height: 2.45rem;
+    position: absolute;
+    bottom: 0;
+    display: -webkit-box;
+    border-top: 1px solid #e8e8e8;
+    z-index: 1;
+    padding: 0 2.6rem;
+}
+.footer a{ text-align: center; font-size:.5rem; color: #333; display: inline-block}
+.footer a.on{color: #d53c3e;}
+.footer a.home:before{ content:''; width: 0.95rem; height: 1.1rem;display:block; margin: 0 auto;margin-top: .35rem;margin-bottom: 0.2rem; background:url(../image/new_index_new.png) no-repeat center center; background-size: 90%;}
+.footer a.my:before{ content:'';width: 0.95rem; height: 1.1rem; display:block; margin: 0 auto;margin-top: .35rem;margin-bottom: 0.2rem; background:url(../image/new_personal_wdj_new.png) no-repeat center center; background-size: 90%;}
+.footer a.on.home:before{ content:''; width: 0.95rem; height: 1.1rem; display:block; margin: 0 auto;margin-top: .35rem;margin-bottom: 0.2rem; background:url(../image/new_index_dj_new.png) no-repeat center center; background-size: 90%;}
+.footer a.on.my:before{ content:''; width: 0.95rem; height: 1.1rem;display:block; margin: 0 auto;margin-top: .35rem;margin-bottom: 0.2rem; background:url(../image/new_personal_new.png) no-repeat center center; background-size: 90%;}
+.footer a.my{position: relative}
+.creatliv{
+    width: 3.575rem;
+    height: 2.7rem;
+    background: url(../image/Establish_new.png) no-repeat center center;background-size:100% 100%;
+    margin: 0 4rem;
+    margin-top: -.67rem ;
+}
+.footerbox{margin: 0 auto;max-width: 18.75rem;}
+/*公共按钮*/
+.not_pointer{pointer-events: none; border:1px #999 solid!important; color:#999!important;}
+.not_pointers{pointer-events: none; border:1px #999 solid!important; color:white!important;}
+.errorMessages{color:#C80000;}
+/*黑色蒙板*/
+#Mask{ width:100%; height:100%; position:fixed; z-index:9999999; background-color:rgba(0,0,0,.5);top:0; left:0; line-height:15rem; text-align:center; color:#FFF;}
+
+.bgcol_c80{background: #CCC !important;color: #fff;}
+
+input[type="button"], input[type="submit"], input[type="reset"], input[type="text"] {
+    -webkit-appearance: none;
+    border-radius:0;
+}
+textarea { -webkit-appearance:none;
+    border-radius:0;resize:none;  }
+input[disabled]{color:white;opacity:1}
+/*关注二维码*/
+#QRcode{ width:100%; height:100%; position:fixed; top:0; left:0; background-color:rgba(0,0,0,0.2); z-index:1;}
+.QRcode_box{ width:10rem; height:10rem; position:absolute; top:50%; left:50%; margin:-5rem 0 0 -5rem; background:#FFF; border-radius:.25rem;}
+.QRcode_box .closehb{ width:.75rem; height:.75rem; position:absolute; top:.25rem; right:.25rem;}
+.QRcode_box h3{ text-align:center; line-height:1rem; margin-top:.8rem; color:#68a180; font-size:.6rem; font-weight:normal;}
+.QRcode_box dl{ width:8rem; height:6rem; padding-top:.5rem; background:#f5f5f5; margin:.5rem auto;}
+.QRcode_box dt { height:4rem; text-align:center;}
+.QRcode_box dt img{ width:4rem; height:4rem; margin:0 auto;}
+.QRcode_box dd{ text-align:center; font-size:.5rem; margin-top:.5rem;}
+.addpic{position: fixed;width: 100%;display: block;opacity: 1;bottom: 0;left: 0;z-index: 1111111;}
+.pullUpLabel{ font-size:.6rem; color: #9da0a5; text-align:center; line-height: 1rem;padding: 0.6rem}
+/*#QRimg{ width:4rem; height:4rem; display:none; ;left: 50%; top:16rem; margin:0 0 0 -2rem}*/
+.noData{
+    width:100%;
+    height:12.15rem;
+    background: url(../image/noData.png) no-repeat center center;
+    background-size: 8.35rem 9.45rem;
+    padding-top: 4.15rem
+}
+.noData_new{
+    width: 100%;
+    height: 9rem;
+    background: url(../image/noData.png) no-repeat center center;
+    background-size: 8.35rem 9.45rem;
+    margin-top: 8.7rem;
+}
+.noDatas{
+    width:100%;
+    background: url(../image/noData.png) no-repeat center center;
+    background-size:8.35rem 9.45rem;
+    margin-top: 5rem;
+    padding-top: 0;
+}
+.sharBox{
+    width: 18.75rem;
+    margin: 0 auto;
+}
+.sharingBox{
+    width: 18.75rem;
+    margin: 0 auto;
+}
+.newtapBox{
+    max-width: 18.75rem;
+    margin: 0 auto;
+}
+.support{
+    height:2.45rem;
+    line-height: 2.45rem;
+    color: #9da0a5;
+    font-size: 0.6rem;
+    text-align: center;
+    background: #f0f1f4;
+}
+.support a{
+    color: #576b95;
+    margin-left:0.95rem;
+}
+#file{ display:none;}
+/*设置转播*/
+.relay_box{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 111111199;
+    display: none;
+}
+.relay_box .relay_list{
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    background: #f0f1f4;
+}
+.relay_box .tit {
+    text-indent: .7rem;
+    background: rgba(247, 247, 247, 1);
+    border-bottom: 1px solid rgba(225,225,225,1);
+    font-size: .75rem;
+    color: rgba(51, 51, 51, 1);
+    display: block;
+    padding: .85rem 0;
+    font-weight: bold;
+}
+.relay_box .tit em{
+    width: 100%;
+    font-size: .55rem;
+    color: #d53c3e;
+    font-weight: normal;
+
+}
+.relay_box .freeofcharge{
+    position: absolute;
+    bottom: 2.4rem;
+    width: 100%;
+    height: 100%;
+    top: 0;
+}
+.relay_box .frecharBox {
+    padding-left: .75rem;
+    background: white;
+    border-bottom: 1px solid #e1e1e1;
+}
+.relay_box .frecharBox li {
+    height: 2.25rem;
+    line-height: 2.25rem;
+    border-bottom: 1px solid #e1e1e1;
+    display: -webkit-box;
+    -webkit-box-pack: justify;
+    -webkit-box-align: center;
+    margin-right: .75rem;
+    font-size: .7rem;
+    color: #333333;
+}
+.relay_box .frecharBox li:last-child {
+    border-bottom: none;
+}
+.relay_box .newdistribution {
+    width: 2.4rem;
+    height: 1.725rem;
+    background: url(/web/res/image/distributionclose.png) no-repeat center center;
+    background-size: 100% 100%;
+}
+.relay_box .newdistribution.on {
+    background: url(/web/res/image/distribution.png) no-repeat center center;
+    background-size: 100% 100%;
+}
+.relay_box .newMuch {
+    display: block;
+    color: #333;
+    padding: 0.375rem 0;
+    font-size: 0.65rem;
+    text-align: center;
+    font-size: 0.65rem;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    border: none;
+    line-height: normal;
+    box-sizing: border-box;
+    text-align: right;
+    -webkit-box-flex: 1;
+    background: #fff;
+}
+.relay_box .distribution {
+    display: block !important;
+    color: #28292f;
+    padding: 0.375rem 0;
+    font-size: 0.65rem;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    border: none;
+    line-height: normal;
+    box-sizing: border-box;
+    text-align: right;
+    -webkit-box-flex: 1;
+    background: #fff;
+}
+.relay_box .relay_btn{
+    width: 18.75rem;
+    position: fixed;
+    bottom: 0;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    background: white;
+    border-top: 1px solid #cccccc
+}
+.relay_box .relay_btn p{
+    width: 50%;
+    -webkit-box-flex: 1;
+    text-align: center;
+    line-height: 2.4rem;
+    background: #d53c3e;
+    color: white;
+    font-size: 0.8rem;
+}
+.relay_box .relay_btn p.relay_c{
+    border-right: 1px solid #CCCCCC;
+    background: rgba(255, 255, 255, 1);
+    color: rgba(51, 51, 51, 1);
+}
+.relay_box .relay_btn p.relay_ok{
+    border-top: 1px #d53c3e solid;
+}
+.relay_box .relay_btn p.relay_ok.on{
+    background: rgba(230, 138, 139, 1);
+    border-top: 1px rgba(230, 138, 139, 1) solid;
+    color: rgba(255, 255, 255, .4);
+}
+/*邀请码*/
+.newinvitationBox{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.5);
+    display: none;
+    z-index: 55555555;
+}
+.invitationInput{
+    width:12.25rem;
+    height:7.85rem;
+    position: absolute;
+    top:35%;
+    left: 50%;
+    margin-top:-3.925rem;
+    margin-left:-6.125rem;
+    background: white;
+    border-radius:0.8rem;
+}
+.invitationInput h2{
+    font-size: 0.8rem;
+    margin: 0 auto;
+    margin-top: 1rem;
+    margin-bottom: 0.925rem;
+    text-align: center;
+    font-weight: normal;
+}
+.midInput{
+    width:9.8rem;
+    height: 0.75rem;
+    margin: 0 auto;
+    background: #f0f0f0;
+    padding: 0.6rem 0;
+    display: -webkit-box;
+    -webkit-box-pack: justify;
+    -webkit-box-align: center;
+}
+.invBtn{
+    width: 0.75rem;
+    height: 0.75rem;
+    background: url("/web/res/image/deateta.png") no-repeat center center;
+    background-size: 100% 100%;
+    margin-right: 0.6rem;
+    display: none;
+}
+.midInput input{
+    border: none;
+    background:#f0f0f0;
+    text-indent:0.35rem;
+    font-size: 0.65rem;
+    display: block;
+}
+.midInput input::-webkit-input-placeholder{
+    font-size: 0.65rem;
+    color: #929294;
+}
+.invitationUl{
+    position: absolute;
+    bottom: 0;
+    display: -webkit-box;
+    border-top: 1px solid #cacace;
+    width: 100%;
+}
+.invitationUl li{
+    -webkit-box-flex: 1;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+}
+.invitationUl li:first-child{
+    border-right: 1px solid #cacace;
+    color: #307bf6;
+}
+.newcha{
+    color: #929294;
+}
+.newcha.on{
+    color: #307bf6;
+}
+.Taptxt{
+    font-size: 0.5rem;
+    color: #d53c3e;
+    text-indent:1.625rem;
+    margin-top: 0.35rem;
+}
+.exchange{
+    width:5.1rem;
+    height: 1.9rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top:-0.95rem;
+    margin-left: -2.55rem;
+    background: rgba(0,0,0,.6);
+    text-align: center;
+    line-height: 1.9rem;
+    font-size: 0.6rem;
+    color: white;
+    border-radius: 1.9rem;
+    z-index: 1;
+    display: none;
+}
+/*违规弹窗*/
+.topBoxcon{
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.5);
+    position: absolute;
+    z-index: 2222222;
+    display: none;
+}
+.topBoxcontap{
+    width: 13.4rem;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    margin-left: -6.7rem;
+    padding-top: 1.2rem;
+    background: white;
+    border-radius: 0.6rem;
+}
+.topBoxcontap h2{
+    font-size: 0.8rem;
+    text-align: center;
+}
+.topBoxcontap p{
+    font-size:0.7rem;
+    width: 10.5rem;
+    margin: 0 auto;
+    margin-top: 0.6rem;
+    line-height: 1rem;
+    text-align: center;
+}
+.topBoxcontap p a{
+    color:#3178ed ;
+    font-size:0.7rem;
+}
+.tapCloseindex{
+    text-align: center;
+    margin-top: 1.2rem;
+    height: 2.25rem;
+    line-height:2.25rem;
+    font-size: 0.75rem;
+    color:#3178ed ;
+    border-top: 1px solid #cacaca;
+}
+/*公用弹窗*/
+.publicPopups{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 111111;
+}
+.publicPopupsbox{
+    width: 13.45rem;
+    /*height: 7.85rem;*/
+    border-radius: 0.6rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -6.725rem;
+    margin-top: -3.925rem;
+    background: white;
+    overflow: hidden;
+}
+.publicPopupstitle{
+    text-align: center;
+    font-size: 0.85rem;
+    padding-top: 1.2rem;
+    padding-bottom: 0.65rem;
+    font-weight: bold;
+}
+.publicPopupscont{
+    text-align: center;
+    line-height: 1rem;
+    font-size:0.65rem ;
+    color: #28292f;
+}
+.publicPopupsul{
+    width: 100%;
+    margin-top: 1rem;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    border-top: 1px solid #cacaca;
+}
+.publicPopupsul li{
+    height: 2.25rem;
+    line-height: 2.25rem;
+    color: #cacace;
+    text-align: center;
+    -webkit-box-flex: 1;
+    color: #007aff;
+    font-size: 0.75rem;
+}
+.publicPopupsul li:first-child{
+    border-right: 1px solid #cacaca;
+}
+/*跳转下载App商店*/
+.downApp{
+    height: 2.45rem;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack:justify;
+    width: 100%;
+    background: rgba(0,0,0,.48);
+    position: absolute;
+    z-index: 2222222;
+    bottom: 0;
+    display: none;
+}
+.downLeftbox{
+    display: -webkit-box;
+    -webkit-box-align: center;
+}
+.downClose{
+    width: .75rem;
+    height: .75rem;
+    background: url(/web/res/image/loadadd.png) no-repeat center center;
+    background-size:100% 100%;
+    display: block;
+    margin-left: .5rem;
+}
+.downLogo{
+    width:1.6rem;
+    height: 1.6rem;
+    background: url(/web/res/image/downLogo.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-left: .5rem;
+    margin-right: .45rem;
+}
+.downApp p{
+    color: white;
+    font-size: .7rem;
+}
+.changea{
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 3.7rem;
+    height: 1.4rem;
+    border-radius: 1.4rem;
+    font-size: 0.6rem;
+    color: #fff;
+    background: #d53c3e;
+}
+.downloadd{
+    font-size:0.65rem;
+    display: block;
+    margin-right: .5rem;
+}
+#wrapper{
+    max-width: 18.75rem;
+    margin: 0 auto;
+}
+
+
+/*公用confirm弹框 开始*/
+.dialog-box{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 111111199;
+}
+.dialog-box .dialog-center{
+    width: 13.45rem;
+    height: 7rem;
+    border-radius: 0.6rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -6.725rem;
+    margin-top: -3.5rem;
+    background: white;
+}
+.dialog-box .dialog-box-close{
+    width: .65rem;
+    height: .65rem;
+    position: absolute;
+    right: .6rem;
+    top: .6rem;
+}
+.dialog-box .dialog-box-close img{
+
+}
+.dialog-box .dialog-Jujubepic{
+    width: 6rem;
+    height: 3.8rem;
+    position: absolute;
+    left: 50%;
+    top: -3.75rem;
+    margin-left: -3rem;
+}
+.dialog-box .dialog-title{
+    padding-top: 1.2rem;
+    font-size: 0.85rem;
+    color:#131313;
+    text-align: center;
+    font-weight: bold;
+}
+.dialog-box .dialog-text{
+    text-align: center;
+    line-height: 2.675rem;
+    font-size: 0rem;
+}
+.dialog-box .dialog-text span{
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 1rem;
+    font-size: 0.65rem;
+}
+.dialog-box .dialog-btn{
+    width: 100%;
+    height:2.25rem;
+    display: -webkit-box;
+    border-top: 1px solid #cacace;
+}
+.dialog-box .dialog-btn a{
+    -webkit-box-flex: 1;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    font-size: 0.75rem;
+    color: #007aff;
+}
+.dialog-box .dialog-btn a.dialog-confirm{
+    border-left: 1px solid #cacace;
+}
+/*公用confirm弹框 结束*/
+/*水印*/
+.watermark{
+    width: 3rem;
+    height: 0.6rem;
+    position: absolute;
+    right: .8rem;
+    top: .65rem;
+    background: url(../image/logo_watermark.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.newdao.LiveConnectRequestMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.LiveConnectRequest">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APPLY_USER" jdbcType="BIGINT" property="applyUser"/>
+        <result column="TEACHER" jdbcType="BIGINT" property="teacher"/>
+        <result column="STUDENT" jdbcType="BIGINT" property="student"/>
+        <result column="APPLY_TIME" jdbcType="TIMESTAMP" property="applyTime"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="FAIL_MSG" jdbcType="VARCHAR" property="failMsg"/>
+        <result column="SUCCESS_TIME" jdbcType="TIMESTAMP" property="successTime"/>
+        <result column="COURSE_ID" jdbcType="BIGINT" property="courseId"/>
+        <result column="CLOSE_TIME" jdbcType="TIMESTAMP" property="closeTime"/>
+        <result column="AGREE_STATUS" jdbcType="VARCHAR" property="agreeStatus"/>
+        <result column="LOSE_TIME" jdbcType="BIGINT" property="loseTime"/>
+        <result column="STUDENT_STATUS" jdbcType="VARCHAR" property="studentStatus"/>
+    </resultMap>
+    <update id="updateLiveConnectStudentOnlineStatus">
+        UPDATE live_connect_request set STUDENT_STATUS =#{liveConnectRequest.studentStatus}
+          where APPLY_USER = #{liveConnectRequest.applyUser}
+            and COURSE_ID = #{liveConnectRequest.courseId}
+    </update>
+  <!--关闭正在连麦的 -->
+  <update id="closeLiveConnectRequest">
+      UPDATE live_connect_request set STATUS =#{req.status} , CLOSE_TIME = #{req.closeTime},FAIL_MSG =  #{req.failMsg}
+          where STUDENT = #{req.student}
+            and TEACHER =  #{req.teacher}
+            and COURSE_ID = #{req.courseId}
+            and STATUS='1'
+  </update>
+
+    <update id="updateStatus">
+    UPDATE live_connect_request set STATUS =#{status} , FAIL_MSG = #{msg}
+        <if test="status == 1">
+            , SUCCESS_TIME = now()
+        </if>
+        <where>
+        ID =  #{reqId}
+    </where>
+  </update>
+
+</mapper>

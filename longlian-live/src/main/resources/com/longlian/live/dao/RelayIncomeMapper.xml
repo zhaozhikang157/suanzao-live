@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.RelayIncomeMapper">
+    <resultMap id="relayIncomeMap" type="com.longlian.model.RelayIncome">
+        <result column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="ORI_APP_ID" jdbcType="BIGINT" property="oriAppId"/>
+        <result column="ORI_COURSE_ID" jdbcType="BIGINT" property="oriCourseId"/>
+        <result column="REL_COURSE_ID" jdbcType="BIGINT" property="relCourseId"/>
+        <result column="PAY_APP_ID" jdbcType="BIGINT" property="payAppId"/>
+        <result column="CHARGE" jdbcType="DECIMAL" property="charge"/>
+        <result column="RELAY_SCALE" jdbcType="DECIMAL" property="relayScale"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="relayIncomeSql">
+      ID id,
+      ORI_APP_ID oriAppId,
+      ORI_COURSE_ID oriCourseId,
+      REL_COURSE_ID relCourseId,
+      PAY_APP_ID payAppId,
+      CHARGE charge,
+      RELAY_SCALE relayScale,
+      TYPE type,
+      CREATE_TIME createTime
+  </sql>
+
+    <insert id="insert" parameterType="com.longlian.model.RelayIncome">
+        insert into relay_income
+        (ORI_APP_ID ,ORI_COURSE_ID ,REL_COURSE_ID ,PAY_APP_ID , CHARGE ,RELAY_SCALE,TYPE)
+        values
+        ( #{oriAppId},#{oriCourseId},#{relCourseId},#{payAppId},#{charge},#{relayScale},#{type} )
+    </insert>
+
+</mapper>

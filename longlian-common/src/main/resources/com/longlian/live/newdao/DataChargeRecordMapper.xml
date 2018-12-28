@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longlian.live.newdao.DataChargeRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.longlian.model.DataChargeRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="TOTAL_AMOUNT" property="totalAmount" jdbcType="BIGINT" />
+    <result column="BAL_AMOUNT" property="balAmount" jdbcType="BIGINT" />
+    <result column="INVALID_DATE" property="invalidDate" jdbcType="INTEGER" />
+    <result column="USED_AMOUNT" property="usedAmount" jdbcType="BIGINT" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ORDER_TIME" property="orderTime" jdbcType="TIMESTAMP" />
+    <result column="CAN_USE_TIME" property="canUseTime" jdbcType="TIMESTAMP" />
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <result column="ROOM_ID" property="roomId" jdbcType="BIGINT" />
+    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="USE_ORIGIN_AMOUNT" property="useOriginAmount" jdbcType="BIGINT" />
+    <result column="INVALID_DATE_UNIT" property="invalidDateUnit" jdbcType="VARCHAR" />
+    <result column="IS_PLATFORM_GIFT" property="isPlatformGift" jdbcType="VARCHAR" />
+    <result column="LEVEL_ID" property="levelId" jdbcType="BIGINT" />
+    <result column="INVALID_REAL_DATE" property="invalidRealDate" />
+  </resultMap>
+
+  <resultMap id="BaseResultDtoMap" type="com.longlian.dto.DataChargeRecordDto" extends="BaseResultMap">
+      <result column="PREF_PRICE" property="prefPrice"></result>
+  </resultMap>
+
+    <select id="getBalAmount" resultType="java.lang.Long">
+        select sum(BAL_AMOUNT)  from data_charge_record where ROOM_ID = #{roomId} and STATUS = '1'
+    </select>
+
+  <select id="getReduce" resultType="java.lang.Long">
+    select  REDUCE_DATA_COUNT   from LIVE_ROOM where ID = #{roomId}
+  </select>
+
+  <select id="findModelByOrderId" resultMap="BaseResultMap">
+    SELECT * FROM data_charge_record WHERE ORDER_ID = #{orderId}
+  </select>
+
+  <select id="getAllRecordByRoomId" resultMap="BaseResultMap">
+    SELECT dcr.*  from data_charge_record dcr
+    LEFT JOIN orders o ON o.ID = dcr.ORDER_ID
+    WHERE dcr.STATUS = '1' AND dcr.ROOM_ID = #{roomId}
+    ORDER BY dcr.INVALID_REAL_DATE , o.CREATE_TIME
+  </select>
+  <select id="getBanlanceByUserId" resultType="java.lang.Long">
+  SELECT IFNULL(SUM(r.BAL_AMOUNT),0) as banlAmount  from data_charge_record r where r.`STATUS` =1 and r.USER_ID  = #{userId}
+  </select>
+  <select id="getReduceDataCountbByAppId" resultType="java.lang.Long">
+   SELECT l.REDUCE_DATA_COUNT as reduceDataCount  FROM live_room l   WHERE l.APP_ID =#{appId}
+  </select>
+  <select id="getAllRecordByAppIdPage" resultMap="BaseResultDtoMap">
+    SELECT dcr.* , dcl.PREF_PRICE , dcl.AMOUNT   FROM data_charge_record dcr
+    LEFT JOIN data_charge_level dcl on dcr.LEVEL_ID = dcl.ID
+    WHERE dcr.USER_ID = #{appId} AND dcr.STATUS != '-2'
+    ORDER by dcr.ORDER_TIME desc
+  </select>
+
+  <select id="getAllBuyFlowPage" resultType="Map">
+    SELECT dcr.id as id,dcr.USED_AMOUNT as usedAmount,dcr.TOTAL_AMOUNT as totalAmount,dcr.STATUS as status,dcr.IS_PLATFORM_GIFT as isPlatformGift ,
+    dcr.ORDER_TIME time,dcr.BAL_AMOUNT flow,o.AMOUNT amount,dcr.INVALID_REAL_DATE as invalidRealDate FROM data_charge_record dcr
+    LEFT JOIN orders o ON o.ID = dcr.ORDER_ID
+    <where>
+      dcr.ROOM_ID = #{roomId} AND dcr.`STATUS` IN ("1","2")
+      <if test="@Ognl@isNotEmpty(startTime)"> AND #{startTime} &lt; dcr.ORDER_TIME</if>
+      <if test="@Ognl@isNotEmpty(endTime)"> AND #{endTime} &gt; dcr.ORDER_TIME</if>
+      <if test="@Ognl@isNotEmpty(amount)">AND #{amount} = o.AMOUNT</if>
+    </where>
+    ORDER BY dcr.ORDER_TIME DESC
+  </select>
+  <update id="deleteByIds" parameterType="java.lang.Long">
+    DELETE FROM data_charge_record  WHERE ID = #{recordId}
+  </update>
+</mapper>

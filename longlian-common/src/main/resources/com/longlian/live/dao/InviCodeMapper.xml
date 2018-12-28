@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.InviCodeMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.InviCode">
+    <id column="ID"  property="id" />
+    <result column="APP_ID"  property="appId" />
+    <result column="COURSE_ID"  property="courseId" />
+    <result column="CODE_COUNT"  property="codeCount" />
+    <result column="BALANCE_COUNT"  property="balanceCount" />
+    <result column="CREATE_TIME"  property="createTime" />
+    <result column="CODE_UNION"  property="codeUnion" />
+    <result column="START_TIME"  property="startTime" />
+    <result column="END_TIME"  property="endTime" />
+    <result column="REMARK"  property="remark" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID,APP_ID,COURSE_ID,CODE_COUNT,BALANCE_COUNT,CREATE_TIME,CODE_UNION,START_TIME,END_TIME,REMARK
+  </sql>
+
+  <resultMap id="BaseResultMapDto" type="com.longlian.dto.InviCodeDto" extends="BaseResultMap">
+      <result column="LIVE_TOPIC" property="liveTopic"/>
+      <result column="CSTART_TIME" property="courseStartTime"/>
+  </resultMap>
+
+  <select id="getAllInviCodePage" resultMap="BaseResultMapDto">
+    SELECT ic.ID , c.LIVE_TOPIC , c.START_TIME CSTART_TIME, ic.CODE_COUNT , ic.BALANCE_COUNT , ic.START_TIME , ic.END_TIME
+    FROM invi_code ic LEFT JOIN course c ON c.ID = ic.COURSE_ID
+    <where>
+      c.APP_ID = #{appId}
+      <if test="@Ognl@isNotEmpty(inviCode.liveTopic)"> AND c.LIVE_TOPIC LIKE CONCAT('%',#{inviCode.liveTopic},'%' )</if>
+      <if test="@Ognl@isNotEmpty(inviCode.codeUnion) "> AND ic.ID = #{inviCode.codeUnion}</if>
+    </where>
+    ORDER BY ic.ID DESC
+  </select>
+
+  <insert id="insertInviCode">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    INSERT INTO invi_code (APP_ID,COURSE_ID,CODE_COUNT,BALANCE_COUNT,CREATE_TIME,CODE_UNION,START_TIME,END_TIME,REMARK)
+    VALUES (#{appId},#{courseId},#{codeCount},0,now(),#{codeUnion},#{startTime},#{endTime},#{remark})
+  </insert>
+
+  <select id="getAllInviCode" resultType="Map">
+    SELECT ic.ID id, c.LIVE_TOPIC liveTopic, c.START_TIME courseStartTime, ic.CODE_COUNT codeCount,
+    ic.BALANCE_COUNT balanceCount, ic.START_TIME startTime, ic.END_TIME endTime
+    FROM invi_code ic LEFT JOIN course c ON c.ID = ic.COURSE_ID
+    <where>
+      c.APP_ID = #{appId}
+      <if test="@Ognl@isNotEmpty(courseName)"> AND c.LIVE_TOPIC = #{courseName}</if>
+      <if test="id > 0 "> AND ic.ID = #{id}</if>
+    </where>
+  </select>
+
+  <select id="findCodeInfo" parameterType="long" resultMap="BaseResultMapDto">
+    SELECT ic.ID , c.LIVE_TOPIC , c.START_TIME CSTART_TIME, ic.CODE_COUNT , ic.BALANCE_COUNT , ic.START_TIME , ic.END_TIME
+    FROM invi_code ic LEFT JOIN course c ON c.ID = ic.COURSE_ID
+    <where>
+      ic.ID = #{id}
+    </where>
+  </select>
+
+  <update id="updateBalanceCount">
+    UPDATE invi_code SET BALANCE_COUNT = (BALANCE_COUNT + 1) WHERE ID = #{id}
+  </update>
+
+  <select id="getCodeInfo" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" /> FROM invi_code WHERE ID = #{id}
+  </select>
+
+
+
+  <select id="getInfo" resultType="java.util.Map">
+    select ic.REMARK  remark ,ic.COURSE_ID courseId,ic.START_TIME inveCodeStartTime ,ic.END_TIME inveCodeEndTime  , c.START_TIME startTime , c.LIVE_TOPIC liveTopic , c.CHARGE_AMT  chargeAmt
+    from  invi_code ic     LEFT JOIN   course c  ON
+    ic.COURSE_ID = c.ID
+      where ic.ID = #{id};
+  </select>
+</mapper>

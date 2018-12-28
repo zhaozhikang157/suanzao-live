@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.VisitCourseRecordStatMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.VisitCourseRecord">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="COURSE_ID" jdbcType="BIGINT" property="courseId"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="STATUS" jdbcType="INTEGER" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="FROM_TYPE" property="fromType"/>
+        <result column="INVITATION_USER_ID" property="invitationUserId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, COURSE_ID, APP_ID, STATUS, CREATE_TIME,FROM_TYPE,INVITATION_USER_ID
+  </sql>
+
+    <select id="findCourseSource" resultType="map">
+         select
+        IFNULL(sum(case when v.FROM_TYPE='0' OR v.FROM_TYPE IS NULL then 1 else 0 end),0) as normal,
+        IFNULL(sum(case when v.FROM_TYPE='1' then 1 else 0 end),0) as invitationCard,
+        IFNULL(sum(case when v.FROM_TYPE='2' then 1 else 0 end),0) as shareLink
+        from visit_course_record v
+        WHERE v.STATUS = '0' AND v.COURSE_ID = #{courseId}
+ </select>
+    <select id="findCourseCountByCourseId" resultType="map">
+        select	count(*) visitCountc
+        from visit_course_record v
+        WHERE v.STATUS = '0'
+        union All
+        select count(*) visitCountp from (
+        select DISTINCT APP_ID from visit_course_record v
+        where v.status=0) t
+        WHERE v.STATUS = '0' AND v.COURSE_ID = #{map.courseId}
+        <if test="@Ognl@isNotEmpty(map.beginTime)">
+            AND CREATE_TIME  &gt;= #{map.beginTime}
+        </if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">
+            AND CREATE_TIME  &lt;= #{map.endTime}
+        </if>
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <select id="queryFriendCircleCountByFromType" resultType="map">
+        SELECT COUNT(v1.id) as count ,v2.createTime as createTime  from visit_course_record v1
+        RIGHT JOIN
+        (SELECT  v.id as vid, DATE_FORMAT(v.CREATE_TIME , '%Y-%m-%d') as createTime from visit_course_record v WHERE  v.CREATE_TIME BETWEEN   DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')
+        and  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S')) v2 ON v1.id = v2.vid  and  v1.FROM_SHARE_TYPE = 1  GROUP BY v2.createTime
+    
+    </select>
+    <select id="queryFriendCountByFromType" resultType="map">
+        SELECT COUNT(v1.id) as count ,v2.createTime as createTime  from visit_course_record v1
+        RIGHT JOIN
+        (SELECT  v.id as vid, DATE_FORMAT(v.CREATE_TIME , '%Y-%m-%d') as createTime from visit_course_record v WHERE  v.CREATE_TIME BETWEEN   DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')
+        and  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S') ) v2 ON v1.id = v2.vid  and  v1.FROM_SHARE_TYPE = 2 GROUP BY v2.createTime
+</select>
+    <select id="queryCountByFromType" resultType="map">
+        SELECT COUNT(v1.id) as count ,v2.createTime as createTime  from visit_course_record v1
+        RIGHT JOIN
+        (SELECT  v.id as vid, DATE_FORMAT(v.CREATE_TIME , '%Y-%m-%d') as createTime from visit_course_record v WHERE  v.CREATE_TIME BETWEEN   DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')
+        and  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S')) v2 ON v1.id = v2.vid GROUP BY v2.createTime
+    </select>
+</mapper>

@@ -1,0 +1,60 @@
+group 'com.longlian'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+
+
+buildscript {
+    ext {
+        springIOVersion = '1.0.0.RELEASE'
+        springBootVersion = '1.5.9.RELEASE'
+    }
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://repo.spring.io/release" }
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "http://repo.spring.io/snapshot" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:${springIOVersion}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+
+dependencyManagement {
+    imports {
+        mavenBom 'io.spring.platform:platform-bom:Brussels-SR6'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Brixton.SR4'
+    }
+}
+
+
+dependencies {
+
+    compile project(':huaxin-util'),fileTree(dir: 'lib', include: '*.jar')
+    compile project(':longlian-model')
+    compile 'io.netty:netty-buffer:4.1.12.Final',
+            'io.netty:netty-codec:4.1.12.Final',
+            'io.netty:netty-codec-http:4.1.12.Final',
+            'io.netty:netty-common:4.1.12.Final',
+            'io.netty:netty-handler:4.1.12.Final',
+            'io.netty:netty-resolver:4.1.12.Final',
+            'io.netty:netty-transport:4.1.12.Final',
+            "org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1",
+            "org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:1.1.1"
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

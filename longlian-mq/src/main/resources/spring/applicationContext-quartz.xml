@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+<!-- 
+    <bean id="reserveJobDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <bean class="com.huaxin.web.quartz.ReserveTimer" />
+        </property>
+        <property name="targetMethod" value="job" />
+        <property name="concurrent" value="true" />
+    </bean> 
+
+    <bean id="reserveTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="reserveJobDetail"></property>
+        <property name="cronExpression" value="0 0/5 * * * ?"></property>
+    </bean>-->
+
+   <!--  <bean id="trigger"  autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+
+      <!--  <property name="schedulerName" value="DefaultQuartzScheduler"/>-->
+      <!--  <property name="dataSource" ref="boneCPDataSource" />-->
+   <!--     <property name="configLocation" value="classpath:quartz.properties" />-->
+        <!--applicationContextSchedulerContextKey：
+        是org.springframework.scheduling.quartz.SchedulerFactoryBean这个类中
+        把spring上下 文以key/value的方式存放在了quartz的上下文中了，
+        可以用applicationContextSchedulerContextKey所定义的key得到对应的spring上下文-->
+       <!--  <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+        <property name="triggers">
+            <list>
+                <ref bean="reserveTriggerBean"/>
+            </list>
+        </property>
+    </bean>-->
+ </beans>

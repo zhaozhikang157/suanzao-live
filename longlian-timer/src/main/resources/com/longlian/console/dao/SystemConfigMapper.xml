@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.SystemConfigMapper">
+  <!--查询服务号接入到期提醒配置-->
+  <select id="findSystemConfigByType" resultType="java.util.Map">
+    select  content,data from system_config  where type = #{type} and status='1'
+  </select>
+</mapper>

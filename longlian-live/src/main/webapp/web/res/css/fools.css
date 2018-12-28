@@ -1,0 +1,237 @@
+html,body{
+    position:relative;
+    height:100%;
+    min-height:100%;
+}
+.wraper{
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+.seaione{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+    background: url("/web/res/image/aire.png") no-repeat center center;
+    background-size:cover;
+    opacity: 1;
+}
+.seaitwo{
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+   background: #fff001;
+    opacity: 0;
+    position: absolute;
+}
+.identification{
+    color: #990000;
+}
+.seaitwo p{
+    color: #333;
+    font-size: 1rem;
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: .9rem;
+}
+.foolsTitle{
+    font-size: .9rem;
+    color: #000;
+    box-shadow: 0px 0px 40px #888888;
+    margin:3.75rem auto;
+    border: 3px solid #000;
+    width:13.2rem;
+    height: auto;
+    line-height: 1.65rem;
+    text-align: center;
+    min-height: 1.65rem;
+}
+.foolsewm{
+    margin: 0 auto;
+    width: 15rem;
+    overflow: hidden;
+    margin-top:4.45rem;
+}
+.follsew{
+    width: 7.4rem;
+    height:2.05rem;
+    background: url("/web/res/image/erw.png") no-repeat center center;
+    background-size: cover;
+    float: left;
+    margin-right: 1rem;
+    margin-top:2rem;
+}
+.ewfoolpic{
+    width: 6.45rem;
+    height: 6.45rem;
+    float: right;
+}
+.ewfoolpic img{
+    display: block;
+    width: 100%;
+}
+.foocation{
+    width:1.125rem;
+    height: 1.475rem;
+    background: url("/web/res/image/foocation.png") no-repeat center center;
+    background-size: cover;
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    margin-left: -.5625rem;
+    -webkit-animation:mymove .5s infinite;
+    display: block;
+    z-index: 101;
+}
+@keyframes mymove
+{
+    from {bottom:1.5rem;}
+    to {bottom:1rem;}
+}
+.seaifour{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    /*background: url("/web/res/image/justmap.jpg") no-repeat center center;*/
+    /*background-size: cover;*/
+}
+.seaifourimg{
+    display: block;
+    width: 100%;
+    position: absolute;
+}
+.foolsText{
+    width: 100%;
+    min-height: 1.65rem;
+    display: block;
+    border: none;
+    background: none;
+    font-size:1rem;
+}
+.foolsText::-webkit-input-placeholder {
+    color: #666;
+    font-size:.9rem;
+    line-height:1.5rem;
+}
+.foolsTitlesecret{
+    position: absolute;
+    top:0;
+    margin-left:-6.6rem;
+    left: 50%;
+}
+.foolBtn{
+    width: 9.2rem;
+    height: 5.1rem;
+    position: absolute;
+    margin-top: 22rem;
+    left: 50%;
+    margin-left: -4.6rem;
+}
+.midpic{
+    width: 12.45rem;
+    height: 15rem;
+    position: absolute;
+    margin-top: 11rem;
+    margin-left: -6.225rem;
+    left: 50%;
+}
+/*分享*/
+.paymentmethod{
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    position: fixed;
+    z-index: 2;
+}
+.mask{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient:vertical ;
+}
+.bsf{
+    width: 5rem;
+    height: 3.25rem;
+    position: absolute;
+    right: 1rem;
+    top: 0.6rem;
+}
+.bsf img{
+    display: block;
+}
+.mask p{
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 1.7rem;
+}
+.mask p:nth-of-type(1){
+    margin-top: 34%;
+
+}
+.pop_wrap{
+    width:10.9rem;
+    height: 1.95rem;
+    overflow: auto;
+    position: absolute;
+    top:12rem;
+    left: 50%;
+    margin-left:-5.45rem ;
+    border-radius: 1.95rem;
+    z-index: 11111111;
+}
+.pop_con{
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    -webkit-box-orient: vertical;
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    margin: 0 auto;
+    line-height: 1.95rem;
+}
+.warning{
+    background: rgba(0,0,0,0.6);
+}
+
+.warning .pop_title{
+    font-size: 1.6rem;
+    background:#67bef5;
+
+}
+.error{
+    background: rgba(0,0,0,0.6);
+
+}
+.error .classpic{
+    width: 1.4rem;
+    height: 1.4rem;
+    background: url(../image/pic_gantanhao.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-bottom: 0.5rem;
+    margin-right: 0;
+}
+.error .pop_title{
+    font-size: 1.6rem;
+}
+.normal {
+    background: rgba(0,0,0,0.6);
+}
+.normal .classpic{
+    width: 1.4rem;
+    height: 1.4rem;
+    background: url(../image/pic_duihao.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-bottom: 0.5rem;
+}
+.poptext{
+    font-size: 0.7rem;
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+}

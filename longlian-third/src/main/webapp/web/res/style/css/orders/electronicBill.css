@@ -1,0 +1,82 @@
+html,body{
+	width: 100%;
+	height: 100%;
+	font-size: 62.5%;
+	background: #fff;
+	font-family: "微软雅黑";
+	font-size: 14px;
+}
+.btnPrints{
+	width: 100%;
+	height: 50px;
+	margin: 0 auto;
+}
+.btnPrints button{
+	float: right;
+}
+.wrapper{
+	position: relative;
+	width: 100%;
+	height: 350px;
+	margin: 0 auto;
+}
+.billTitle{
+	width: 98%;
+	height: 82px;
+	margin: 0 auto;
+}
+.billTitle h1{
+	height: 60px;
+	margin: 0;
+	padding: 0;
+	line-height: 60px;
+	text-align: center;
+	font-size: 20px;
+	font-weight: 500;
+	color: #3d3d3d;
+}
+.billTitle div{
+	position: relative;
+	width: 98%;
+	margin: 0 auto;
+}
+.billTitle div p{
+	color: #3d3d3d;
+	font-size: 14px;
+}
+.billTitle div p:nth-child(1){
+	float: left;
+}
+.billTitle div p:nth-child(2){
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	text-align: center;
+}
+.billTitle div p:nth-child(3){
+	float: right;
+}
+
+.billTable{
+	width: 100%;
+	border: 1px solid #000;
+}
+.billTable td{
+	height: 42px;
+	color: #3d3d3d;
+	vertical-align: middle;
+	text-align: center;
+	border: 1px solid #000;
+}
+.smallTableBox {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+.smallTableBox table td{
+	border: none;
+	border-bottom: 1px solid #000;
+	border-left: 1px solid #000;
+}
+

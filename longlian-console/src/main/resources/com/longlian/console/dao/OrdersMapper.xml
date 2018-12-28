@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.OrdersMapper">
+    <resultMap id="ordersMap" type="com.longlian.model.Orders">
+        <id column="id" property="id"/>
+        <result column="APP_ID" property="appId"/>
+        <result column="TRAN_NO" property="tranNo"/>
+        <result column="ORDER_NO" property="orderNo"/>
+        <result column="AMOUNT" property="amount"/>
+        <result column="REAL_AMOUNT" property="realAmount"/>
+        <result column="COUPON_AMOUNT" property="couponAount"/>
+        <result column="COUPON_ID" property="couponId"/>
+        <result column="BANK_TYPE" property="bankType"/>
+        <result column="ORDER_TYPE" property="orderType"/>
+        <result column="OPT_STATUS" property="optStatus"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="SUCCESS_TIME" property="successTime"/>
+        <result column="MER_ID" property="merId"/>
+        <result column="NAME" property="name"/>
+        <result column="BANK_CARD_NO" property="bankCardNo"/>
+        <result column="BANK_NAME" property="bankName"/>
+        <result column="MOBILE" property="mobile"/>
+        <result column="REMARK" property="remark"/>
+        <result column="AUDITOR_ID" property="auditorId"/>
+        <result column="AUDIT_STATUS" property="auditStatus"/>
+        <result column="AUDIT_TIME" property="auditTime"/>
+        <result column="AUDIT_AGREED" property="auditAgreed"/>
+        <result column="UNION_STAT" property="unionStat"/>
+        <result column="CHARGE_PERCENT" property="chargePercent"/>
+        <result column="CHARGE" property="charge"/>
+        <result column="LL_CHARGE_PERCENT" property="llChargePercent"/>
+        <result column="LL_CHARGE" property="llCharge"/>
+    </resultMap>
+
+    <resultMap id="ordersDtoMap" type="com.longlian.dto.OrdersDto" extends="ordersMap">
+        <result column="APP_NAME" property="appName"/>
+        <result column="BANK_CAID_OPEN_NAME" property="bankCaidOpenName"/>
+        <result column="AUDITOR_NAME" property="auditorName"/>
+        <result column="APP_MOBILE" property="appMobile"/>
+    </resultMap>
+
+    <sql id="ordersSql">
+        APP_ID,TRAN_NO,ORDER_NO,AMOUNT,REAL_AMOUNT,COUPON_AMOUNT,COUPON_ID,BANK_TYPE,ORDER_TYPE,OPT_STATUS,CREATE_TIME,SUCCESS_TIME,MER_ID,`NAME`,
+        BANK_CARD_NO,BANK_NAME,MOBILE,REMARK,AUDITOR_ID,AUDIT_STATUS,AUDIT_TIME,AUDIT_AGREED,UNION_STAT,CHARGE_PERCENT,CHARGE,LL_CHARGE_PERCENT,LL_CHARGE
+    </sql>
+
+
+
+
+    <insert id="create" parameterType="Orders">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO orders (
+        <include refid="ordersSql"></include>
+        )
+        VALUES (#{appId} ,#{tranNo}
+        ,#{orderNo},#{amount},#{realAmount},#{couponAount},#{couponId},#{bankType},#{orderType},
+        #{optStatus},,#{createTime},#{successTime},#{merId},#{name},#{bankCardNo},#{bankName},#{mobile},#{remark},
+        #{auditorId},#{auditStatus},#{auditTime},#{auditAgreed},#{unionStat},#{chargePercent},#{charge},#{llChargePercent},#{llCharge})
+    </insert>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="ordersMap">
+        SELECT ID ,
+        <include refid="ordersSql"></include>
+        from orders where id= #{id}
+    </select>
+
+    <select id="selectLockById" parameterType="java.lang.Long" resultMap="ordersMap">
+        SELECT ID ,
+        <include refid="ordersSql"></include>
+        from orders where id= #{id} for UPDATE
+    </select>
+
+
+    <update id="handlerAuditStatusUnionStat">
+        UPDATE orders
+        SET AUDIT_STATUS=#{orders.auditStatus} ,
+        OPT_STATUS=#{orders.optStatus}
+        <if test="@Ognl@isNotEmpty(orders.successTime)">, SUCCESS_TIME = #{orders.successTime}</if>
+        <if test="@Ognl@isNotEmpty(orders.charge)">, CHARGE = #{orders.charge}</if>
+        <if test="@Ognl@isNotEmpty(orders.chargePercent)">, CHARGE_PERCENT = #{orders.chargePercent}</if>
+        <if test="@Ognl@isNotEmpty(orders.llCharge)">, LL_CHARGE = #{orders.llCharge}</if>
+        <if test="@Ognl@isNotEmpty(orders.llChargePercent)">, LL_CHARGE_PERCENT = #{orders.llChargePercent}</if>
+        <if test="@Ognl@isNotEmpty(orders.unionStat)">, UNION_STAT = #{orders.unionStat}</if>
+        WHERE ID=#{orders.id}
+    </update>
+
+    <!-- 轮询查询失败的订单,条件:提现审核通过,并且处于处理状态-->
+    <select id="findFailOrders" resultType="map">
+        SELECT o.ORDER_NO orderNo,o.ID AS id,o.AUDIT_TIME AS auditTime,o.AMOUNT AS amount,o.BANK_NAME AS
+        bankName,o.BANK_CARD_NO AS bankCardNo,o.AUDIT_AGREED AS auditAgreed
+        ,au.NAME AS appName
+        ,o.NAME AS bankCaidOpenName,o.MOBILE mobile
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        where o.ORDER_TYPE=1 AND o.AUDIT_STATUS=1 and o.UNION_STAT in (${map.unionStat})
+    </select>
+
+    <select id="getWithdrawDepositCheckListPage" resultMap="ordersDtoMap">
+        SELECT o.ID,o.CREATE_TIME,o.AMOUNT,o.REAL_AMOUNT,o.LL_CHARGE_PERCENT,o.LL_CHARGE,o.BANK_NAME,o.BANK_CARD_NO,o.REMARK,o.MOBILE MOBILE
+        ,au.NAME AS APP_NAME
+        ,o.NAME AS BANK_CAID_OPEN_NAME
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        <where>
+            o.ORDER_TYPE=1
+            AND o.AUDIT_STATUS=0
+            <if test="@Ognl@isNotEmpty(ordersDto.bankName)">
+                AND o.BANK_NAME=#{ordersDto.bankName}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+        </where>
+        GROUP BY o.ID
+        ORDER BY o.CREATE_TIME DESC
+    </select>
+
+
+    <select id="selectBankOutById" resultMap="ordersDtoMap">
+        SELECT o.ID,o.CREATE_TIME,o.AMOUNT,o.BANK_NAME,o.BANK_CARD_NO,o.REMARK,o.APP_ID,o.ORDER_NO
+        ,au.NAME AS APP_NAME,au.mobile AS APP_MOBILE
+        ,bc.NAME AS BANK_CAID_OPEN_NAME,o.NAME AS bankCaidOpenName
+        ,o.AUDITOR_ID
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        LEFT JOIN bank_card AS bc ON bc.CARD_NO=o.BANK_CARD_NO AND bc.APP_ID=o.APP_ID
+        WHERE o.ID=#{id}
+        GROUP BY o.ID
+    </select>
+
+    <update id="updateAuditStatus">
+        UPDATE orders
+        SET
+        OPT_STATUS=#{orders.optStatus},AUDITOR_ID=#{orders.auditorId},AUDIT_STATUS=#{orders.auditStatus},
+        AUDIT_TIME=#{orders.auditTime},AUDIT_AGREED=#{orders.auditAgreed},REMARK=#{orders.remark}
+        <if test="@Ognl@isNotEmpty(orders.orderNo)">, ORDER_NO = #{orders.orderNo}</if>
+        <if test="@Ognl@isNotEmpty(orders.merId)">, MER_ID = #{orders.merId}</if>
+        <if test="@Ognl@isNotEmpty(orders.tranNo)">, TRAN_NO = #{orders.tranNo}</if>
+        <if test="@Ognl@isNotEmpty(orders.successTime)">, SUCCESS_TIME = #{orders.successTime}</if>
+        <if test="@Ognl@isNotEmpty(orders.charge)">, CHARGE = #{orders.charge}</if>
+        <if test="@Ognl@isNotEmpty(orders.chargePercent)">, CHARGE_PERCENT = #{orders.chargePercent}</if>
+        <if test="@Ognl@isNotEmpty(orders.llCharge)">, LL_CHARGE = #{orders.llCharge}</if>
+        <if test="@Ognl@isNotEmpty(orders.llChargePercent)">, LL_CHARGE_PERCENT = #{orders.llChargePercent}</if>
+        WHERE ID=#{orders.id}
+    </update>
+
+    <update id="updateAuditStatusUnionStat">
+        UPDATE orders
+        SET UNION_STAT =#{orders.unionStat},AUDITOR_ID=#{orders.auditorId},AUDIT_STATUS=#{orders.auditStatus}
+        ,AUDIT_TIME=#{orders.auditTime},AUDIT_AGREED=#{orders.auditAgreed},REMARK=#{orders.remark}
+        <if test="@Ognl@isNotEmpty(orders.orderNo)">, ORDER_NO = #{orders.orderNo}</if>
+        <if test="@Ognl@isNotEmpty(orders.merId)">, MER_ID = #{orders.merId}</if>
+        WHERE ID=#{orders.id}
+    </update>
+
+    <select id="getBankOutCheckList" resultType="map">
+        SELECT o.ORDER_NO orderNo,o.ID AS id,o.CREATE_TIME AS createTime,o.AMOUNT AS amount,o.BANK_NAME AS
+        bankName,o.BANK_CARD_NO AS bankCardNo,o.AUDIT_AGREED AS auditAgreed
+        ,au.NAME AS appName
+        ,o.NAME AS bankCaidOpenName,o.MOBILE mobile
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        <where>
+            o.ORDER_TYPE=1
+            AND o.AUDIT_STATUS=0
+            <if test="@Ognl@isNotEmpty(map.bankName)">
+                AND o.BANK_NAME=#{map.bankName}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{map.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{map.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.unionStat)">
+                and o.UNION_STAT in (${map.unionStat})
+            </if>
+        </where>
+        ORDER BY o.CREATE_TIME DESC
+    </select>
+
+    <select id="getOrderElectronicPage" resultType="Map">
+        SELECT orders.ID as id , orders.SUCCESS_TIME as successTime, app_user.MOBILE as mobile,
+        orders.ORDER_TYPE as orderType,orders.TRAN_NO as tranNo,
+        orders.ORDER_NO as orderNo,orders.BANK_TYPE as bankType ,orders.AMOUNT as amount ,
+        orders.LL_CHARGE as llCharge,orders.CHARGE as charge , orders.BANK_TYPE AS payType
+        FROM orders
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            orders.OPT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(orderNo)">
+                AND orders.ORDER_NO = #{orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(orderType)">
+                <if test="orderType == 1 ">
+                    AND orders.ORDER_TYPE = #{orderType}
+                </if>
+                <if test="orderType == 0 ">
+                     AND orders.BANK_TYPE = '09' AND orders.ORDER_TYPE = #{orderType}
+                </if>
+                <if test="orderType == 2 ">
+                     AND orders.BANK_TYPE = '14' AND orders.ORDER_TYPE = #{orderType}
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(startDate)">
+                AND orders.SUCCESS_TIME &gt; #{startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(endDate)">
+                AND orders.SUCCESS_TIME &lt; #{endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )
+            </if>
+        </where>
+        ORDER BY orders.ID DESC
+    </select>
+
+    <select id="selectInfoById" resultMap="ordersDtoMap">
+        SELECT o.ID,o.SUCCESS_TIME,o.AMOUNT,o.NAME,o.BANK_NAME,o.BANK_CARD_NO,o.REMARK,o.APP_ID,o.ORDER_NO
+        , o.ORDER_TYPE , o.BANK_TYPE, o.MER_ID,o.CHARGE_PERCENT ,o.CHARGE ,o.LL_CHARGE_PERCENT , o.LL_CHARGE
+        ,au.NAME AS APP_NAME,au.mobile AS APP_MOBILE , o.TRAN_NO AS tranNo , o.BANK_CARD_NO as bankCardNo
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        WHERE o.ID=#{id}
+    </select>
+
+
+    <update id="updateOptStatusById">
+        UPDATE orders
+        SET OPT_STATUS=#{optStatus}
+        WHERE ID=#{id}
+    </update>
+    <select id="getCheckRecordListPage" resultMap="ordersDtoMap">
+        SELECT
+        o.ID,o.CREATE_TIME,o.AMOUNT,o.BANK_NAME,o.BANK_CARD_NO,o.REMARK,o.OPT_STATUS,o.ORDER_NO,o.AUDIT_AGREED,o.SUCCESS_TIME,o.AUDIT_TIME
+        ,au.NAME AS APP_NAME, au.MOBILE AS APP_MOBILE
+        ,o.NAME AS BANK_CAID_OPEN_NAME
+        ,o.AUDITOR_ID AS auditorId
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        <where>
+            o.ORDER_TYPE=1
+            AND o.AUDIT_STATUS=#{ordersDto.auditStatus}
+            <if test="@Ognl@isNotEmpty(ordersDto.bankName)">
+                AND o.BANK_NAME=#{ordersDto.bankName}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE  CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.optStatus)">
+                AND o.OPT_STATUS=#{ordersDto.optStatus}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.orderNo)">
+                AND o.ORDER_NO=#{ordersDto.orderNo}
+            </if>
+        </where>
+        GROUP BY o.ID
+        ORDER BY o.CREATE_TIME DESC
+    </select>
+
+    <select id="getBankOutCheckRecordList" resultType="map">
+        SELECT o.ID,o.CREATE_TIME AS createTime,o.AMOUNT AS amount,o.BANK_NAME AS bankName,o.BANK_CARD_NO AS
+        bankCardNo,o.AUDIT_AGREED AS auditAgreed, o.OPT_STATUS AS optStatus,o.ORDER_NO AS orderNo
+        ,au.NAME AS appName, au.MOBILE AS appMobile
+        ,o.NAME AS bankCaidOpenName
+        ,o.AUDITOR_ID AS auditorId
+        ,o.AUDIT_TIME AS auditTime
+        FROM orders AS o
+        LEFT JOIN app_user AS au ON au.ID=o.APP_ID
+        <where>
+            o.ORDER_TYPE=1
+            AND o.AUDIT_STATUS=#{map.auditStatus}
+            <if test="@Ognl@isNotEmpty(map.bankName)">
+                AND o.BANK_NAME=#{map.bankName}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{map.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{map.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{map.appMobile},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.optStatus)">
+                AND o.OPT_STATUS=#{map.optStatus}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.orderNo)">
+                AND o.ORDER_NO=#{map.orderNo}
+            </if>
+        </where>
+        ORDER BY o.CREATE_TIME DESC
+    </select>
+
+    <select id="getInfoBuyCourse" parameterType="long" resultType="map">
+        SELECT   o.APP_ID appId,au3.NAME name,au3.MOBILE mobile,o.REAL_AMOUNT realAmount,o.SUCCESS_TIME successTime,o.TRAN_NO tranNo,o.ORDER_NO orderNo,o.BANK_TYPE bankType,
+                 au1.ID teacherId, au1.NAME teacherName,at1.AMOUNT teacherAmount,
+                 au2.ID distributorId, au2.NAME distributorName,at2.AMOUNT distributorAmount,
+                 c.DIVIDE_SCALE divideScale,o.ORDER_TYPE orderType
+        FROM orders o
+        LEFT JOIN account_track at1 ON at1.ORDER_ID = o.ID  AND at1.RETURN_MONEY_LEVEL = '0'  AND at1.TO_ACCOUNT_ID !=-8888
+        LEFT JOIN account_track at2 ON at2.ORDER_ID = o.ID AND  at2.RETURN_MONEY_LEVEL = '1'  AND at2.TO_ACCOUNT_ID !=-8888
+        LEFT JOIN app_user au1 ON au1.ID =  at1.TO_ACCOUNT_ID
+        LEFT JOIN app_user au2 ON au2.ID =  at2.TO_ACCOUNT_ID
+        LEFT JOIN app_user au3 ON au3.ID =  o.APP_ID
+        LEFT JOIN join_course_record j on j.ID = o.JOIN_COURSE_ID
+        LEFT JOIN course c ON  c.ID = j.COURSE_ID
+        WHERE o.ID = #{id} AND at1.FORM_ACCOUNT_ID
+    </select>
+
+    <update id="updateOptStatusFail">
+        update orders set OPT_STATUS = '2' WHERE JOIN_COURSE_ID = #{joinCourseId} and OPT_STATUS = '0'
+    </update>
+
+    <select id="getOrderElectronic" resultType="Map">
+        SELECT orders.ID as id , orders.SUCCESS_TIME as successTime, app_user.MOBILE as mobile,
+        orders.ORDER_TYPE as orderType,orders.TRAN_NO as tranNo,
+        orders.ORDER_NO as orderNo,orders.BANK_TYPE as bankType ,orders.AMOUNT as amount ,
+        orders.LL_CHARGE as llCharge,orders.CHARGE as charge,app_user.NAME AS userName,
+        orders.BANK_NAME AS bankName , orders.BANK_CARD_NO AS bankCardNo
+        FROM orders
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            orders.OPT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(map.orderNo)">
+                AND orders.ORDER_NO = #{map.orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.orderType)">
+                AND orders.ORDER_TYPE = #{map.orderType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startDate)">
+                AND orders.SUCCESS_TIME &gt; #{map.startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endDate)">
+                AND orders.SUCCESS_TIME &lt; #{map.endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+        </where>
+        ORDER BY orders.ID DESC
+    </select>
+
+    <!--提现电子回单 -->
+    <select id="getwithdrawalsPage" resultType="Map">
+        SELECT orders.ID as id , orders.SUCCESS_TIME as successTime, app_user.MOBILE as mobile,
+        orders.ORDER_TYPE as orderType,orders.TRAN_NO as tranNo,orders.BANK_NAME AS bankName,
+        orders.ORDER_NO as orderNo,orders.AMOUNT as amount,app_user.NAME AS userName , orders.BANK_CARD_NO AS bankCardNo
+        FROM orders
+        LEFT JOIN app_user ON app_user.ID = orders.APP_ID
+        <where>
+            orders.OPT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(map.orderNo)">
+                AND orders.ORDER_NO = #{map.orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.orderType)">
+                AND orders.ORDER_TYPE = #{map.orderType} AND orders.AUDIT_STATUS = '1'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startDate)">
+                AND orders.SUCCESS_TIME &gt; #{map.startDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endDate)">
+                AND orders.SUCCESS_TIME &lt; #{map.endDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND app_user.MOBILE LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+        </where>
+        ORDER BY orders.ID DESC
+    </select>
+
+    <select id="findIncomePage" resultMap="ordersDtoMap">
+        SELECT o.CREATE_TIME , o.ORDER_NO, o.TRAN_NO , au.`NAME` APP_NAME ,
+        au.MOBILE  APP_MOBILE, o.BANK_TYPE , o.AMOUNT , o.REMARK
+        FROM orders o
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        <where>
+            o.ORDER_TYPE IN ('3','5') AND o.OPT_STATUS = '1'
+            <if test="ordersDto.bankType != 0 ">
+                AND o.BANK_TYPE = #{ordersDto.bankType}
+            </if>
+            <if test="ordersDto.bankType == 0  ">
+                AND o.BANK_TYPE IN ('13','14','15','17','18')
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="ordersDto.appId > 0 ">
+                AND au.ID  = #{ordersDto.appId}
+            </if>
+        </where>  ORDER BY o.CREATE_TIME DESC
+    </select>
+
+    <select id="findIncome" resultType="Map">
+        SELECT o.CREATE_TIME , o.ORDER_NO, o.TRAN_NO , o.REMARK,
+        au.`NAME` APP_NAME , au.MOBILE  APP_MOBILE, o.BANK_TYPE , o.AMOUNT
+        FROM orders o
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        <where>
+            o.ORDER_TYPE IN ('3','5') AND o.OPT_STATUS = '1'
+            <if test="ordersDto.bankType != 0 ">
+                AND o.BANK_TYPE = #{ordersDto.bankType}
+            </if>
+            <if test="ordersDto.bankType == 0  ">
+                AND o.BANK_TYPE IN ('13','14','15','17','18')
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="ordersDto.appId > 0 ">
+                AND au.ID  = #{ordersDto.appId}
+            </if>
+        </where>  ORDER BY o.CREATE_TIME DESC
+    </select>
+
+    <select id="findIncomeCount" resultType="java.math.BigDecimal">
+        SELECT SUM(o.AMOUNT)
+        FROM orders o
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        <where>
+            o.ORDER_TYPE IN ('3','5') AND o.OPT_STATUS = '1'
+            <if test="ordersDto.bankType != 0 ">
+                AND o.BANK_TYPE = #{ordersDto.bankType}
+            </if>
+            <if test="ordersDto.bankType == 0  ">
+                AND o.BANK_TYPE IN ('13','14','15','17')
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.CREATE_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.CREATE_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="ordersDto.appId > 0 ">
+                AND au.ID  = #{ordersDto.appId}
+            </if>
+        </where>  ORDER BY o.CREATE_TIME DESC
+    </select>
+
+    <select id="findExpenditurePage" resultMap="ordersDtoMap">
+        SELECT o.SUCCESS_TIME CREATE_TIME, o.ORDER_NO, o.TRAN_NO , au.`NAME` APP_NAME , au.MOBILE  APP_MOBILE
+        , o.BANK_TYPE , o.AMOUNT FROM orders o
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        <where>
+            o.ORDER_TYPE = '1' AND o.AUDIT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.SUCCESS_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.SUCCESS_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="ordersDto.appId > 0 ">
+                AND au.ID  = #{ordersDto.appId}
+            </if>
+        </where>
+            ORDER BY o.SUCCESS_TIME DESC
+    </select>
+
+    <select id="findExpenditureCount" resultType="java.math.BigDecimal">
+        SELECT sum(o.AMOUNT) FROM orders o
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        <where>
+            o.ORDER_TYPE = '1' AND o.AUDIT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.SUCCESS_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.SUCCESS_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="ordersDto.appId > 0 ">
+                AND au.ID  = #{ordersDto.appId}
+            </if>
+        </where>
+        ORDER BY o.SUCCESS_TIME DESC
+    </select>
+
+    <select id="findExpenditure" resultType="Map">
+        SELECT o.SUCCESS_TIME CREATE_TIME , o.ORDER_NO, o.TRAN_NO , au.`NAME` APP_NAME , au.MOBILE  APP_MOBILE
+        , o.BANK_TYPE , o.AMOUNT FROM orders o
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        <where>
+            o.ORDER_TYPE = '1' AND o.AUDIT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeBegin)">
+                AND o.SUCCESS_TIME &gt; #{ordersDto.createTimeBegin}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.createTimeEnd)">
+                AND o.SUCCESS_TIME &lt; #{ordersDto.createTimeEnd}
+            </if>
+            <if test="@Ognl@isNotEmpty(ordersDto.appMobile)">
+                AND au.MOBILE LIKE CONCAT('%',#{ordersDto.appMobile},'%' )
+            </if>
+            <if test="ordersDto.appId > 0 ">
+                AND au.ID  = #{ordersDto.appId}
+            </if>
+        </where>
+        ORDER BY o.SUCCESS_TIME DESC
+    </select>
+
+    <select id="findCourseId" resultType="Long">
+        SELECT jcr.COURSE_ID FROM orders o
+        LEFT JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+        WHERE o.ID = #{orderId}
+    </select>
+    <select id="findCourseIds" resultType="java.util.Map">
+        SELECT o.ID , jcr.COURSE_ID FROM orders o
+        LEFT JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+    </select>
+    <!-- 1.6.5审核通过后延期7天提现 -->
+    <update id="updateOrderAuditById">
+        UPDATE orders  SET OPT_STATUS=#{order.optStatus},AUDIT_AGREED=#{order.auditAgreed },AUDITOR_ID=#{order.auditorId},AUDIT_TIME=#{order.auditTime} WHERE ID=#{order.id}
+    </update>
+    <!-- 查询审核成功但还未提现到账的订单 -->
+    <select id="findWithDrawList" resultMap="ordersMap">
+        select <include refid="ordersSql"/> from orders where ORDER_TYPE=1 AND OPT_STATUS=1 AND AUDIT_STATUS=1 and TRAN_NO is null
+    </select>
+    <select id="getWithDrawTime" resultType="string">
+        select con.content from system_config con where con.status = 1 and con.type = 1
+    </select>
+</mapper>

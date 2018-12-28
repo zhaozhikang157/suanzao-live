@@ -1,0 +1,80 @@
+
+
+.jBoxN3-volume-container{
+    position:absolute;
+    top:52px;left:0px;right:0px;
+    height:40px;opacity:0;
+    -webkit-transition:opacity .2s;
+    transition:opacity .2s
+}
+#demoN3:hover .jBoxN3-volume-container{
+    display:block;opacity:1
+}
+.jBoxN3-volume{
+    font-size:16px;
+    line-height:40px;
+    color:#7C8690;width:40px;height:40px;
+    text-align:center;color:#8F99A4;
+    position:absolute;top:0px;cursor:pointer
+}
+.jBoxN3-volume:hover{
+    color:#505963
+}
+.jBoxN3-volume.active,.jBoxN3-volume.active:hover{
+    color:#03ADE0
+}
+.icon-volume-mute{
+    left:20px
+}
+.icon-volume-low{
+    left:60px
+}
+.icon-volume-medium{left:100px}
+
+
+.jBox-content{
+    background-size: 46px 46px;
+    background-position-y:20px;
+
+}
+.jBox-container{
+    opacity:0.85;
+}
+.jBox-Notice .jBox-content{
+    background: url(../img/info.png) no-repeat 15px center !important;
+    max-width: 500px;
+}
+.jBox-Notice-error .jBox-content{
+    background: url(../img/error.png) no-repeat 15px center !important;
+    max-width: 500px;
+}
+.jBox-Notice-warning .jBox-content{
+    background: url(../img/warning.png) no-repeat 15px center !important;
+    max-width: 500px;
+}
+.jBox-Notice-info .jBox-content{
+    background: url(../img/info.png) no-repeat 15px center !important;
+    max-width: 500px;
+}
+.jBox-Notice-success .jBox-content{
+    background: url(../img/success.png) no-repeat 15px center !important;
+    max-width: 500px;
+}
+.jBox-Notice-help .jBox-content{
+    background: url(../img/help.png) no-repeat 15px center !important;
+
+    max-width: 500px;
+}
+
+.jBox-footer{
+    border-top: 1px solid #ddd;
+    border-radius:0 0 3px 3px;
+    padding: 10px 15px;
+    background: #f4f5f6;
+}
+.jBox-footer button{
+    margin-left: 15px ;
+}
+.jBox-footer div {
+    text-align: right;
+}

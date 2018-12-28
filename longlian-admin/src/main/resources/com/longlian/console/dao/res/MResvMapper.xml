@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.res.MResvMapper">
+  <resultMap id="BaseResultMap" type="MRes">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="res_pic" jdbcType="VARCHAR" property="resPic" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, parent_id, type, sort, status , url , res_pic , description
+  </sql>
+   <sql id="Column_List">
+    a.id, a.name, a.parent_id, a.type, a.sort, a.status, a.url , a.res_pic
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from `longlian-res`.m_res
+    where id = #{id}
+  </select>
+  
+   <select id="selectByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select distinct
+    <include refid="Base_Column_List" />
+    from `longlian-res`.m_res
+    where status = 0 and type = #{type} order by sort
+  </select>
+  
+  <select id="selectByRes" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Column_List" />
+    from `longlian-res`.m_res c left join `longlian-res`.m_res_rel b on c.id = b.res_id left join `longlian-res`.m_res a on b.rel_id = a.id
+    where c.status = 0 and a.type=#{type} and a.status = 0 and c.id in (${ids}) order by a.sort
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from `longlian-res`.m_res
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" parameterType="MRes" >
+    insert into `longlian-res`.m_res (name, parent_id, type, sort, status ,description , url)
+    values (#{name}, #{parentId}, #{type}, #{sort}, #{status} , #{description} , #{url})
+    <selectKey keyProperty="id" resultType="long">
+      SELECT LAST_INSERT_ID() AS ID
+    </selectKey>
+  </insert>
+
+  <insert id="insertSelective" parameterType="MRes">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into `longlian-res`.m_res
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@Ognl@isNotEmpty(name)">
+        name,
+      </if>
+      <if test="@Ognl@isNotEmpty(parentId)">
+        parent_id,
+      </if>
+      <if test="@Ognl@isNotEmpty(type)">
+        type,
+      </if>
+      <if test="@Ognl@isNotEmpty(sort)">
+        sort,
+      </if>
+      <if test="@Ognl@isNotEmpty(status)">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@Ognl@isNotEmpty(name)">
+        #{name},
+      </if>
+      <if test="@Ognl@isNotEmpty(parentId)">
+        #{parentId},
+      </if>
+      <if test="@Ognl@isNotEmpty(type)">
+        #{type},
+      </if>
+      <if test="@Ognl@isNotEmpty(sort)">
+        #{sort},
+      </if>
+      <if test="@Ognl@isNotEmpty(status)">
+        #{status},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="MRes">
+    update `longlian-res`.m_res
+    <set>
+      <if test="@Ognl@isNotEmpty(name)">
+        name = #{name},
+      </if>
+      <if test="@Ognl@isNotEmpty(parentId)">
+        parent_id = #{parentId},
+      </if>
+      <if test="@Ognl@isNotEmpty(type)">
+        type = #{type},
+      </if>
+      <if test="@Ognl@isNotEmpty(sort)">
+        sort = #{sort},
+      </if>
+      <if test="@Ognl@isNotEmpty(status)">
+        status = #{status},
+      </if>
+      <if test="@Ognl@isNotEmpty(description)">
+        description = #{description}
+      </if>
+      <if test="@Ognl@isNotEmpty(url)">
+        url = #{url}
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="MRes">
+    update `longlian-res`.m_res
+    set res_name = #{name},
+      parent_id = #{parentId},
+      type = #{type},
+      sort = #{sort},
+      status = #{status},
+      description = #{description},
+      url = #{url}
+    where id = #{id}
+  </update>
+
+  <select id="getListPage" parameterType="MRes" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List" /> FROM `longlian-res`.m_res
+        <where>
+            type = #{mRes.type}
+          <if test="@Ognl@isNotEmpty(mRes.name)"> AND `name` like CONCAT('%',#{mRes.name},'%')</if>
+          <if test="@Ognl@isNotEmpty(mRes.status)"> AND STATUS=#{mRes.status}</if>
+        </where>
+  </select>
+
+  <!--根据角色名称查找-->
+  <select id="findRoleName" parameterType="String" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" /> FROM `longlian-res`.m_res WHERE type = '002' AND `name` = #{name}
+  </select>
+
+  <update id="deleteRoleById" parameterType="String">
+      UPDATE `longlian-res`.m_res SET status = 1 WHERE id IN (${item})
+  </update>
+
+  <!--根据角色ID查找所有的资源-->
+  <select id="findMenuByRoleId" parameterType="long" resultType="long">
+      SELECT r.id FROM `longlian-res`.m_res_rel rr LEFT JOIN `longlian-res`.m_res r ON rr.rel_id = r.id
+        WHERE rr.res_id = #{res_id} AND r.type='003' AND r.status = 0
+  </select>
+
+  <update id="deleteCalatlog" parameterType="long">
+    UPDATE `longlian-res`.m_res SET status = 1 WHERE id = #{id}
+  </update>
+  
+  <select id="findMenuByParent" parameterType="MRes" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List" /> FROM `longlian-res`.m_res
+        <where>
+          <if test="@Ognl@isNotEmpty(mRes.type)"> AND type=#{mRes.type}</if>
+          <if test="@Ognl@isNotEmpty(mRes.status)"> AND STATUS=#{mRes.status}</if>
+          <if test="@Ognl@isNotEmpty(mRes.parentId)"> AND parent_id=#{mRes.parentId}</if>
+        </where>
+        order by sort
+  </select>
+
+	<update id="updateMenuSort" parameterType="MRes">
+		   update `longlian-res`.m_res set sort=${sort} where id = ${id}
+	</update>
+
+  <!--判断角色下面是否有员工-->
+  <select id="find" parameterType="long" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" /> FROM `longlian-res`.m_res
+    WHERE id in (SELECT  res_id  FROM m_res_rel WHERE  rel_id =#{id})  and  type in('001','002')
+  </select>
+
+  <update id="deleteById" parameterType="long">
+    DELETE FROM  `longlian-res`.m_res  WHERE  id = #{id}
+  </update>
+  
+  <!-- 根据url查询id -->
+  <select id="findResourceIdByUrl" resultMap="BaseResultMap" parameterType="MRes">
+    SELECT <include refid="Base_Column_List" /> FROM `longlian-res`.m_res
+    WHERE type = '003' and status = 0 and url = #{url}
+  </select>
+  
+</mapper>

@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.LlAccountTrackMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.LlAccountTrack">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="FORM_ACCOUNT_ID" jdbcType="BIGINT" property="formAccountId"/>
+        <result column="TO_ACCOUNT_ID" jdbcType="BIGINT" property="toAccountId"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount"/>
+        <result column="CURR_BALANCE" jdbcType="DECIMAL" property="currBalance"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="TRACK_ID" jdbcType="BIGINT" property="trackId"/>
+        <result column="ORDER_ID" jdbcType="BIGINT" property="orderId"/>
+        <result column="RETURN_MONEY_LEVEL" jdbcType="INTEGER" property="returnMoneyLevel"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    FORM_ACCOUNT_ID, TO_ACCOUNT_ID, TYPE, AMOUNT,
+    CURR_BALANCE, CREATE_TIME, TRACK_ID, ORDER_ID,RETURN_MONEY_LEVEL
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        ID ,
+        <include refid="Base_Column_List"/>
+        from ll_account_track
+        where ID = #{id}
+    </select>
+
+    <insert id="insert" parameterType="LlAccountTrack">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ll_account_track (
+        <include refid="Base_Column_List"></include>
+        )
+        values (#{formAccountId}, #{toAccountId}, #{type}, #{amount}, #{currBalance}, #{createTime}, #{trackId},
+        #{orderId},#{returnMoneyLevel})
+    </insert>
+
+    <select id="getProfit" parameterType="java.lang.Long" resultType="Map">
+      select ll_account_track.CREATE_TIME as createTime,
+      app_user.MOBILE as mobile,
+      ll_account_track.AMOUNT as amount,
+      ll_account_track.RETURN_MONEY_LEVEL as level
+      from ll_account_track
+      LEFT JOIN app_user ON app_user.ID = ll_account_track.FORM_ACCOUNT_ID
+      WHERE ll_account_track.TO_ACCOUNT_ID = #{id} AND ll_account_track.RETURN_MONEY_LEVEL IN (1,2,3)
+      AND ll_account_track.TYPE=0
+      ORDER BY ll_account_track.CREATE_TIME DESC
+  </select>
+
+    <select id="getWalletsPage" resultType="Map">
+        SELECT ID , AMOUNT as amount , TYPE as type ,RETURN_MONEY_LEVEL AS status  , CREATE_TIME AS createTime
+        FROM ll_account_track WHERE TO_ACCOUNT_ID = #{id}
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <select id="getWalletsNewPage" resultType="Map">
+        SELECT
+            t.ID,
+            t.amount,
+            t.type,
+            t.RETURN_MONEY_LEVEL AS `status`,
+            t.CREATE_TIME AS createTime
+        FROM
+            ll_account_track t
+        WHERE
+	        <if test="@Ognl@isNotEmpty(returnMoneyLevel)">
+	        	 t.RETURN_MONEY_LEVEL = #{returnMoneyLevel} 
+	        </if>
+	        <if test="@Ognl@isEmpty(returnMoneyLevel)">
+	             t.RETURN_MONEY_LEVEL IN (0, 1, 2, 3)
+	        </if>
+        	AND t.TO_ACCOUNT_ID = #{id}
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+
+    <select id="findMyCourseProfitPage" resultType="Map">
+        SELECT au.`NAME` name, o.AMOUNT oAmount, ll.AMOUNT amount, ll.CREATE_TIME createTime,c.LIVE_WAY as live_way
+        FROM account_track ll
+        LEFT JOIN orders o ON o.ID = ll.ORDER_ID
+        LEFT JOIN join_course_record jcr ON jcr.ID = o.JOIN_COURSE_ID
+        LEFT JOIN
+         (
+        select * ,app_id appId,id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+        ) c ON jcr.COURSE_ID = c.cid
+        LEFT JOIN app_user au ON au.ID = o.APP_ID
+        WHERE ll.TO_ACCOUNT_ID = #{appId}  AND ll.TYPE = '0'
+        AND o.ORDER_TYPE = '0' AND o.OPT_STATUS = '1' AND jcr.COURSE_ID = #{courseId}
+        AND ll.RETURN_MONEY_LEVEL = '0'
+        ORDER BY ll.CREATE_TIME DESC 
+    </select>
+
+    <select id="relayCourseIncomePage" resultType="Map">
+        SELECT
+            t.ID,
+            t.ORI_APP_ID,
+            t.ORI_COURSE_ID,
+            t.REL_COURSE_ID,
+            t.PAY_APP_ID,
+            sum(t2.PAY_COUNT) PAY_COUNT,
+            IFNULL(SUM(t2.CHARGE), 0) TOTAL,
+            MAX(t2.CREATE_TIME) CREATE_TIME,
+            t3.`NAME` USER_NAME,
+            t3.PHOTO USER_PHOTO
+        FROM
+        (
+        SELECT
+            t0.ID,
+            t0.ORI_APP_ID,
+            t0.ORI_COURSE_ID,
+            t0.REL_COURSE_ID,
+            t0.PAY_APP_ID,
+            t0.CHARGE,
+            t0.CREATE_TIME
+        FROM
+          relay_income t0
+        WHERE
+            t0.ORI_APP_ID = #{appId}
+            AND t0.ORI_COURSE_ID = #{courseId}
+            AND t0.TYPE = 1
+        ) t
+        LEFT JOIN (
+            SELECT
+                t11.PAY_APP_ID,
+                t11.CHARGE,
+                t11.REL_COURSE_ID,
+                t12.APP_ID,
+                t11.CREATE_TIME,
+                if(t11.TYPE = 2, 1, 0) PAY_COUNT
+            FROM
+                relay_income t11
+            LEFT JOIN course_relay t12 ON t11.REL_COURSE_ID = t12.ID
+            ) t2 ON t.PAY_APP_ID = t2.APP_ID
+            AND t.REL_COURSE_ID = t2.REL_COURSE_ID
+            LEFT JOIN app_user t3 ON t.PAY_APP_ID = t3.ID
+        <where>
+            <if test="today">
+                DATE_FORMAT(t2.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+            </if>
+        </where>
+        GROUP BY
+          t.PAY_APP_ID,
+          t.REL_COURSE_ID
+        ORDER BY
+            t.CREATE_TIME DESC
+    </select>
+
+    <resultMap id="DtoBaseResultMap" type="com.longlian.dto.LlAccountTrackDto" extends="BaseResultMap">
+        <result column="ORDER_NO" property="orderNo"/>
+        <result column="TRAN_NO" property="tranNo"/>
+        <result column="BANK_TYPE" property="bankType"/>
+        <result column="O_AMOUNT" property="oAmount"/>
+        <result column="REAL_AMOUNT" property="realAmount"/>
+        <result column="MOBILE" property="mobile"/>
+        <result column="REMARK" property="remark"/>
+    </resultMap>
+
+    <!--查询电子回单 -->
+    <select id="getRechargePage" resultMap="DtoBaseResultMap">
+        SELECT ll.AMOUNT , o.ORDER_NO , o.TRAN_NO , o.BANK_TYPE  , o.REMARK,
+        o.AMOUNT O_AMOUNT, o.REAL_AMOUNT , ll.CREATE_TIME , au.MOBILE , ll.ID
+        FROM ll_account_track ll
+        LEFT JOIN app_user au ON au.ID = ll.TO_ACCOUNT_ID
+        LEFT JOIN orders o ON o.ID = ll.ORDER_ID
+        <where>
+            ll.TYPE = '0' AND ll.RETURN_MONEY_LEVEL = '0' AND o.OPT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(llAccountTrackDto.startTime)">
+                AND ll.CREATE_TIME &gt; #{llAccountTrackDto.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(llAccountTrackDto.endTime)">
+                AND ll.CREATE_TIME &lt; #{llAccountTrackDto.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(llAccountTrackDto.orderNo)">
+                AND o.ORDER_NO = #{llAccountTrackDto.orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(llAccountTrackDto.mobile)">
+                AND au.MOBILE = #{llAccountTrackDto.mobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(llAccountTrackDto.bankType)">
+                AND o.BANK_TYPE = #{llAccountTrackDto.bankType}
+            </if>
+        </where>
+        ORDER BY ll.CREATE_TIME DESC
+    </select>
+
+    <!--导出电子回单 充值 -->
+    <select id="getRecharge" resultType="Map">
+        SELECT ll.AMOUNT , o.ORDER_NO , o.TRAN_NO , o.BANK_TYPE  ,o.REMARK,
+        o.AMOUNT O_AMOUNT, o.REAL_AMOUNT , ll.CREATE_TIME , au.MOBILE , ll.ID
+        FROM ll_account_track ll
+        LEFT JOIN app_user au ON au.ID = ll.TO_ACCOUNT_ID
+        LEFT JOIN orders o ON o.ID = ll.ORDER_ID
+        <where>
+            ll.TYPE = '0' AND ll.RETURN_MONEY_LEVEL = '0' AND o.OPT_STATUS = '1'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND ll.CREATE_TIME &gt; #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND ll.CREATE_TIME &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.orderNo)">
+                AND o.ORDER_NO = #{map.orderNo}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appMobile)">
+                AND au.MOBILE = #{map.appMobile}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.bankType)">
+                AND o.BANK_TYPE = #{map.bankType}
+            </if>
+        </where>
+        ORDER BY ll.CREATE_TIME DESC
+    </select>
+
+    <select id="findOrderInfo" resultType="Map">
+        SELECT ll.RETURN_MONEY_LEVEL level, au.MOBILE mobile, au.ID appId, ll.AMOUNT mobile,
+        o.REAL_AMOUNT realAmount, o.AMOUNT oAmount ,o.TRAN_NO tranNo, o.ORDER_NO orderNo,
+        o.BANK_TYPE bankType,ll.CREATE_TIME createTime , o.LL_CHARGE llCharge , o.CHARGE charge
+        FROM ll_account_track ll
+        LEFT JOIN orders o ON o.ID = ll.ORDER_ID
+        LEFT JOIN app_user au ON au.ID = ll.TO_ACCOUNT_ID
+        WHERE ll.ID = #{id}
+    </select>
+
+    <select id="relayCourseIncomeStat" resultType="Map">
+      SELECT
+        t.ID,
+        t.ORI_APP_ID,
+        t.ORI_COURSE_ID,
+        t.REL_COURSE_ID,
+        t.PAY_APP_ID,
+        sum(t.CHARGE) CHARGE,
+        t.CREATE_TIME,
+        sum(t.RELAYER_CNT) RELAYER_CNT,
+        t.TYPE
+    FROM
+        (
+            SELECT
+                t0.ID,
+                t0.ORI_APP_ID,
+                t0.ORI_COURSE_ID,
+                t0.REL_COURSE_ID,
+                t0.PAY_APP_ID,
+                t0.CHARGE,
+                t0.CREATE_TIME,
+
+            IF (t0.TYPE = 1, 1, 0) RELAYER_CNT,
+            t0.type
+        FROM
+            relay_income t0
+        WHERE
+            t0.ORI_APP_ID = #{appId}
+        AND t0.ORI_COURSE_ID = #{courseId}
+        <if test="today">
+           AND DATE_FORMAT(t0.CREATE_TIME,'%y-%m-%d') = DATE_FORMAT(NOW(),'%y-%m-%d')
+        </if>
+        ) t
+    GROUP BY
+        t.type
+    </select>
+
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.mq.dao.UserFollowMqMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.UserFollow">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="APP_ID" jdbcType="BIGINT" property="appId" />
+    <result column="ROOM_ID" jdbcType="BIGINT" property="roomId" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="IS_READED"  property="isReaderd" />
+    <result column="THIRD_OPENID"  property="thirdOpenId" />
+    <result column="THIRD_WECHAT_APPID"  property="thirdWechatAppId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, APP_ID, ROOM_ID, CREATE_TIME, STATUS,IS_READED,THIRD_OPENID,THIRD_WECHAT_APPID
+  </sql>
+
+  <insert id="insert" parameterType="com.longlian.model.UserFollow">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_follow (APP_ID, ROOM_ID, CREATE_TIME, STATUS,THIRD_OPENID,THIRD_WECHAT_APPID)
+    values (#{appId}, #{roomId}, #{createTime}, #{status}, #{thirdOpenId}, #{thirdWechatAppId})
+  </insert>
+
+  <update id="update" parameterType="com.longlian.model.UserFollow">
+    update user_follow
+    set
+      STATUS = #{status}
+    where APP_ID = #{appId} and ROOM_ID = #{roomId}
+  </update>
+
+  <select id="getCountByUserIdAndRoomId" resultType="java.lang.Integer">
+   select count(1)
+    FROM user_follow  WHERE  ROOM_ID = #{roomId} AND  APP_ID = #{appId}
+  </select>
+
+  <update id="updataIsReaderd"  parameterType="long">
+    update user_follow
+    set
+    IS_READED ='1'
+    where ID = #{id}
+  </update>
+
+</mapper>

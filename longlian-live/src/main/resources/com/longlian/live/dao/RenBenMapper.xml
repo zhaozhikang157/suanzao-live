@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.RenBenMapper">
+    <resultMap id="advertisingMap" type="com.longlian.model.RenBenUser">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <insert id="insertRenBenUser" parameterType="com.longlian.model.RenBenUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into renben_user(user_name,phone,create_time) values(#{userName},#{phone},now())
+    </insert>
+    <select id="findRenBenUserByPhone" resultType="int">
+        select count(1) from renben_user where phone=#{phone}
+    </select>
+</mapper>

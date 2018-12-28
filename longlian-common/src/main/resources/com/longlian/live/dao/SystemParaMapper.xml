@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longlian.live.dao.SystemParaMapper" >
+
+    <sql id="SystemParaColumnSql">
+      `NAME`,`CODE`,`VALUE`,`DESCRIBE`
+    </sql>
+
+    <resultMap id="SystemParaMap" type="SystemPara">
+        <id column="ID" property="id"></id>
+        <result column="NAME" property="name"></result>
+        <result column="CODE" property="code"></result>
+        <result column="VALUE" property="value"></result>
+        <result column="DESCRIBE" property="describe"></result>
+    </resultMap>
+
+    <resultMap id="paraMap" type="java.util.Map">
+        <result column="CODE" property="code" javaType="string"></result>
+        <result column="VALUE" property="value" javaType="string"></result>
+        <result column="DESCRIBE" property="describe"></result>
+    </resultMap>
+    <!--获取列表-->
+    <select id="getListPage"  resultMap="SystemParaMap">
+      SELECT ID,
+      <include refid="SystemParaColumnSql"></include>
+        FROM system_para
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(systemPara.name)">
+            AND NAME = #{systemPara.name}
+            </if>
+        </where>
+    </select>
+    <select id="getAllList"  resultMap="paraMap">
+        SELECT CODE, VALUE , `DESCRIBE` FROM system_para
+    </select>
+
+    <!--根据id查询-->
+    <select id="selectById" parameterType="Long" resultMap="SystemParaMap">
+      SELECT ID,
+        <include refid="SystemParaColumnSql"></include>
+        FROM system_para
+        WHERE ID=#{id}
+    </select>
+
+    <select id="getCourseDivideScale" resultType="string">
+        SELECT VALUE FROM system_para WHERE CODE = '${code}'
+    </select>
+
+
+    <insert id="create" parameterType="SystemPara" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO system_para (`NAME`,`CODE`,`VALUE`,`DESCRIBE`)
+        VALUES (#{name},#{code},#{value},#{describe})
+    </insert>
+
+    <update id="update" parameterType="SystemPara">
+        UPDATE system_para SET  `NAME`=#{name},`CODE`=#{code},`VALUE`=#{value},`DESCRIBE`=#{describe}
+        WHERE ID=#{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM system_para WHERE ID IN (${ids})
+    </delete>
+
+    <select id="selectByCode" resultMap="SystemParaMap">
+        SELECT ID,<include refid="SystemParaColumnSql"></include>
+        FROM system_para
+        WHERE CODE=#{code}
+    </select>
+</mapper>

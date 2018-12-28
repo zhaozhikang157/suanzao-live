@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.CourseTypeMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.CourseType">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PIC_ADDRESS" jdbcType="VARCHAR" property="picAddress" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="ORDER_SORT" jdbcType="INTEGER" property="orderSort" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, NAME, PATH, PARENT_ID, STATUS, ORDER_SORT, CREATE_TIME, UPDATE_TIME
+  </sql>
+
+  <insert id="insert" parameterType="com.longlian.model.CourseType">
+
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_type (NAME, PIC_ADDRESS, REMARK, STATUS, ORDER_SORT)
+    values (#{name}, #{picAddress}, #{remark}, #{status}, #{orderSort})
+  </insert>
+
+  <update id="update" parameterType="com.longlian.model.CourseType">
+    update course_type
+    set NAME = #{name},
+      PIC_ADDRESS = #{picAddress},
+      REMARK = #{remark},
+      STATUS = #{status},
+      ORDER_SORT = #{orderSort}
+    where ID = #{id}
+  </update>
+
+  <select id="getCourseType" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"></include> FROM course_type WHERE STATUS='0' ORDER  by ORDER_SORT
+  </select>
+
+  <!--获取所有可用课程类型-->
+  <select id="getCourseTypes" resultType="java.util.Map">
+    SELECT ID AS id,NAME AS name FROM course_type WHERE STATUS='0' ORDER  by ORDER_SORT ASC
+  </select>
+</mapper>

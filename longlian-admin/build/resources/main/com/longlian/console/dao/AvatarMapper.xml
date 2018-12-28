@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.AvatarMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.Avatar">
+    <id column="ID" property="id" />
+    <result column="USER_NAME" property="userName" />
+    <result column="PHOTO" property="photo" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, USER_NAME, PHOTO
+  </sql>
+
+  <insert id="insertAcatar" parameterType="java.util.List">
+    insert into imp_user_avatar (USER_NAME, PHOTO) values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.userName}, #{item.photo})
+    </foreach>
+  </insert>
+
+  <select id="findPthotoByName" parameterType="String" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List"/> FROM imp_user_avatar WHERE USER_NAME = #{name}
+  </select>
+
+</mapper>

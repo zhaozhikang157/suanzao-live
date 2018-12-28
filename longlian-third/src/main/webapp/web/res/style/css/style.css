@@ -1,0 +1,83 @@
+.like,a{
+	padding: 0px 2px;
+}
+
+.form-horizontal-my-from{
+	width: 97%;
+}
+.ll_tab_header{
+	background:none;
+	height:35px;
+}
+.ll_tab{
+	border:0px;
+	height:50px;
+	font-size:16px;
+	width:100px;
+	font-family:微软雅黑;
+	float:left;
+	cursor:pointer;
+	line-height:50px;
+	text-align:center;
+	padding:0px;
+	margin-left:5px;
+	color:#939393;
+}
+.ll_tab:hover{
+	background:none;
+	color:#134a92;
+	border-bottom:1px solid #134a92;
+}
+.ll_tab_select{
+	background:none;
+	color:#134a92;
+	border-bottom:1px solid #134a92;
+}
+.ll_tab_pointer_left{
+	z-index:100;
+	height:28px;
+	width:24px;
+	line-height:30px;
+}
+.ll_tab_pointer_right{
+	z-index:100;
+	height:28px;
+	width:24px;
+	line-height:28px;
+}
+
+.base_layout_top{
+	position: absolute;
+	width: 100%;
+	height: 50px;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+}
+.base_layout_center{
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	right: 0px;
+	top: 50px;
+	bottom: 0px;
+}
+.like,.remove{
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 12px;
+	border-radius: 15px;
+	color: #fff;
+}
+.like:hover,.remove:hover{
+	color: #fff;
+	background: #00dbed;
+}
+.like{
+	background: #ff6666;
+}
+.remove{
+	background: #00bb9d;
+}

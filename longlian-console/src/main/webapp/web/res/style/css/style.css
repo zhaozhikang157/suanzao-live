@@ -1,0 +1,134 @@
+.vt{    font-size: 16px;margin-left: 38px;width: 600px;
+	margin-top: 10px;color: #1f0404;}
+/*.vp{margin-left: 40px;}*/
+.weixinCountp{margin-left: 52px;}
+ .androidCountp{margin-left: 61px;}
+.iosCountp{margin-left: 79px;}
+.visitDialog{border-radius: 10px; display:none; width: 800px;height: 200px;background-color: #ccccd6; margin-top: -400px;/* z-index: 99999; */ margin-left: 274px;position: absolute;}
+
+.subStay1{margin-left: 20px;    color: #41414a;}
+table.table-fixed-head .table-fixed-head-thead {
+	border-bottom: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	background: #fff;
+}
+.totalVisite{float: left;  font-size: 16px;
+	/*font-weight: bold;*/}
+.totalVisitCount{height:130px;width:340px;
+	/* margin: 13px; */
+	margin-left: 408px;
+	margin-top: -464px;
+	z-index: 999;
+	background: #e6dca9;
+	position: absolute;
+	border-radius: 10px;
+}
+.stay{    float: left;
+	margin-right: 20px;}
+.showSpan{color: blue;    cursor: pointer;  border-bottom: solid 1px;}
+.fixed-table-container{border-bottom:0px;}
+.like,a{
+	padding: 0px 2px;
+}
+
+.form-horizontal-my-from{
+	width: 97%;
+}
+.ll_tab_header{
+	background:none;
+	height:35px;
+}
+.ll_tab{
+	border:0px;
+	height:50px;
+	font-size:16px;
+	width:100px;
+	font-family:微软雅黑;
+	float:left;
+	cursor:pointer;
+	line-height:50px;
+	text-align:center;
+	padding:0px;
+	margin-left:5px;
+	color:#939393;
+}
+.ll_tab:hover{
+	background:none;
+	color:#134a92;
+	border-bottom:1px solid #134a92;
+}
+.ll_tab_select{
+	background:none;
+	color:#134a92;
+	border-bottom:1px solid #134a92;
+}
+.ll_tab_pointer_left{
+	z-index:100;
+	height:28px;
+	width:24px;
+	line-height:30px;
+}
+.ll_tab_pointer_right{
+	z-index:100;
+	height:28px;
+	width:24px;
+	line-height:28px;
+}
+
+.base_layout_top{
+	position: absolute;
+	width: 100%;
+	height: 50px;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+}
+.base_layout_center{
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	right: 0px;
+	top: 50px;
+	bottom: 0px;
+}
+.like,.remove{
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 12px;
+	border-radius: 15px;
+	color: #fff;
+}
+.like:hover,.remove:hover{
+	color: #fff;
+	background: #00dbed;
+}
+.like{
+	background: #ff6666;
+}
+.remove{
+	background: #00bb9d;
+}
+#form1 input {
+	border: none;
+}
+.tappic img {
+	/*display: block!important;*/
+	/*width: 105px!important;*/
+	/*height: 98px!important;*/
+	display: block;
+	width: 280px;
+	height: 156px;
+}
+.tappic {
+	float: left;
+}
+
+.picboxs {
+	margin-top: 20px;
+}
+.mobels{
+	line-height: 38px;
+	display: inline-block;
+}

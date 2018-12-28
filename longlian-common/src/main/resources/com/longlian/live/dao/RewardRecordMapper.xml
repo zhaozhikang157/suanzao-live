@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.RewardRecordMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.RewardRecord">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="SINGLE_AMOUNT" jdbcType="DECIMAL" property="singleAmount"/>
+        <result column="MEN_COUNT" jdbcType="INTEGER" property="menCount"/>
+        <result column="LL_ADD_MEN_COUNT" jdbcType="INTEGER" property="llAddMenCount"/>
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="COURSE_ID" property="courseId"/>
+        <result column="RELATION_APP_ID" property="relationAppId"/>
+        <result column="REMARK" property="remark"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    APP_ID, TYPE, SINGLE_AMOUNT, MEN_COUNT,LL_ADD_MEN_COUNT, AMOUNT, CREATE_TIME,RELATION_APP_ID,REMARK
+
+  </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from reward_record
+        where ID = #{id}
+    </select>
+
+
+    <insert id="insert" parameterType="com.longlian.model.RewardRecord">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into reward_record (APP_ID, TYPE, SINGLE_AMOUNT, MEN_COUNT,LL_ADD_MEN_COUNT, AMOUNT,
+        CREATE_TIME,COURSE_ID,RELATION_APP_ID,REMARK
+        )
+        values (#{appId}, #{type}, #{singleAmount}, #{menCount},#{llAddMenCount},
+        #{amount},#{createTime},#{courseId},#{relationAppId},#{remark}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.longlian.model.RewardRecord">
+
+    update reward_record
+    set APP_ID = #{appId},
+      TYPE = #{type},
+      SINGLE_AMOUNT = #{singleAmount},
+      MEN_COUNT = #{menCount},
+      AMOUNT = #{amount},
+      COURSE_ID = #{courseId}
+    where ID = #{id}
+  </update>
+
+    <!--推荐老师 成功过的老师记录-->
+    <select id="getRewardSuccessInvitationTeach" resultType="map">
+    SELECT RELATION_APP_ID relationAppId
+    from reward_record where TYPE = '1'  and RELATION_APP_ID > 0
+  </select>
+
+    <!--老师粉丝关注奖励 成功过的老师记录-->
+    <select id="getFollowRewardTeach" resultType="map">
+    SELECT APP_ID appId , FOLLOW_REWARD_ID followRewardId
+    from reward_record where TYPE = '2'  and FOLLOW_REWARD_ID > 0
+  </select>
+
+
+    <select id="getplatIncomePage" resultType="Map">
+        select TYPE as type , AMOUNT AS amount , CREATE_TIME AS createTime
+        FROM reward_record WHERE APP_ID = #{appId} ORDER BY CREATE_TIME DESC
+    </select>
+
+    <!--获取推介老师奖励列表-->
+    <select id="getRecommendTeacherListPage" resultType="java.util.Map">
+        SELECT r.ID id,r.AMOUNT amount,r.APP_ID recommendId,a1.`NAME` recommendName,a1.MOBILE recommendMobile,
+        r.RELATION_APP_ID recommendedId, a2.NAME recommendedName,r.CREATE_TIME createTime
+        FROM reward_record r
+        LEFT JOIN app_user a1 ON a1.ID=r.APP_ID
+        LEFT JOIN app_user a2 ON a2.ID = r.RELATION_APP_ID
+        <where>
+            r.TYPE = 1
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.recommendId)">
+                AND r.APP_ID = #{map.recommendId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.recommendName)">
+                AND a1.`NAME` LIKE CONCAT('%',#{map.recommendName},'%' )
+            </if>
+        </where>
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!--推介老师总金额-->
+    <select id="getRecommendTeacherAccount"  resultType="BigDecimal">
+        SELECT NULLIF(sum(r.AMOUNT),0.00)
+        FROM reward_record r
+        LEFT JOIN app_user a1 ON a1.ID=r.APP_ID
+        LEFT JOIN app_user a2 ON a2.ID = r.RELATION_APP_ID
+        <where>
+            r.TYPE = 1
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.recommendId)">
+                AND r.APP_ID = #{map.recommendId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.recommendName)">
+                AND a1.`NAME` LIKE CONCAT('%',#{map.recommendName},'%' )
+            </if>
+        </where>
+    </select>
+
+
+    <!--获取推介老师奖励列表   导出-->
+    <select id="getRecommendTeacherList" resultType="java.util.Map">
+        SELECT r.ID id,r.AMOUNT amount,r.APP_ID recommendId,a1.`NAME` recommendName,a1.MOBILE recommendMobile,
+        r.RELATION_APP_ID recommendedId, a2.NAME recommendedName,r.CREATE_TIME createTime
+        FROM reward_record r
+        LEFT JOIN app_user a1 ON a1.ID=r.APP_ID
+        LEFT JOIN app_user a2 ON a2.ID = r.RELATION_APP_ID
+        <where>
+            r.TYPE = 1
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.recommendId)">
+                AND r.APP_ID = #{map.recommendId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.recommendName)">
+                AND a1.`NAME` LIKE CONCAT('%',#{map.recommendName},'%' )
+            </if>
+        </where>
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+
+    <!--获取老师粉丝关注奖励列表-->
+    <select id="getFollowRewardRecordListPage" resultType="java.util.Map">
+        SELECT r.APP_ID appId,a.NAME name,a.MOBILE mobile,r.CREATE_TIME createTime,IFNULL(SUM(r.SINGLE_AMOUNT),0.00)
+        singleAmount,
+        IFNULL(SUM(r.REMARK),0) remark, IFNULL(SUM(r.AMOUNT),0.00) amount
+        FROM reward_record r
+        LEFT JOIN app_user a ON a.ID = r.APP_ID
+        <where>
+            r.TYPE = '2'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appId)">
+                AND r.APP_ID = #{map.appId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND a.NAME LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+        </where>
+        GROUP BY r.APP_ID
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!--关注总金额-->
+    <select id="getFollowRewardRecordAccount"  resultType="BigDecimal">
+        SELECT  IFNULL(SUM(r.AMOUNT),0.00)
+        FROM reward_record r
+        LEFT JOIN app_user a ON a.ID = r.APP_ID
+        <where>
+            r.TYPE = '2'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appId)">
+                AND r.APP_ID = #{map.appId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND a.NAME LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+        </where>
+    </select>
+
+    <!--获取老师粉丝关注奖励列表导出-->
+    <select id="getFollowRewardRecordList" resultType="java.util.Map">
+        SELECT r.APP_ID appId,a.NAME name,a.MOBILE mobile,r.CREATE_TIME createTime,IFNULL(SUM(r.SINGLE_AMOUNT),0.00)
+        singleAmount,
+        IFNULL(SUM(r.REMARK),0) remark, IFNULL(SUM(r.AMOUNT),0.00) amount
+        FROM reward_record r
+        LEFT JOIN app_user a ON a.ID = r.APP_ID
+        <where>
+            r.TYPE = '2'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appId)">
+                AND r.APP_ID = #{map.appId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND a.NAME LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+        </where>
+        GROUP BY r.APP_ID
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!--课程奖励列表-->
+    <select id="getCourseRecommendListPage" resultType="java.util.Map">
+        SELECT r.CREATE_TIME createTime,r.APP_ID appId,r.SINGLE_AMOUNT singleAmount,r.MEN_COUNT menCount,r.AMOUNT
+        amount,r.LL_ADD_MEN_COUNT llAddMenCount,
+        a.NAME name,a.MOBILE mobile,c.LIVE_TOPIC liveTopic
+        FROM reward_record r
+        LEFT JOIN course c ON c.ID = r.COURSE_ID
+        LEFT JOIN app_user a ON a.ID = r.APP_ID
+        <where>
+            r.TYPE = '0'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appId)">
+                AND r.APP_ID = #{map.appId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND a.NAME LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+        </where>
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!--课程奖励总金额-->
+    <select id="getCourseRecommendAccount" resultType="BigDecimal">
+        SELECT NULLIF(sum(r.AMOUNT),0.00)
+        FROM reward_record r
+        LEFT JOIN course c ON c.ID = r.COURSE_ID
+        LEFT JOIN app_user a ON a.ID = r.APP_ID
+        <where>
+            r.TYPE = '0'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appId)">
+                AND r.APP_ID = #{map.appId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND a.NAME LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+        </where>
+    </select>
+
+
+    <!--课程奖励列表 导出-->
+    <select id="getCourseRecommendList" resultType="java.util.Map">
+        SELECT r.CREATE_TIME createTime,r.APP_ID appId,r.SINGLE_AMOUNT singleAmount,r.MEN_COUNT menCount,r.AMOUNT
+        amount,r.LL_ADD_MEN_COUNT llAddMenCount,
+        a.NAME name,a.MOBILE mobile,c.LIVE_TOPIC liveTopic
+        FROM reward_record r
+        LEFT JOIN course c ON c.ID = r.COURSE_ID
+        LEFT JOIN app_user a ON a.ID = r.APP_ID
+        <where>
+            r.TYPE = '0'
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND r.CREATE_TIME &gt;= #{map.startTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND r.CREATE_TIME &lt;= #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startAmount)">
+                AND r.AMOUNT &gt;= #{map.startAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endAmount)">
+                AND r.AMOUNT &lt;= #{map.endAmount}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appId)">
+                AND r.APP_ID = #{map.appId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.name)">
+                AND a.NAME LIKE CONCAT('%',#{map.name},'%' )
+            </if>
+        </where>
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <select id="findAlreadyCourseId" resultType="Long">
+        SELECT COURSE_ID FROM reward_record WHERE TYPE = '0'
+    </select>
+
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.CourseRelayMapper">
+    <resultMap id="courseRelayMap" type="com.longlian.dto.CourseRelayDto">
+        <id column="ORI_COURSE_ID" jdbcType="BIGINT" property="oriCourseId"/>
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="ORI_APP_ID" jdbcType="BIGINT" property="oriAppId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="RELAY_CHARGE" jdbcType="DECIMAL" property="relayCharge"/>
+        <result column="RELAY_SCALE" jdbcType="FLOAT" property="relayScale"/>
+        <!--add by acai-->
+        <result column="VISIT_COUNT" jdbcType="INTEGER" property="visitCount"/>
+        <result column="CHAT_ROOM_ID" jdbcType="BIGINT" property="chatRoomId"/>
+        <result column="JOIN_COUNT" jdbcType="INTEGER" property="joinCount"/>
+        <result column="IS_SERIES_COURSE" jdbcType="VARCHAR" property="isSeriesCourse"/>
+        <result column="SERIES_COURSE_ID" jdbcType="BIGINT" property="seriesCourseId"/>
+        <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+    </resultMap>
+
+    <sql id="courseRelaySql">
+        cr.ORI_COURSE_ID,cr.ID,cr.APP_ID,cr.ORI_APP_ID,cr.CREATE_TIME,cr.UPDATE_TIME,cr.RELAY_CHARGE,cr.RELAY_SCALE
+  </sql>
+
+    <sql id="courseSql">
+        c.LIVE_TOPIC liveTopic,c.REMARK remark,c.LIVE_WAY liveWay,
+        c.COVERSS_ADDRESS coverssAddress,c.VISIT_COUNT visitCount,c.IS_SERIES_COURSE isSeriesCourse,
+        c.CHARGE_AMT chargeAmt,c.IS_CONNECTION isConnection,c.START_TIME startTime,c.END_TIME endTime,c.UPDATED_COUNT updatedCount
+  </sql>
+
+    <sql id="liveRoomSql">
+        lr.id roomId
+    </sql>
+
+    <insert id="createRelayCourse" parameterType="com.longlian.dto.CourseRelayDto">
+      insert into course_relay
+      (ORI_COURSE_ID,APP_ID,ORI_APP_ID,RELAY_CHARGE,RELAY_SCALE,CHAT_ROOM_ID,ROOM_ID,IS_SERIES_COURSE,SERIES_COURSE_ID,STATUS,IS_DELETE)
+      values
+      (#{oriCourseId},#{appId},#{oriAppId},#{relayCharge},#{relayScale},#{chatRoomId},#{roomId},#{isSeriesCourse},#{seriesCourseId},#{status},#{isDelete})
+    </insert>
+
+    <select id="queryByAppidAndOriCourseId" resultMap="courseRelayMap">
+      select <include refid="courseRelaySql"/>,<include refid="courseSql"/>,<include refid="liveRoomSql"/> from course_relay cr
+      left join course c on c.id=cr.ori_course_id
+      left join live_room lr on lr.APP_ID=cr.app_id
+      where cr.app_id=#{appId} and cr.ORI_COURSE_ID=#{oriCourseId} and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <select id="queryById" resultMap="courseRelayMap">
+        select <include refid="courseRelaySql"/> from course_relay cr where cr.id=#{id} and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <select id="queryByCreateTime" resultMap="courseRelayMap">
+        select <include refid="courseRelaySql"/>,<include refid="courseSql"/>
+        from course_relay cr
+        left join course c on c.id=cr.ori_course_id
+        where cr.app_id=#{appId}
+        and cr.create_time=(select max(create_time) from course_relay where app_id=#{appId}) and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <select id="queryByPlayingCourse" resultMap="courseRelayMap">
+        select * from course where app_id=#{appId} and START_TIME &lt;=NOW() and END_TIME is null
+        and IS_DELETE=0 and STATUS=0 and IS_SERIES_COURSE=0
+        union all
+        select c.* from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+        where cr.app_id=#{appId} and c.START_TIME &lt;=NOW() and c.END_TIME is null
+        and c.IS_DELETE=0 and c.STATUS=0 and c.IS_SERIES_COURSE=0 and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <select id="getRelayCountByOriAppId" resultType="int">
+        SELECT COUNT(ID) FROM course_relay WHERE ORI_APP_ID=#{appId} and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <insert id="createRelaySeriesCourse" >
+      insert into course_relay
+      (ORI_COURSE_ID,APP_ID,ORI_APP_ID,RELAY_CHARGE,RELAY_SCALE,IS_SERIES_COURSE,SERIES_COURSE_ID, ROOM_ID, CHAT_ROOM_ID)
+        select c.id,${appId},c.app_id,c.relay_charge,c.relay_scale,c.is_series_course,c.series_course_id, #{roomId} roomId, #{charRoomId} CHAT_ROOM_ID from course c
+        where (c.id=#{id} or c.SERIES_COURSE_ID=#{id}) and c.is_delete=0 and c.status=0
+    </insert>
+
+    <insert id="insertSeriesSingleCourse" parameterType="com.longlian.dto.CourseDto">
+      insert into course_relay
+      (ORI_COURSE_ID,APP_ID,ORI_APP_ID,RELAY_CHARGE,RELAY_SCALE,IS_SERIES_COURSE,SERIES_COURSE_ID, ROOM_ID)
+           select ori_course_id,APP_ID,ORI_APP_ID,RELAY_CHARGE,RELAY_SCALE,IS_SERIES_COURSE,SERIES_COURSE_ID, #{roomId}
+           from course_relay where ori_course_id=#{id}
+    </insert>
+
+    <select id="getRelayCourse" resultMap="courseRelayMap">
+        SELECT * FROM course_relay WHERE 1=1 and status=0 and is_delete=0
+        <if test="id != null and id != '' and id > 0">
+            AND ID = #{id}
+        </if>
+        <if test="oriCourseId != null and oriCourseId != '' and oriCourseId > 0">
+            AND ORI_COURSE_ID = #{oriCourseId}
+        </if>
+        <if test="@Ognl@isNotEmpty(isSeriesCourse)">
+            AND IS_SERIES_COURSE = ${isSeriesCourse}
+        </if>
+        <if test="appId != null and appId != '' and appId > 0">
+            AND APP_ID = #{appId}
+        </if>
+        <if test="oriAppId != null and oriAppId != '' and oriAppId > 0">
+            AND ORI_APP_ID = #{oriAppId}
+        </if>
+        <if test="@Ognl@isNotEmpty(createTime)">
+            AND CREATE_TIME &gt; #{createTime}
+        </if>
+    </select>
+
+    <select id="getCourseIdsBySeries" resultType="java.lang.Long">
+        SELECT ID FROM course WHERE SERIES_COURSE_ID = #{id} AND IS_DELETE = 0
+    </select>
+
+    <select id="getRelayCourseIds" resultType="map">
+        SELECT ID,ORI_COURSE_ID FROM course_relay WHERE SERIES_COURSE_ID = #{id} and is_delete=0
+    </select>
+
+</mapper>

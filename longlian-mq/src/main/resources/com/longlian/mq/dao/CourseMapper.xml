@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.mq.dao.CourseMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.Course">
+    <id column="ID" jdbcType="BIGINT" property="id"/>
+    <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+    <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+    <result column="LIVE_TOPIC" jdbcType="VARCHAR" property="liveTopic"/>
+    <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+    <result column="LIVE_WAY" jdbcType="VARCHAR" property="liveWay"/>
+    <result column="LIVE_TYPE" jdbcType="VARCHAR" property="liveType"/>
+    <result column="LIVE_PWD" jdbcType="VARCHAR" property="livePwd"/>
+    <result column="DIVIDE_SCALE" jdbcType="VARCHAR" property="divideScale"/>
+    <result column="COVERSS_ADDRESS" jdbcType="VARCHAR" property="coverssAddress"/>
+    <result column="CHARGE_AMT" jdbcType="DECIMAL" property="chargeAmt"/>
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime"/>
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+    <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="ORDER_SORT" jdbcType="INTEGER" property="orderSort"/>
+    <result column="COURSE_TYPE" jdbcType="BIGINT" property="courseType"/>
+    <!--- <result column="PUSH_PRAISE_COUNT" jdbcType="INTEGER" property="pushPraiseCount"/>-->
+    <result column="VISIT_COUNT" jdbcType="INTEGER" property="visitCount"/>
+    <result column="JOIN_COUNT" jdbcType="INTEGER" property="joinCount"/>
+    <!---<result column="STUDY_COUNT" jdbcType="INTEGER" property="studyCount"/>-->
+    <!--- <result column="COMMENT_COUNT" jdbcType="INTEGER" property="commentCount"/>-->
+    <result column="END_TIME" property="endTime"/>
+    <result column="LIVE_ADDRESS" property="liveAddress"/>
+    <result column="PUSH_ADDRESS" property="pushAddress"/>
+    <result column="VIDEO_ADDRESS" property="videoAddress"/>
+    <result column="RECO_TIME" property="recoTime"/>
+    <result column="HLS_LIVE_ADDRESS" property="hlsLiveAddress"/>
+    <result column="CHAT_ROOM_ID" property="chatRoomId"/>
+    <result column="IS_SHOW_WARE" property="isShowWare"/>
+    <result column="TARGET_USERS" property="targetUsers"/>
+    <result column="TEACHER_DESC" property="teacherDesc"/>
+    <result column="INVITE_TMP" property="inviteTmp"/>
+    <result column="IS_SERIES_COURSE" property="isSeriesCourse"/>
+    <result column="SERIES_COURSE_ID" property="seriesCourseId"/>
+    <result column="COURSE_PLAN_COUNT" property="coursePlanCount"/>
+    <result column="UPDATED_COUNT" property="updatedCount"/>
+    <result column="ENDED_COUNT" property="endedCount"/>
+    <result column="IS_DELETE" property="isDelete"/>
+    <result column="AUTO_CLOSE_TIME" property="autoCloseTime"/>
+    <result column="IS_VERTICAL_SCREEN" property="isVerticalScreen"/>
+    <result column="VERTICAL_COVERSS_ADDRESS" property="verticalCoverssAddress"/>
+    <result column="CLEAN_SCREEN_TIME" property="cleanScreenTime"/>
+    <result column="AD_ADDRESS" property="adAddress"/>
+    <result column="IS_RECORDED" property="isRecorded"/>
+    <result column="REC_TIME" property="recTime"/>
+    <result column="TRY_SEE_TIME" property="trySeeTime"/>
+    <result column="IS_INVITE_CODE" property="isInviteCode"/>
+    <result column="MUST_SHARE_TIME" property="mustShareTime"/>
+    <result column="CAN_CONNECT" property="canConnect"/>
+    <result column="SORT" property="sort"/>
+  </resultMap>
+
+  <resultMap id="BaseResultAndUserMap" type="java.util.Map" extends="BaseResultMap">
+    <result column="USER_NAME"  property="userName" />
+    <result column="PHOTO"  property="photo" />
+    <result column="GENDER"  property="gender" />
+    <result column="FOLLOW_COUNT"  property="followCount" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+        ID, ROOM_ID, APP_ID, LIVE_TOPIC, REMARK, LIVE_WAY, LIVE_TYPE, LIVE_PWD, DIVIDE_SCALE,
+        COVERSS_ADDRESS, CHARGE_AMT, START_TIME, UPDATE_TIME, STATUS, CREATE_TIME, ORDER_SORT,
+        COURSE_TYPE
+        , VISIT_COUNT
+        , JOIN_COUNT
+        , END_TIME ,LIVE_ADDRESS, PUSH_ADDRESS ,VIDEO_ADDRESS ,  RECO_TIME ,HLS_LIVE_ADDRESS, CHAT_ROOM_ID,TEACHER_DESC,INVITE_TMP
+        ,IS_SERIES_COURSE,SERIES_COURSE_ID,COURSE_PLAN_COUNT,UPDATED_COUNT,ENDED_COUNT,IS_DELETE,IS_VERTICAL_SCREEN, VERTICAL_COVERSS_ADDRESS,CLEAN_SCREEN_TIME,AD_ADDRESS,IS_RECORDED,REC_TIME,TRY_SEE_TIME,IS_INVITE_CODE
+        ,MUST_SHARE_TIME,CAN_CONNECT , SORT
+    </sql>
+
+
+  <select id="getCourse" resultMap="BaseResultMap">
+    SELECT *
+    FROM course c
+
+    WHERE c.ID = #{id}
+
+  </select>
+
+  <select id="getRelayCourse" resultMap="BaseResultMap">
+SELECT cr.ID,c.LIVE_WAY
+    FROM course_relay cr
+  LEFT JOIN course c on cr.ORI_COURSE_ID=c.ID
+    WHERE cr.ID = #{id}
+  </select>
+
+
+  <update id="addVisitCount" >
+    update course
+    set
+    VISIT_COUNT = VISIT_COUNT + 1
+    where ID = #{id}
+  </update>
+
+  <update id="updateVisitCount" >
+    update course
+    set
+    VISIT_COUNT = #{visitCount}
+    where ID = #{id}
+  </update>
+
+  <update id="updateCourseVerticalImage" >
+    update course
+    set
+    VERTICAL_COVERSS_ADDRESS = #{verticalCoverssAddress}
+    where ID = #{id}
+  </update>
+
+
+  <select id="GetVideoAddressPage" resultMap="BaseResultMap">
+    select * from course c where c.VIDEO_ADDRESS = 'novideo' and LIVE_WAY = '0'
+  </select>
+
+  <select id="getCourseBySeriesId" resultMap="BaseResultMap">
+    select * from course c where c.SERIES_COURSE_ID =  #{seriesCourseId} and c.`STATUS` = 0  AND c.IS_DELETE = '0'  order by c.START_TIME
+  </select>
+  <update id="update" parameterType="com.longlian.model.Course">
+    update course
+    set
+    START_TIME = #{startTime}
+    , END_TIME = #{endTime}
+    , UPDATED_COUNT =  #{updatedCount}
+    , ENDED_COUNT =   #{endedCount}
+    where ID = #{id}
+  </update>
+
+  <select id="getAllNoEndCourseByTeahcerId" resultMap="BaseResultMap">
+    SELECT * FROM  course WHERE APP_ID = #{teacherId} AND STATUS = '0'
+    AND END_TIME is null AND IS_SERIES_COURSE = '0' AND IS_DELETE = '0' AND CHAT_ROOM_ID > 0
+  </select>
+
+  <select id="findSeriesCourseBySeriesId" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM course WHERE STATUS = '0' AND IS_SERIES_COURSE = '0' AND IS_DELETE = '0'
+    and SERIES_COURSE_ID = #{id}
+  </select>
+
+  <insert id="updateClassImg">
+    INSERT INTO course_img (COURSE_ID , ADDRESS , STATUS ,  CREATE_TIME) VALUES (#{courseId},#{url},'0',now())
+  </insert>
+
+  <update id="delClassImg">
+    UPDATE course_img SET STATUS = '1' WHERE COURSE_ID = #{courseId}
+  </update>
+    <update id="updateCreateTime">
+       UPDATE course SET START_TIME =  #{startTime} WHERE ID = #{courseId}
+    </update>
+    <select id="selectCourseMsgByChatRoomId" resultMap="BaseResultMap">
+    select ID , APP_ID , LIVE_TOPIC  from course c where c.CHAT_ROOM_ID = #{chatRoomid}
+  </select>
+    <select id="getCourseByVideoAddress" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List"/> FROM course WHERE VIDEO_ADDRESS LIKE CONCAT(CONCAT('%', #{md5}), '%') limit 1;
+    </select>
+
+  <select id="getStartCourse" resultMap="BaseResultMap">
+    SELECT ID ,  START_TIME from course WHERE  START_TIME IS NOT NULL AND END_TIME IS NULL  and IS_RECORDED = '0'
+    AND STATUS  = '0' and LIVE_WAY = '0' and START_TIME &lt;= now()
+  </select>
+
+  <update id="closeSeries">
+    UPDATE course SET STATUS = '1' WHERE ID = #{courseId}
+  </update>
+
+  <select id="getAllStartCourse" resultMap="BaseResultMap">
+    SELECT * from course WHERE  START_TIME IS NOT NULL AND END_TIME IS NULL  and IS_RECORDED = '0'
+    AND STATUS  = '0' and START_TIME &lt;= now()
+  </select>
+
+  <select id="findAllCourse" resultMap="BaseResultMap">
+    SELECT * FROM course
+    where
+      STATUS = '0' AND IS_DELETE = '0'
+      AND START_TIME IS not NULL and IS_SERIES_COURSE = '0'
+      AND TIMESTAMPDIFF(MINUTE,START_TIME,END_TIME) >= 5
+    ORDER BY TIMESTAMPDIFF(MINUTE,START_TIME,END_TIME) DESC
+    limit #{offset}, #{pageSize}
+  </select>
+
+  <update id="updateCourseSort">
+    update course set SORT = #{sort} WHERE ID = #{courseId}
+  </update>
+
+  <!--WHA 2017-12-08 首页改版 单节课OR系列课 每周精选-->
+  <select id="findCourseWeeklySelection" resultType="Map">
+    SELECT c.ID id, c.LIVE_TOPIC topic, IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) coverssAddress , c.START_TIME startTime ,
+    c.REMARK remark , ap.NAME userName , c.VISIT_COUNT visitCount , c.JOIN_COUNT joinCount ,
+    c.ROOM_ID AS roomId,c.LIVE_WAY AS liveWay ,
+    ap.YUNXIN_TOKEN AS yunxinToken ,  c.CHAT_ROOM_ID AS chatRoomId ,
+    c.PUSH_ADDRESS AS pushAddress , c.RECO_TIME AS recoTime , c.CHARGE_AMT AS chargeAmt , c.IS_SERIES_COURSE isSeriesCourse , c.UPDATED_COUNT updatedCount , c.APP_ID appId
+    FROM course c
+    LEFT JOIN app_user ap ON ap.ID = c.APP_ID
+    <where>
+      c.STATUS = '0' AND IS_DELETE = '0' AND SERIES_COURSE_ID = 0
+      <if test="@Ognl@isNotEmpty(isSeriesCourse)">
+        <if test="@Ognl@isSortPopularity(isSeriesCourse)">
+          AND c.IS_SERIES_COURSE = #{isSeriesCourse} AND c.UPDATED_COUNT>0
+        </if>
+        <if test="@Ognl@isSortComprehensive(isSeriesCourse)">
+          AND c.IS_SERIES_COURSE = #{isSeriesCourse}
+        </if>
+      </if>
+      <if test="@Ognl@isNotEmpty(beginTime)">
+        AND c.START_TIME &gt; #{beginTime}
+      </if>
+      <if test="@Ognl@isNotEmpty(endTime)">
+        AND c.START_TIME &lt; #{endTime}
+      </if>
+    </where>
+    ORDER BY c.SORT DESC,c.START_TIME DESC
+    LIMIT 0,4
+  </select>
+
+  <!--WHA 2017-12-08 首页改版 单节课OR系列课 每周精选 根据ID-->
+  <select id="findCourseWeeklySelectionById" resultType="Map">
+    SELECT c.ID id, c.LIVE_TOPIC topic, IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) coverssAddress , c.START_TIME startTime ,
+    c.REMARK remark , ap.NAME userName , c.VISIT_COUNT visitCount , c.JOIN_COUNT joinCount ,
+    c.ROOM_ID AS roomId,c.LIVE_WAY AS liveWay ,
+    ap.YUNXIN_TOKEN AS yunxinToken ,  c.CHAT_ROOM_ID AS chatRoomId ,
+    c.PUSH_ADDRESS AS pushAddress , c.RECO_TIME AS recoTime , c.CHARGE_AMT AS chargeAmt , c.IS_SERIES_COURSE isSeriesCourse , c.UPDATED_COUNT updatedCount , c.APP_ID appId
+    FROM course c
+    LEFT JOIN app_user ap ON ap.ID = c.APP_ID
+    <where>
+      c.ID = #{id}
+    </where>
+  </select>
+</mapper>

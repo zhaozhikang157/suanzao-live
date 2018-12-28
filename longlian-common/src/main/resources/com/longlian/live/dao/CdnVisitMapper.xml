@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.CdnVisitMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.CdnVisit">
+    <id column="ID"  property="id" />
+    <result column="ROOM_ID"  property="roomId" />
+    <result column="COURSE_ID"  property="courseId" />
+    <result column="VISIT_DATE"  property="visitDate" />
+    <result column="CLIENT_IP"  property="clientIp" />
+    <result column="PROXY_IP"  property="proxyIp" />
+    <result column="RESPONSE_TIME"  property="responseTime" />
+    <result column="REFERER"  property="referer" />
+    <result column="METHOD"  property="method" />
+    <result column="URL"  property="url" />
+    <result column="HTTP_CODE"  property="httpCode" />
+    <result column="REQUEST_SIZE"  property="requestSize" />
+    <result column="RESPONSE_SIZE"  property="responseSize" />
+    <result column="CONTENT"  property="content" />
+    <result column="IS_REVIEW"  property="isReview" />
+  </resultMap>
+
+  <insert id="insertCdnVisit" parameterType="CdnVisit">
+    INSERT INTO cdn_visit (ROOM_ID,COURSE_ID,VISIT_DATE,CLIENT_IP,PROXY_IP,RESPONSE_TIME,REFERER,METHOD,URL,HTTP_CODE,REQUEST_SIZE,RESPONSE_SIZE,CONTENT,IS_REVIEW)
+    VALUES (#{roomId},#{courseId},#{visitDate},#{clientIp},#{proxyIp},#{responseTime},#{referer},#{method},#{url},#{httpCode},#{requestSize},#{responseSize},#{content},#{isReview})
+  </insert>
+
+  <select id="getSizeByRoomId" resultType="Map">
+    SELECT ROOM_ID roomId , sum(RESPONSE_SIZE) countSize FROM cdn_visit WHERE ROOM_ID > 0 GROUP BY ROOM_ID
+  </select>
+
+  <select id="getAllCourseFlowPage" resultType="Map">
+    SELECT c.ID courseId, c.LIVE_TOPIC liveTopic, max(cdu.START_USE_TIME) startTime,
+    max(cdu.END_USE_TIME) endTime,
+    (CASE WHEN max(cdu.START_USE_TIME) &lt;= max(cdu.END_USE_TIME) THEN max(cdu.START_USE_TIME)
+    WHEN max(cdu.END_USE_TIME) &lt; max(cdu.START_USE_TIME) THEN max(cdu.END_USE_TIME) END ) t ,
+    sum(cdu.LIVE_DATA_USE +  cdu.REVIEW_USE) AS size FROM course_data_use cdu
+    LEFT JOIN course c ON c.ID = cdu.COURSE_ID
+    WHERE c.START_TIME is not NULL
+    AND (cdu.LIVE_DATA_USE > 0 or cdu.REVIEW_USE > 0 )
+    AND c.ROOM_ID = #{roomId}
+    GROUP BY cdu.COURSE_ID ORDER BY t DESC
+  </select>
+
+</mapper>

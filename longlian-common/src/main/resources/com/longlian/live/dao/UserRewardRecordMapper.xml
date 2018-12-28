@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.UserRewardRecordMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.UserRewardRecord">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="REWARD_APP_ID" property="rewardRewardId"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="SINGLE_AMOUNT" jdbcType="DECIMAL" property="singleAmount"/>
+        <result column="REWARD_COUNT" jdbcType="INTEGER" property="rewardCount"/>
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="COURSE_ID" property="courseId"/>
+        <result column="REMARK" property="remark"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        APP_ID,REWARD_APP_ID, TYPE, SINGLE_AMOUNT, REWARD_COUNT, AMOUNT, CREATE_TIME,REMARK
+   </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_reward_record
+        where ID = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.longlian.model.UserRewardRecord">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user_reward_record (APP_ID, REWARD_APP_ID,TYPE, SINGLE_AMOUNT, REWARD_COUNT, AMOUNT,
+        CREATE_TIME,COURSE_ID,REMARK
+        )
+        values (#{appId}, #{rewardRewardId}, #{type}, #{singleAmount}, #{rewardCount},
+        #{amount},#{createTime},#{courseId},#{remark}
+        )
+    </insert>
+
+
+    <select id="selectUserRewardSortPage" parameterType="long" resultType="java.util.Map">
+        select sum(urr.AMOUNT) amount  ,urr.APP_ID appId , au.`NAME` name  ,au.PHOTO photo from user_reward_record  urr left JOIN app_user au on  au.ID = urr.APP_ID
+          where urr.COURSE_ID = #{courseId}
+        GROUP BY  urr.APP_ID  ORDER BY amount  DESC , urr.APP_ID desc
+    </select>
+
+    <select id="findSumAccount" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(AMOUNT),0.00) FROM user_reward_record WHERE REWARD_APP_ID = #{appId} AND TYPE = '0'
+    </select>
+
+    <select id="findRewInfoPage" resultType="Map">
+        SELECT c.LIVE_TOPIC topic, c.COVERSS_ADDRESS address,
+        SUM(AMOUNT) totalAmount, c.cid courseId ,c.LIVE_WAY liveWay ,max(urr.CREATE_TIME) createTime
+        FROM user_reward_record urr
+        LEFT JOIN
+        (
+        select * ,app_id appId,id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+        ) c
+        ON c.cid = urr.COURSE_ID
+        WHERE  urr.TYPE = '0' and urr.REWARD_APP_ID  = #{appId}
+        GROUP BY urr.COURSE_ID
+        ORDER BY createTime DESC
+    </select>
+
+    <select id="findTodayRewInfoPage" resultType="Map">
+        SELECT c.LIVE_TOPIC topic, c.COVERSS_ADDRESS address,
+        SUM(AMOUNT) totalAmount, urr.COURSE_ID courseId ,c.LIVE_WAY liveWay ,c.isRelay IsRelay,max(urr.CREATE_TIME) createTime
+        FROM user_reward_record urr
+        LEFT JOIN
+        (
+        select * ,app_id appId, id cid,0 isRelay from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+        ) c
+        ON c.cid = urr.COURSE_ID
+        WHERE  urr.TYPE = '0' and urr.REWARD_APP_ID  = #{appId} and DATE_FORMAT(urr.create_time,'%y-%m-%d') = DATE_FORMAT(now(),'%y-%m-%d')
+        GROUP BY urr.COURSE_ID
+        ORDER BY createTime DESC
+    </select>
+
+    <select id="findTodayRelayDetailPage" resultType="Map">
+        SELECT
+            t2.ID,
+            t2.LIVE_TOPIC,
+            t2.LIVE_TOPIC topic,
+            t2.COVERSS_ADDRESS,
+            t2.COVERSS_ADDRESS address,
+            sum(t.CHARGE) INCOME_TOTAL,
+            sum(t.RELAYER_CNT) RELAYER_CNT,
+            t2.LIVE_WAY liveWay
+        FROM
+            (
+                SELECT
+                    t0.ID,
+                    t0.ORI_APP_ID,
+                    t0.ORI_COURSE_ID,
+                    t0.REL_COURSE_ID,
+                    t0.CHARGE,
+                    IF(t0.TYPE = 1, 1, 0) RELAYER_CNT,
+                    t0.CREATE_TIME
+                FROM
+                    relay_income t0
+            ) t
+        LEFT JOIN course t2 on t.ORI_COURSE_ID = t2.ID
+        WHERE
+            t.ORI_APP_ID = #{appId}
+        AND DATE_FORMAT(t.create_time,'%y-%m-%d') = DATE_FORMAT(now(),'%y-%m-%d')
+        GROUP BY
+            t.ORI_COURSE_ID
+        ORDER BY
+	        t.CREATE_TIME DESC
+    </select>
+
+    <select id="findRewCountbyAppId" resultType="String">
+        SELECT APP_ID FROM user_reward_record WHERE COURSE_ID = #{courseId} GROUP BY APP_ID
+    </select>
+
+    <select id="findTodayRewCountbyAppId" resultType="int">
+        SELECT COUNT(DISTINCT APP_ID) as count FROM user_reward_record
+        WHERE COURSE_ID = #{courseId} AND DATE_FORMAT(create_time,'%y-%m-%d') = DATE_FORMAT(now(),'%y-%m-%d')
+    </select>
+
+    <select id="findRewInfoPageByCourseIdPage" resultType="Map">
+        SELECT urr.AMOUNT amount ,
+        urr.COURSE_ID courseId , au.NAME userName , urr.CREATE_TIME createTime
+        FROM user_reward_record urr
+        LEFT JOIN course c ON c.ID = urr.COURSE_ID
+        LEFT JOIN app_user au ON au.ID = urr.APP_ID
+        WHERE urr.TYPE = '0' AND urr.COURSE_ID = #{courseId}
+        ORDER BY urr.CREATE_TIME DESC
+    </select>
+    <select id="statRewardCountbyAppId" resultType="Map">
+        SELECT
+            sum(r.AMOUNT) amout,
+            r.APP_ID userId
+        FROM
+            user_reward_record r
+        WHERE
+            r.COURSE_ID = #{courseId}
+        GROUP BY
+           userId
+    </select>
+
+    <select id="getTodayRewardIncome" resultType="java.math.BigDecimal">
+        SELECT SUM(AMOUNT) totalAmount
+        FROM user_reward_record urr
+        WHERE  urr.TYPE = '0' and urr.REWARD_APP_ID  = #{appId} and DATE_FORMAT(urr.create_time,'%y-%m-%d') = DATE_FORMAT(now(),'%y-%m-%d')
+    </select>
+
+
+</mapper>

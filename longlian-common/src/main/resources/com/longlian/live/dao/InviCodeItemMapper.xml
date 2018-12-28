@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.InviCodeItemMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.InviCodeItem">
+    <id column="ID"  property="id" />
+    <result column="INVI_CODE_ID"  property="inviCodeId" />
+    <result column="INVI_CODE"  property="inviCode" />
+    <result column="CREATE_TIME"  property="createTime" />
+    <result column="USE_APP_ID"  property="useAppId" />
+    <result column="USE_TIME"  property="useTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID,INVI_CODE_ID,INVI_CODE,CREATE_TIME,USE_APP_ID,USE_TIME
+  </sql>
+  
+  <resultMap id="dtoBase" type="com.longlian.dto.InviCodeItemDto" extends="BaseResultMap">
+    <result column="NAME"  property="useName" />
+  </resultMap>
+  
+  <select id="getInviCodeItemPage" resultMap="dtoBase">
+      SELECT ict.ID ,ict.INVI_CODE_ID,ict.INVI_CODE ,ict.CREATE_TIME ,ict.USE_APP_ID,ict.USE_TIME ,au.NAME
+      FROM invi_code_item ict
+      LEFT JOIN  app_user au ON ict.USE_APP_ID  = au.ID
+      WHERE ict.INVI_CODE_ID = #{inviCodeId}
+  </select>
+
+  <select id="getAllInviCodeItem" resultType="Map">
+    SELECT ict.ID id,ict.INVI_CODE_ID inviCodeId,ict.INVI_CODE inviCode ,ict.CREATE_TIME createTime,
+    ict.USE_APP_ID useAppId,ict.USE_TIME useTime,au.NAME useName
+      FROM invi_code_item ict
+      LEFT JOIN  app_user au ON ict.USE_APP_ID  = au.ID
+      WHERE ict.INVI_CODE_ID = #{inviCodeId}
+  </select>
+
+  <insert id="insertCode">
+    insert into invi_code_item (INVI_CODE_ID, INVI_CODE, CREATE_TIME) values
+    <foreach collection="list" item="item" separator=",">
+      (#{inviCodeId}, #{item}, now() )
+    </foreach>
+  </insert>
+
+  <select id="getNoUseInviCode" resultType="long">
+    SELECT ID FROM invi_code_item WHERE USE_APP_ID = '0' AND INVI_CODE_ID = #{inviCodeId}
+  </select>
+
+  <select id="getItemInfo" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM invi_code_item WHERE ID = #{id}
+  </select>
+
+  <update id="updateUseAppId">
+    UPDATE invi_code_item SET USE_APP_ID = #{useId} ,USE_TIME = #{useTime}  WHERE ID = #{id}
+  </update>
+
+  <update id="updateUseTime">
+    UPDATE invi_code_item SET USE_TIME = now() WHERE ID = #{id}
+  </update>
+
+  <select id="getItemInfoByInviCode" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM invi_code_item WHERE INVI_CODE_ID = #{inviCodeId} AND INVI_CODE = #{inviCode}
+  </select>
+
+
+  <select id="getItemInfoByInviCodeAndCourseId" resultType="java.util.Map">
+    SELECT ici.ID id , ic.START_TIME startTime , ic.END_TIME endTime ,  ici.INVI_CODE_ID inviCodeId , ici.USE_TIME useTime ,
+    ici.USE_APP_ID userAppId  FROM invi_code_item ici  LEFT  JOIN
+    invi_code ic on ic.ID = ici.INVI_CODE_ID
+    WHERE ic.COURSE_ID = #{courseId} AND ici.INVI_CODE = #{inviCode}
+  </select>
+
+  <select id="findCourseName" parameterType="long" resultType="String">
+   SELECT c.LIVE_TOPIC FROM invi_code ic
+    LEFT JOIN course c ON c.ID = ic.COURSE_ID
+    WHERE ic.ID = #{itemId}
+  </select>
+
+</mapper>

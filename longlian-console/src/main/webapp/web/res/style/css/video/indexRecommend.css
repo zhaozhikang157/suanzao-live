@@ -1,0 +1,35 @@
+html,body{
+    width: 100%;
+    font-size: 62.5%;
+    background: #F6F6F6;
+    font-family: "微软雅黑";
+    font-size: 14px;
+}
+.wrapper{
+	width: 100%;
+}
+	.btnBox button{
+		margin-bottom: 16px;
+	}
+	table{
+		width: 100%;
+	}
+	table tr th{
+		height: 42px;
+		line-height: 42px;
+		text-align: center;
+		border: 1px solid #666;
+	}
+	table tr td{
+		height: 32px;
+		line-height: 32px;
+		text-align: center;
+		border: 1px solid #666;
+	}
+	table tr input[type=text]{
+		display: none;
+		width: 60px;
+		height: 28px;
+		margin: 0 auto;
+		vertical-align: middle;
+	}

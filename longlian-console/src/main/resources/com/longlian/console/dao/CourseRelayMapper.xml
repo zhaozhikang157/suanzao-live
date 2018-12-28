@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.CourseRelayMapper">
+
+    <resultMap id="courseRelayMap" type="com.longlian.dto.CourseRelayDto">
+        <id column="ORI_COURSE_ID" jdbcType="BIGINT" property="oriCourseId"/>
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="ORI_APP_ID" jdbcType="BIGINT" property="oriAppId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="RELAY_CHARGE" jdbcType="DECIMAL" property="relayCharge"/>
+        <result column="RELAY_SCALE" jdbcType="FLOAT" property="relayScale"/>
+        <!--add by acai-->
+        <result column="VISIT_COUNT" jdbcType="INTEGER" property="visitCount"/>
+        <result column="CHAT_ROOM_ID" jdbcType="BIGINT" property="chatRoomId"/>
+        <result column="JOIN_COUNT" jdbcType="INTEGER" property="joinCount"/>
+        <result column="IS_SERIES_COURSE" jdbcType="VARCHAR" property="isSeriesCourse"/>
+        <result column="SERIES_COURSE_ID" jdbcType="BIGINT" property="seriesCourseId"/>
+        <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+    </resultMap>
+
+    <sql id="courseRelaySql">
+        cr.ORI_COURSE_ID,cr.ID,cr.APP_ID,cr.ORI_APP_ID,cr.CREATE_TIME,cr.UPDATE_TIME,cr.RELAY_CHARGE,cr.RELAY_SCALE
+    </sql>
+
+    <sql id="courseSql">
+        c.LIVE_TOPIC liveTopic,c.REMARK remark,c.LIVE_WAY liveWay,
+        c.COVERSS_ADDRESS coverssAddress,c.VISIT_COUNT visitCount,c.IS_SERIES_COURSE isSeriesCourse,
+        c.CHARGE_AMT chargeAmt,c.IS_CONNECTION isConnection,c.START_TIME startTime,c.END_TIME endTime,c.UPDATED_COUNT updatedCount
+    </sql>
+
+    <sql id="liveRoomSql">
+        lr.id roomId
+    </sql>
+
+    <update id="updateRelayCourseStatus">
+        update course_relay set STATUS=#{status} where id=#{id} or SERIES_COURSE_ID=#{id}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="courseRelayMap">
+      select <include refid="courseRelaySql"/> from course_relay cr where cr.id=#{id} and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <select id="queryByAppidAndOriCourseId" resultMap="courseRelayMap">
+        select <include refid="courseRelaySql"/>,<include refid="courseSql"/>,<include refid="liveRoomSql"/> from course_relay cr
+        left join course c on c.id=cr.ori_course_id
+        left join live_room lr on lr.APP_ID=cr.app_id
+        where cr.app_id=#{appId} and cr.ORI_COURSE_ID=#{oriCourseId} and cr.status=0 and cr.is_delete=0
+    </select>
+
+    <update id="updateStatusByOriCourseId" >
+      update course_relay cr,course_relay c set cr.status = #{status} where cr.ori_course_id=#{id} or
+      (cr.SERIES_COURSE_ID=c.id and c.ori_course_id=#{id})
+    </update>
+
+    <update id="updateDeleteStatus">
+        update course_relay set is_delete= #{status} where id=#{id} or SERIES_COURSE_ID=#{id}
+    </update>
+
+    <update id="updateDeleteStatusByOriCourseId" >
+        update course_relay c ,course_relay cr set c.is_delete=#{status} where c.ori_course_id=#{id}
+        or (cr.id=c.SERIES_COURSE_ID and cr.ori_course_id=#{id})
+    </update>
+
+</mapper>

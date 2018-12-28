@@ -1,0 +1,1154 @@
+@media screen and (min-width:321px) and (max-width:375px){html{font-size:11px}}
+@media screen and (min-width:376px) and (max-width:414px){html{font-size:12px}}
+@media screen and (min-width:415px) and (max-width:639px){html{font-size:15px}}
+@media screen and (min-width:640px) and (max-width:719px){html{font-size:20px}}
+@media screen and (min-width:720px) and (max-width:749px){html{font-size:22.5px}}
+@media screen and (min-width:750px) and (max-width:799px){html{font-size:23.5px}}
+@media screen and (min-width:800px){html{font-size:25px}}
+body{-text-size-adjust:text;-webkit-user-select:text;/*不允许用户选择文本*/-webkit-tap-highlight-color:rgba(0,0,0,0);}
+/*--------------------------我要提现----------------------------*/
+input{
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color:transparent;
+    outline:none;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    font-size: 62.5%;
+    font-family: "微软雅黑";
+    position: relative;
+}
+html{
+    background: #f5f5f5;
+}
+#wrap {
+    width: 100%;
+    height: 100%;
+    display: -webkit-box;
+    background: #eeeeee;
+    -webkit-box-orient: vertical;
+    max-width:46.75rem;margin: 0 auto;
+}
+.headStyle {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: -ms-flexbox;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    box-sizing: border-box;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -o-box-align: center;
+    -ms-flex-align: center;
+    box-align: center;
+    width: 100%;
+    height: 4rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid #ececec;
+    background: #d53c3e;
+    color: white;
+}
+.headStyle span {
+    display: inline-block;
+    width: 74px;
+}
+.headStyle p {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: -ms-flexbox;
+    display: box;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -o-box-align: center;
+    -ms-flex-align: center;
+    box-align: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -o-box-pack: center;
+    -ms-flex-pack: center;
+    box-pack: center;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+    height: 100%;
+    font-size: 1.6rem;
+}
+.headStyle span:last-child {
+    text-align: right;
+}
+.contact {
+    position: absolute;
+    top: 4rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    max-width: 46.75rem;
+    margin: 0 auto;
+}
+.cont_moneybag .section{
+    width: 100%;
+    background: #fff;
+}
+.cont_moneybag .mybalance{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -o-box-orient: vertical;
+    -ms-flex-direction: column;
+    box-orient: vertical;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -o-box-align: center;
+    box-align: center;
+    padding: 2rem 0;
+    margin-bottom: 1rem;
+    background: white;
+}
+.mybalance p{
+    font-size: 1.2rem;
+    color: #000;
+}
+.mybalance div{
+    font-size: 2.4rem;
+    color: #000;
+}
+.mybalance div span{
+    font-size: 2.4rem;
+    color: #000;
+}
+.mypic{
+    width: 12.2rem;
+    height:8.25rem ;
+    background: url(../image/mysecretion.png) no-repeat center center;
+    background-size: 100% 100%;
+    margin-bottom: 2.5rem;
+}
+.money_section2{
+    width: 100%;
+    background: #fff;
+    margin-top: 1rem;
+}
+.money_section2 div{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    box-sizing: border-box;
+    padding: 0 .75rem;
+}
+.money_section2 div aside{
+    display: inline-block;
+    height: 1.6rem;
+    padding: 1rem;
+}
+.money_section2 div aside img{
+    height: 100%;
+    vertical-align: middle;
+}
+.more{
+    width: 0.7rem;
+    height: 1.4rem;
+    background: url("/web/res/image/more.png") no-repeat center center;
+    background-size: 100% 100%;
+    display: block;
+}
+.myMoeybtn{
+    width: 25rem;
+    height: 3.8rem;
+    line-height: 3.8rem;
+    color: white;
+    background: #d53c3e;
+    border-radius: 3.8rem;
+    margin: 0 auto;
+    margin-top: 4rem;
+    font-size: 1.6rem;
+    text-align: center;
+}
+.money_section2 p{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+    -webkit-box-align: center;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid #e8e8e8;
+    font-size: 1.4rem;
+}
+.money_section2 p span:first-child{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+}
+/*--------------------------myMoneybag---完-------------------------*/
+/*--------------------------bankCard----------------------------*/
+.bankCard{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -o-box-orient: vertical;
+    -ms-flex-direction: column;
+    box-orient: vertical;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -o-box-align: center;
+    box-align: center;
+}
+.bankCard > div{
+    width: 94%;
+    margin-top: 1rem;
+    border-radius: 6px;
+    background: url(/web/res/image/pic_tiao1.png) repeat-y;
+    background-size: 100% 100%;
+}
+.bankCard > div:first-child{
+    background: url(/web/res/image/pic_tiao2.png) repeat-y;
+    background-size: 100% 100%;
+}
+.bankCard > div:last-child{
+    background: url(/web/res/image/pic_tiao3.png) repeat-y;
+    background-size: 100% 100%;
+}
+.bankCard dl{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -o-box-align: center;
+    box-align: center;
+    padding: 1rem;
+}
+.bankCard dl dt{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    -o-box-pack: center;
+    box-pack: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -o-box-align: center;
+    box-align: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-right: 1rem;
+    border-radius: 2.4rem;
+    background: #fff;
+}
+.bankCard dl dt img{
+    display: block;
+    width: 78%;
+    height: 78%;
+}
+.bankCard dl dd{
+    font-size: 1.6rem;
+    color: #fff;
+}
+.bankCard p{
+    width: 100%;
+    padding-bottom: 1rem;
+    font-size: 1.6rem;
+    color: #fff;
+    text-align: center;
+}
+/*--------------------------bankCard---完-------------------------*/
+/*--------------------------addBankCard---完-------------------------*/
+
+.cont_addCard{
+    background: #fff;
+    top: 0;
+    max-width: 46.75rem;
+    margin: 0 auto;
+}
+.cont_addCardForm > p{
+    width: 100%;
+    padding:1rem;
+    box-sizing: border-box;
+    color: #999999;
+    background: #EDEDED;
+}
+.addcardTitle{
+    width: 100%;
+    padding:1rem;
+    box-sizing: border-box;
+    color: #999999;
+    background: #EDEDED;
+}
+.sec_addCard{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid #e1e1e1;
+    -webkit-box-align: center;
+}
+.sec_addCard label{
+    display: inline-block;
+    width: 6rem;
+}
+.cont_addCardForm{
+    padding: 0 1.5rem;
+}
+.sec_addCard > input{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+    height: 100%;
+    font-family: "微软雅黑";
+    color: #333;
+    border: 1px solid #fff;
+}
+.promptText p{
+    padding: 10px 1rem;
+    box-sizing: border-box;
+    color: #999999;
+}
+.selectedBankCard p{
+    border: none;
+}
+.okAddBankCard{
+    margin: 0 1rem;
+    margin-top: 5rem !important;
+}
+.iconBtn{
+    display: inline-block;
+    width: 20px;
+    height: 16px;
+    vertical-align: middle;
+    background: url(../image/pic_gengduo.png) no-repeat;
+    background-size: auto 100%;
+}
+
+.sec_addCard > a{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+    height: 100%;
+    font-family: "微软雅黑";
+    color: #333;
+    border: 1px solid transparent;
+}
+.add_section2{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    width: 100%;
+}
+.add_section2 dl{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    position: relative;
+}
+.add_section2 dl dt{
+    position: absolute;
+    top: -2px;
+    height: 2.2rem;
+}
+.add_section2 dl dt img{
+    height: 100%;
+}
+.add_section2 dl dd{
+    margin-left: 3rem;
+}
+.btnstyle a {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -ms-flex: 1;
+    -o-box-flex: 1;
+    box-flex: 1;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    -o-box-pack: center;
+    box-pack: center;
+    width: 100%;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    color: white;
+    border-radius: 6px;
+    background: #d53c3e;
+}
+/*--------------------------addBankCard---完-------------------------*/
+/*选择银行卡*/
+.select_section2{
+    padding: 1rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid #ececec;
+}
+
+.cont_bankcard{
+    background: #fff;
+    top: 0;
+    max-width: 46.75rem;
+    margin: 0 auto;
+}
+#wrapper{
+    max-width: 46.75rem;
+    margin: 0 auto;
+    background: white;
+}
+.sec_details input{
+    color: #6D6D6D;
+    background: white;
+}
+.sec_Cash{
+    position: relative;
+}
+/*-----------------------carryCash.html------------------*/
+.sec_Cash label{
+    display: inline-block;
+    width: 8rem;
+}
+.importMoney{
+    height: 4rem !important;
+    font-size: 2.4rem;
+    color: #333;
+}
+input.importMoney::-webkit-input-placeholder{
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+}
+input.importMoney::-moz-placeholder{
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+}
+input.importMoney::-webkit-input-placeholder{
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+}
+input.importMoney:-ms-input-placeholder{
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+}
+.sec_Cash span{
+    position: absolute;
+    left: 7.2rem;
+    top: 1.7rem;
+    display: none;
+    color: #333;
+    font-size: 2.4rem;
+}
+.allCash{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+}
+.allCash span{
+    display: block;
+}
+.allCash span:last-child{
+    color: #d53c3e;
+}
+/*-----------------------carryCash.html--完----------------*/
+/*-----------------------detailsMoneyPage.html------------------*/
+.cont_detMoneyForm{
+    padding: 0 1.5rem;
+}
+.toptixian{
+    display: -webkit-box;
+    -webkit-box-pack: justify;
+    -webkit-box-align: center;
+    margin-bottom: 0.7rem;
+}
+.toptixian span{
+    display: block;
+}
+.detailMoneyCont{
+    background: #fff;
+}
+.detailsMoney{
+    padding: 1rem 0;
+    box-sizing: border-box;
+    border-bottom: 1px solid #ececec;
+    background: white;
+}
+.cashNum{
+    font-size: 1.6rem;
+    color: #333;
+}
+.cashName{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    font-size: 1.4rem;
+}
+.cashName span{
+    display: block;
+    padding:0.2rem 0.3rem;
+    border-radius: 8px;
+}
+.statusred{
+    color: red!important;
+}
+.zhuangtai{
+    width: 4.9rem;
+    height: 1.7rem;
+    line-height: 1.7rem;
+    text-align: center;
+    font-size: 1rem;
+
+}
+.zhuangtai.shz{
+    background: #67a07d;
+}
+.zhuangtai.txcg{
+    background: #68be77;
+}
+.zhuangtai.txsb{
+    background: #f16d6b;
+}
+/*-----------------------detailsMoneyPage.html--完----------------*/
+/*--------------------------register----------------------------*/
+.contactBox{
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background: #fff;
+    padding-top: 30px;
+}
+.contactBox p{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    position: relative;
+    width: 78%;
+    padding: 1rem 0;
+    margin: 0 auto;
+    border-bottom: 1px solid #ececec;
+}
+.contactBox p img{
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.verification{
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    font-size: 14px;
+    color: #f00;
+}
+.contactBox p:first-child{
+    margin-top: 0;
+}
+.contactBox p.contactTel{
+    color: #67a07d;
+    font-size: 1.2rem;
+    border: none !important;
+}
+.contactBox p.contactTel a{
+    color: #999;
+    margin-right: 16px;
+}
+.contactBox p.contactTelLog{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: -ms-flexbox;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    color: #67a07d;
+    font-size: 1.2rem;
+    border: none !important;
+}
+.contactBox p.contactTelLog a{
+    display: block;
+    color: #999;
+}
+.contactBox p.contactTelLog a:last-child{
+    color: #67a07d;
+}
+.contactBox p input{
+    height: 28px;
+    text-indent: 3%;
+    color: #000;
+    border: none;
+    font-family: "微软雅黑";
+}
+.authCode{
+    position: relative;
+}
+.downNum{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -14px;
+}
+.authCode input[type='button'].on{
+    color: #fff;
+    background: #ddd;
+    border: 1px solid #eee;
+}
+.authCode input[type='button']{
+    height: 28px;
+    margin-left: 20px;
+    color: #fff;
+    border: 1px solid #d53c3e;
+    border-radius: 6px;
+    background: #d53c3e;
+    text-align: center;
+}
+.agreeBox{
+    height: 16px;
+    margin-top: 8px !important;
+    margin-bottom: 42px;
+    font-size: 1.2rem;
+    border: none !important;
+}
+.agreeBox i.checkAgreeBtn{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    width: 18px;
+    height: 18px;
+    margin: 2px 6px 0 0;
+    border: 1px solid #67a07d;
+    border-radius: 4px;
+}
+.checkAgreeBtn img{
+    width: 20px !important;
+    margin-bottom: 4px;
+}
+.agreeBox span{
+    display: inline-block;
+    height: 20px;
+    line-height: 22px;
+    font-size: 1.2rem;
+    color: #757575;
+}
+.agreeBox a{
+    color: #67a07d;
+}
+.btnstyle{
+    border: none !important;
+    margin-top: 14px !important;
+}
+.loginBtnBox input{
+    height: 38px !important;
+    color: #fff;
+}
+.noticeMsgBox{
+    position: fixed;
+    top: 50%;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.6);
+    padding: 15px 0px;
+}
+.dealPwdBox{
+    position: relative;
+}
+.dealPwdBox span{
+    position: absolute;
+    display: inline-block;
+    height: 28px;
+    margin-top: 2px;
+    line-height: 28px;
+}
+.dealPwdBox input{
+    margin-left: 8rem;
+    border: 1px solid transparent;
+}
+/*--------------------------register---完-------------------------*/
+/*弹出框 */
+/*弹出框 */
+/* CSS Document */
+.pop_wrap{
+    overflow: auto;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-left:-5.45rem!important;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    padding: 1.4rem;
+}
+.pop_con{
+    display:-webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    -webkit-box-orient: vertical;
+    text-align: center;
+    font-size: 1.4rem;
+    color:rgba(255,255,255,0.9);
+    margin: 0 auto;
+}
+.warning{
+    background: rgba(0,0,0,0.6);
+}
+
+.warning .pop_title{
+    font-size: 1.6rem;
+    background:#efa428;
+
+}
+.error{
+    background: rgba(0,0,0,0.6);
+
+}
+.error .classpic{
+    width: 3.4rem;
+    height: 3.2rem;
+    background: url(/web/res/image/pic_gantanhao.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-bottom: 0.8rem;
+}
+.error .pop_title{
+    font-size: 1.6rem;
+}
+.normal {
+    background: rgba(0,0,0,0.6);
+}
+.normal .classpic{
+    width: 3.4rem;
+    height: 3.2rem;
+    background: url(/web/res/image/pic_duihao.png) no-repeat center center;
+    background-size:100% 100%;
+    margin-bottom: 0.8rem;
+}
+
+/*结束 */
+/*--------------------------register----------------------------*/
+.contactBox p{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    position: relative;
+    width: 78%;
+    padding: 1rem 0;
+    margin: 0 auto;
+    border-bottom: 1px solid #ececec;
+}
+.forgetPwd{
+    display: block;
+    padding: 0 4rem;
+    text-align: right;
+    color: #d53c3e;
+}
+.contactBox p img{
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.verification{
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    font-size: 14px;
+    color: #f00;
+}
+.contactBox p:first-child{
+    margin-top: 0;
+}
+.wrap{
+    width: 100%;
+    height: 100%;
+}
+.pullUpLabel{ font-size:1.2rem; color: #999; text-align:center; line-height: 2rem;margin-top: 1rem}
+#cont_box{ padding-bottom:3.2rem;}
+.contactBox p.contactTel{
+    color: #67a07d;
+    font-size: 1.2rem;
+    border: none !important;
+}
+.contactBox p.contactTel a{
+    color: #999;
+    margin-right: 16px;
+}
+.contactBox p.contactTelLog{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: -ms-flexbox;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    color:#67a07d;
+    font-size: 1.2rem;
+    border: none !important;
+}
+.contactBox p.contactTelLog a{
+    display: block;
+    color: #999;
+}
+.contactBox p.contactTelLog a:last-child{
+    color: #67a07d;
+}
+.contactBox p input{
+    height: 28px;
+    text-indent: 3%;
+    color: #000;
+    border: none;
+    font-family: "微软雅黑";
+}
+.authCode{
+    position: relative;
+}
+.downNum{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -14px;
+}
+.authCode input[type='button'].on{
+    color: #fff;
+    background: #ddd;
+    border: 1px solid #eee;
+}
+.agreeBox{
+    height: 16px;
+    margin-top: 8px !important;
+    margin-bottom: 42px;
+    font-size: 1.2rem;
+    border: none !important;
+}
+.agreeBox i.checkAgreeBtn{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    width: 18px;
+    height: 18px;
+    margin: 2px 6px 0 0;
+    border: 1px solid #67a07d;
+    border-radius: 4px;
+}
+.checkAgreeBtn img{
+    width: 20px !important;
+    margin-bottom: 4px;
+}
+.agreeBox span{
+    display: inline-block;
+    height: 20px;
+    line-height: 22px;
+    font-size: 1.2rem;
+    color: #757575;
+}
+.agreeBox a{
+    color: #67a07d;
+}
+.btnstyle{
+    border: none !important;
+    margin-top: 14px !important;
+}
+.loginBtnBox input{
+    height: 38px !important;
+    color: #fff;
+    background:#67a07d;
+}
+
+.noticeMsgBox{
+    position: fixed;
+    top: 50%;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.6);
+    padding: 15px 0px;
+}
+
+/*--------------------------register---完-------------------------*/
+/*--------------------------person----------------------------*/
+.personContBox{
+    padding: 0;
+}
+.infoDiv{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    -ms-flex-pack: justify;
+    box-pack: justify;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid #ececec;
+}
+.infoDiv  p{
+    width: auto;
+    margin: 0;
+    border: none;
+}
+.infoDiv  p:last-child{
+    color: #999;
+}
+.infoDiv  p .demo1{
+    color: #999;
+}
+.headImgDiv p{
+    height: 40px;
+    line-height: 40px;
+}
+.headImgDiv .headImgParent span{
+    overflow: hidden;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+}
+.headImgDiv .headImgParent img{
+    width: 100%;
+    height: 100%;
+}
+.infoDiv-City{
+    position: relative;
+}
+.infoDiv-City input{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    bottom: 0;
+    width: 80%;
+    text-align: right;
+    background: transparent;
+    border: none;
+    color: #999;
+    font-family: "微软雅黑";
+}
+.infoDiv-Time{
+    position: relative;
+}
+.picktime{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -o-box;
+    display: box;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-flex: 1;
+    box-flex: 1;
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    bottom: 0;
+    width: 80%;
+    text-align: right;
+    background: transparent;
+    border: none;
+    color: #999;
+    font-family: "微软雅黑";
+}
+/*--------------------------person---完-------------------------*/
+.mylivwallet{
+    background: white;
+    padding-left: 1rem;
+}
+.myzq {
+    padding: 1.4rem 0;
+    border-bottom: 1px solid #e8e8e8;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: justify;
+}
+.myzq p {
+    display: -webkit-box;
+    -webkit-box-align: center;
+}
+.myzq span {
+    display: block;
+    color: #000;
+}
+.myzq p i {
+    display: block;
+    font-weight: bold;
+}
+.walletxq {
+    display: -webkit-box;
+    -webkit-box-align: center;
+}
+.new_more{
+    margin-left: 1rem;
+}
+.mylivwallet:last-child{
+    margin-bottom: 1rem;
+}
+.cont_moneybag{
+    top: 0;
+}
+.bindingtap{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1;
+}
+.bindtext{
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: #28292f;
+    padding: 2.4rem 5rem;
+    text-align: center;
+    padding-top: 0;
+}
+.bindbox{
+    width: 26rem;
+    border-radius: 13px;
+    margin: 0 auto;
+    margin-top: 22rem;
+    background: white;
+}
+.bingthure{
+    width: 100%;
+    height: 4rem;
+    display: -webkit-box;
+    border-top: 1px solid #cacace;
+}
+.bingthure li{
+    -webkit-box-flex: 1;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    font-size:1.5rem;
+    color: #007aff;
+}
+.bingthure li:first-child{
+    border-right: 1px solid #cacace;
+}
+.bindboxTitle{
+    text-align: center;
+    height: 5rem;
+    line-height:5rem;
+    font-size:1.8rem;
+    font-weight: bold;
+}

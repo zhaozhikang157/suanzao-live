@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.BankMapper">
+    <resultMap id="bankMap" type="com.longlian.model.Bank">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="NAME"  property="name"/>
+        <result column="REMARK"  property="remark"/>
+        <result column="ORDER_SORT"  property="orderSort"/>
+        <result column="STATUS"  property="status"/>
+        <result column="PIC_ADDRESS"  property="picAddress"/>
+        <result column="BACKGROUND_START"  property="backgroundStart"/>
+        <result column="BACKGROUND_END"  property="backgroundEnd"/>
+    </resultMap>
+    <resultMap id="bankDtoMap" type="com.longlian.dto.BankDto" extends="bankMap">
+
+    </resultMap>
+
+    <sql id="bankSql">
+        `NAME`,REMARK,ORDER_SORT,STATUS,PIC_ADDRESS,BACKGROUND_START,BACKGROUND_END
+    </sql>
+
+    <select id="getListPage" resultMap="bankDtoMap">
+      SELECT ID,
+      <include refid="bankSql"></include>
+      FROM bank
+      <where>
+        <if test="@Ognl@isNotEmpty(bankDto.name)">
+            AND `NAME` LIKE CONCAT('%',#{bankDto.name},'%' )
+        </if>
+          <if test="@Ognl@isNotEmpty(bankDto.status)">
+              AND STATUS = #{bankDto.status}
+          </if>
+    </where>
+    </select>
+
+    <insert id="create">
+        INSERT INTO bank(
+          `NAME`,REMARK,ORDER_SORT,PIC_ADDRESS,BACKGROUND_START,BACKGROUND_END
+        )VALUES(#{bank.name},#{bank.remark},#{bank.orderSort},#{bank.picAddress},#{bank.backgroundStart},#{bank.backgroundEnd})
+    </insert>
+
+    <update id="update">
+      UPDATE bank
+      SET `NAME`=#{bank.name},REMARK=#{bank.remark},ORDER_SORT=#{bank.orderSort},PIC_ADDRESS=#{bank.picAddress},BACKGROUND_START=#{bank.backgroundStart},BACKGROUND_END=#{bank.backgroundEnd}
+      WHERE ID=#{bank.id}
+    </update>
+
+    <select id="selectById" resultMap="bankMap">
+        SELECT ID,<include refid="bankSql"></include>
+        FROM  bank
+        WHERE ID=#{id}
+    </select>
+
+    <update id="setStatusForbidden">
+        UPDATE bank
+        SET STATUS='1'
+        WHERE ID=#{id}
+    </update>
+
+    <update id="setStatusStart">
+        UPDATE bank
+        SET STATUS='0'
+        WHERE ID=#{id}
+    </update>
+
+    <select id="getList4App" resultMap="bankMap">
+        SELECT ID,
+        <include refid="bankSql"></include>
+        FROM bank
+        where  status = '0'
+    </select>
+
+    <select id="getBankNameList" resultMap="bankMap">
+        SELECT ID,NAME FROM bank
+    </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.newdao.DataUseRecordMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.DataUseRecord">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="COURSE_ID" jdbcType="BIGINT" property="courseId" />
+    <result column="ROOM_ID" jdbcType="BIGINT" property="roomId" />
+    <result column="LIVE_DATA_USE" jdbcType="BIGINT" property="liveDataUse" />
+    <result column="REVIEW_DATA_USE" jdbcType="BIGINT" property="reviewDataUse" />
+    <result column="DATA_USE" jdbcType="BIGINT" property="dataUse" />
+    <result column="USE_DATE" jdbcType="TIMESTAMP" property="useDate" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <select id="getAllUseFlowPage" resultType="Map">
+    SELECT dur.DATA_USE flow, dur.USE_DATE time ,c.LIVE_TOPIC courseName FROM data_use_record dur
+    LEFT JOIN course c ON c.ID = dur.COURSE_ID
+    <where>
+      dur.ROOM_ID = #{roomId}
+      <if test="@Ognl@isNotEmpty(startTime)"> AND #{startTime} &lt; dur.USE_DATE</if>
+      <if test="@Ognl@isNotEmpty(endTime)"> AND #{endTime} &gt; dur.USE_DATE</if>
+      <if test="@Ognl@isNotEmpty(courseName)">AND #{courseName} = c.LIVE_TOPIC</if>
+    </where>
+    ORDER BY dur.USE_DATE desc
+  </select>
+</mapper>

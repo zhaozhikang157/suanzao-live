@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>  
+<configuration scan="true" scanPeriod="30 minutes" debug="false">
+	<!-- 日志存储根路径 -->
+	<property name="log.dir.root" value="/export/weblogs" /> 
+	
+	<!-- 控制台输出日志 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder charset="utf-8"> <!-- encoder 可以指定字符集，对于中文输出有意义 -->
+			<pattern>%d{MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+    <!--
+	<appender name="LOGSTASH" class="com.cwbase.logback.RedisAppender">
+            <source>longlian-mq</source>
+            <host>123.57.224.112</host>
+            <port>6379</port>
+            <password>huaxin!@#</password>
+            <key>huaxin</key>
+            <mdc>true</mdc>
+            <location>true</location>
+            <callerStackIndex>0</callerStackIndex>
+        </appender>
+        <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="LOGSTASH" />
+    </appender>-->
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    
+    <logger name="com.ibatis" level="DEBUG" />  
+	<logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />  
+	<logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />  
+	<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />  
+	<logger name="java.sql.Connection" level="DEBUG" />  
+	<logger name="java.sql.Statement" level="DEBUG" />  
+	<logger name="java.sql.PreparedStatement" level="DEBUG" />  
+
+	<!-- 下面配置一些第三方包的日志过滤级别 -->
+	<logger name="com.longlian" level="DEBUG" additivity="true"/>
+	<logger name="com.huaxin" level="DEBUG" additivity="true"/>
+	<logger name="org.mybatis" level="DEBUG"/>
+	<logger name="org.springframework.web" level="DEBUG" />
+
+
+	<root level="info">
+        <appender-ref ref="FILE"/>
+        <!--<appender-ref ref="ASYNC"/>-->
+	</root>
+
+
+
+</configuration>

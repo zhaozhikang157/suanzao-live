@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.LiveChatRoomMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.LiveChatRoom">
+        <id column="ID" property="id"/>
+        <result column="LIVE_ROOM_ID" property="liveRoomId"/>
+        <result column="CHAT_ROOM_ID" property="chatRoomId"/>
+        <result column="IS_USE" property="isUse"/>
+        <result column="CREATE_TIME" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      ID, LIVE_ROOM_ID, CHAT_ROOM_ID, IS_USE ,CREATE_TIME
+    </sql>
+
+    <insert id="insert">
+        insert live_chat_room ( LIVE_ROOM_ID, CHAT_ROOM_ID, IS_USE ,CREATE_TIME) VALUES (#{liveRoomId},#{chatRoomId},#{isUse},#{createTime})
+    </insert>
+
+    <update id="update">
+        UPDATE live_chat_room set IS_USE = '1' WHERE CHAT_ROOM_ID = #{chatRoomId}
+    </update>
+
+    <select id="findByLiveRoomId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM live_chat_room WHERE LIVE_ROOM_ID = #{liveRoomId} AND IS_USE = '0'
+    </select>
+
+
+</mapper>

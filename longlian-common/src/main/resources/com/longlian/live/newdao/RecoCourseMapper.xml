@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longlian.live.newdao.RecoCourseMapper" >
+  <resultMap id="BaseResultMap" type="com.longlian.model.RecoCourse" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <result column="ID" property="id" jdbcType="BIGINT" />
+    <result column="COURSE_ID" property="courseId" jdbcType="BIGINT" />
+    <result column="RECO_POS" property="recoPos" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select id="getRecoCourseListPage"  resultType="Map">
+      SELECT
+      r.ID AS id,
+      r.COURSE_ID AS courseId,
+      c.LIVE_TOPIC as liveTopic,
+      r.CREATE_TIME AS createTime,
+      r.RECO_POS AS recoPos,
+      r.SORT AS sort
+      FROM
+      reco_course r LEFT JOIN course c on r.COURSE_ID = c.id
+      WHERE
+      1=1
+    <if test="@Ognl@isNotEmpty(map.courseId)">
+      AND r.COURSE_ID = #{map.courseId}
+    </if>
+      <if test="@Ognl@isNotEmpty(map.liveTopic)">
+          AND c.LIVE_TOPIC LIKE  CONCAT('%',#{map.liveTopic},'%' )
+      </if>
+      ORDER  BY   r.CREATE_TIME desc
+  </select>
+  <select id="getRecoCoursesById" resultMap="BaseResultMap">
+    SELECT * FROM reco_course WHERE ID = #{id}
+  </select>
+  <update id="updateRecoCoursesById" parameterType="com.longlian.model.RecoCourse">
+      UPDATE reco_course SET COURSE_ID = #{courseId},RECO_POS = #{recoPos},CREATE_TIME = #{createTime},SORT = #{sort} WHERE ID = #{id}
+  </update>
+
+  <select id="getRecoCourses" resultType="Map">
+   SELECT c.ID id, c.LIVE_TOPIC topic, IFNULL(c.COL_IMG_ADDRESS ,c.COVERSS_ADDRESS) coverssAddress , c.START_TIME
+        startTime ,c.END_TIME endTime,
+        ap.NAME userName ,greatest(c.VISIT_COUNT,c.JOIN_COUNT) joinCount ,c.LIVE_WAY AS liveWay ,
+        (CASE WHEN c.SERIES_COURSE_ID> 0 THEN (SELECT c2.CHARGE_AMT FROM course c2 WHERE c.SERIES_COURSE_ID = c2.ID ) ELSE c.CHARGE_AMT END ) chargeAmt,
+        c.IS_SERIES_COURSE isSeriesCourse , c.UPDATED_COUNT updatedCount,ap.ID as appId
+
+        FROM reco_course r
+        LEFT JOIN course c ON r.COURSE_ID = c.ID
+        LEFT JOIN app_user ap ON ap.ID = c.APP_ID
+    <where>
+            c.STATUS = '0' AND IS_DELETE = '0' AND SERIES_COURSE_ID = 0
+            AND (c.IS_SERIES_COURSE = '0' OR (c.IS_SERIES_COURSE = '1' AND c.UPDATED_COUNT > 0 ))
+    </where>
+    ORDER BY r.SORT DESC
+    limit 0 ,4
+  </select>
+    <select id="isExistRecoCourse" resultType="int">
+        SELECT count(id) from reco_course WHERE COURSE_ID = #{courseId}
+    </select>
+    <update id="deleteById">
+        DELETE  FROM  reco_course  WHERE ID = #{id}
+    </update>
+</mapper>

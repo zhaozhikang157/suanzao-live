@@ -1,0 +1,51 @@
+.appUserInfoList p{
+	display: inline-block;
+	margin-right: 18px;
+}
+.appUserInfoList p img{
+	width: 100px;
+	height: 100px;
+}
+.appUserInfoList p label{
+	font-size: 16px;
+}
+.appUserInfoList p span{
+	display: inline-block;
+	padding-top: 7px;
+	font-size: 16px;
+	vertical-align: middle;
+}
+.tableBox{
+	width: 100%;
+	margin-top: 20px;
+	border: 1px solid #eee;
+}
+.tableBox thead tr{
+	height: 42px;
+	border-bottom: 1px solid #eee;
+	background: #d9edf7;
+}
+.tableBox tbody tr{
+	height: 34px;
+}
+.tableBox tbody tr:hover{
+	background: #F5F5F5;
+}
+.tableBox tbody tr:nth-child(even){
+	background: #dff0d8;
+}
+.tableBox th{
+	line-height: 42px;
+	text-align: center;
+	border: none;
+}
+.tableBox td{
+	line-height: 34px;
+	text-align: center;
+	border: none;
+}
+.backOutBtnBox{
+	width: 100% !important;
+	margin-top: 20px !important;
+	text-align: center;
+}

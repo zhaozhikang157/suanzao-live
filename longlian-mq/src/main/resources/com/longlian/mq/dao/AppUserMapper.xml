@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.mq.dao.AppUserMapper">
+	<resultMap id="BaseResultMap" type="com.longlian.model.AppUser">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="OPENID" jdbcType="VARCHAR" property="openid" />
+		<result column="UNIONID" jdbcType="VARCHAR" property="unionid" />
+		<result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="GENDER" jdbcType="VARCHAR" property="gender" />
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+		<result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+		<result column="STATUS" jdbcType="VARCHAR" property="status" />
+		<result column="USER_PRIV" jdbcType="VARCHAR" property="userPriv" />
+		<result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="PHOTO" jdbcType="INTEGER" property="photo" />
+		<result column="FROM_TYPE" jdbcType="VARCHAR" property="fromType" />
+		<result column="CITY" jdbcType="VARCHAR" property="city" />
+		<result column="LEVEL" jdbcType="INTEGER" property="level" />
+		<result column="INVITATION_APP_ID" jdbcType="BIGINT" property="invitationAppId" />
+		<result column="ID_CARD" jdbcType="VARCHAR" property="idCard" />
+		<result column="ID_CARD_FRONT" property="idCardFront" />
+		<result column="ID_CARD_REAR"  property="idCardRear" />
+		<result column="YUNXIN_TOKEN"  property="yunxinToken" />
+
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	   OPENID,UNIONID, MOBILE, NAME, GENDER, PASSWORD, BIRTHDAY, STATUS,USER_PRIV, CREATE_TIME,
+		PHOTO, FROM_TYPE, CITY ,LEVEL,INVITATION_APP_ID,ID_CARD,ID_CARD_FRONT,ID_CARD_REAR,YUNXIN_TOKEN
+	</sql>
+
+	<select id="getNames" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		ID ,NAME
+		from app_user
+		where 1=1 AND ID in
+		<foreach collection="list" item="id" index="index"
+				 open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+
+
+	</select>
+
+	<select id="getOpenidById" resultType="java.lang.String" >
+		SELECT OPENID from app_user where ID = #{id}
+	</select>
+
+	<update id="updateYunXinToken">
+		update app_user set YUNXIN_TOKEN = #{token}  where ID = #{id}
+	</update>
+	<!-- 更新用户模糊背景图 -->
+	<update id="updateUserBlurPhoto">
+		update app_user set blur_photo=#{blurPhoto} WHERE  ID = #{id}
+	</update>
+	<select id="getNameAndPhoto" resultType="map" >
+		SELECT ID id , NAME name , PHOTO photo from app_user where ID = #{id}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+			resultMap="BaseResultMap">
+		select
+		ID ,<include refid="Base_Column_List" />
+		from app_user
+		where ID = #{id}
+	</select>
+
+</mapper>
+

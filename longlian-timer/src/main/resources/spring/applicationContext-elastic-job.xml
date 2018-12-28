@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
+       xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.dangdang.com/schema/ddframe/reg
+       http://www.dangdang.com/schema/ddframe/reg/reg.xsd
+       http://www.dangdang.com/schema/ddframe/job
+       http://www.dangdang.com/schema/ddframe/job/job.xsd">
+
+	<!-- 任务注册中心 -->
+    <reg:zookeeper id="registryCenter"
+    	server-lists="${zookeeper.address}" 
+    	namespace="longlian_timer_job"
+    	base-sleep-time-milliseconds="1000" 
+    	max-sleep-time-milliseconds="3000"
+    	max-retries="3" />
+    	
+<!-- ===================================后台定时任务 start======================= -->
+    <!--        task          -->
+  	<!-- 凌晨1点执行一次 -->
+	<job:simple id="buttonCountTask"
+                class="com.longlian.console.task.ButtonCountTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="各个按钮点击次数统计"/>
+    <!--录播课结束任务-->
+    <job:simple id="recordCourseEndTask"
+                class="com.longlian.console.task.RecordCourseEndTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/1 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="录播课结束任务"/>
+    <!--定时器,处理云信消息抄送-->
+    <job:simple id="chatRoomMsgTask"
+                class="com.longlian.console.task.ChatRoomMsgTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/5 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="处理云信息消息抄送"/>
+    <!--计数写入db-->
+    <job:simple id="countWriteToDBTask"
+                class="com.longlian.console.task.CountWriteToDBTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="计数写入db"/>
+    <!--课程开课程消息提醒-->
+    <job:simple id="courseMessageTask"
+                class="com.longlian.console.task.CourseMessageTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/5 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="课程开课程消息提醒"/>
+    <!--云信Token后台创建（补漏）-->
+    <job:simple id="createYunxinTokenTask"
+                class="com.longlian.console.task.CreateYunxinTokenTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/10 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="云信Token后台创建（补漏）"/>
+    <!--删除10天之前的消息-->
+    <job:simple id="delAppMsgTask"
+                class="com.longlian.console.task.DelAppMsgTask"
+                registry-center-ref="registryCenter"
+                cron="0 30 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="删除10天之前的消息"/>
+    <!--页面访问统计-->
+    <job:simple id="pageCountTask"
+                class="com.longlian.console.task.PageCountTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="页面访问统计"/>
+
+    <!--页面平均执行时间统计-->
+    <job:simple id="pagehandleTimeTask"
+                class="com.longlian.console.task.PagehandleTimeTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 2 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="页面平均执行时间统计"/>
+    <!-- timer目录定时 -->
+    <job:simple id="courseEndTimer"
+                class="com.longlian.console.timer.CourseEndTimer"
+                registry-center-ref="registryCenter"
+                cron="0 0 0/1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="结束课程任务"/>
+    <!--清除没有流的课程-->
+    <!--<job:simple id="clearClouseByNoStream"
+                class="com.longlian.console.timer.ClearClouseByNoStream"
+                registry-center-ref="registryCenter"
+                cron="0 0 3 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="清除没有流的课程"/>-->
+    <!--    time      -->
+    <!--开课十分钟之前,发送通知-->
+    <job:simple id="coursePreRemindTimer"
+                  class="com.longlian.console.timer.CoursePreRemindTimer"
+                  registry-center-ref="registryCenter"
+                  cron="0 0/5 * * * ?"
+                  sharding-total-count="1"
+                  misfire="false"
+                  overwrite="true"
+                  description="开课十分钟之前,发送通知"/>
+    <!--循环处理 查询AppUser 和 LLAccount 的ID 是相同-->
+    <job:simple id="findUserAndLLAccountTimer"
+                  class="com.longlian.console.timer.FindUserAndLLAccountTimer"
+                  registry-center-ref="registryCenter"
+                  cron="0 0/5 * * * ?"
+                  sharding-total-count="1"
+                  misfire="false"
+                  overwrite="true"
+                  description="循环处理 查询AppUser 和 LLAccount 的ID 是相同"/>
+    <!--定时处理 支付中的订单 分钟之前的-->
+    <job:simple id="handlerPayingJoinCourseTimer"
+                  class="com.longlian.console.timer.handlerPayingJoinCourseTimer"
+                  registry-center-ref="registryCenter"
+                  cron="0 0/5 * * * ?"
+                  sharding-total-count="1"
+                  misfire="false"
+                  overwrite="true"
+                  description="定时处理 支付中的订单 分钟之前的"/>
+    <!--处理第三方授权公众号失效-->
+    <job:simple id="handlerThirdWechatAccessTokenLoseUseTimer"
+                  class="com.longlian.console.timer.HandlerThirdWechatAccessTokenLoseUseTimer"
+                  registry-center-ref="registryCenter"
+                  cron="0 0/10 * * * ?"
+                  sharding-total-count="1"
+                  misfire="false"
+                  overwrite="true"
+                  description="处理第三方授权公众号失效"/>
+    <job:simple id="courseButtonCountTask"
+                class="com.longlian.console.task.CourseButtonCountTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 2 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="课程按钮/返回按钮/播放按钮 访问统计 停留时长"/>
+    <job:simple id="coursePageCountTask"
+                class="com.longlian.console.task.CoursePageCountTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="课程详情 访问统计 停留时长"/>
+    <job:simple id="withDrawMoneyTask"
+                class="com.longlian.console.task.WithDrawMoneyTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 4 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="审核通过7天后自动提现到账"/>
+    <job:simple id="seriesCourseStatus"
+                class="com.longlian.console.timer.SeriesCourseStatus"
+                registry-center-ref="registryCenter"
+                cron="0 0/1 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="系列课状态"/>
+    <job:simple id="courseRelayCheckAndUpdate"
+                class="com.longlian.console.timer.CourseRelayCheckAndUpdate"
+                registry-center-ref="registryCenter"
+                cron="0 0 23 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="检查转播系列单节课补充任务"/>
+    <!--<job:simple id="wechatServerEndRemindTimer"
+                class="com.longlian.console.timer.WechatServerEndRemindTimer"
+                registry-center-ref="registryCenter"
+                cron="0 0 12 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="审核通过7天后自动提现到账"/>-->
+
+    <!--         task_mq        -->
+    <job:simple id="UpdateCourseStatusTask"
+                class="com.longlian.console.task_mq.UpdateCourseStatusTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/1 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="更新课程审核状态"/>
+    <job:simple id="voiceCourseEndTimer"
+                class="com.longlian.console.timer.VoiceCourseEndTimer"
+                registry-center-ref="registryCenter"
+                cron="0 0/2 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="语音课程没有内容结束"/>
+
+    <!--<job:simple id="CdnLogTask"
+                class="com.longlian.console.task_mq.CdnLogTask"
+                registry-center-ref="registryCenter"
+                cron="0 5 0 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="直播流量消耗统计"/>
+    <job:simple id="CourseDataUseTask"
+                class="com.longlian.console.task_mq.CourseDataUseTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="转化成DataUseRecord对象"/>
+    <job:simple id="CourseSortTask"
+                class="com.longlian.console.task_mq.CourseSortTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 2 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="课程排序"/>
+    <job:simple id="DataChargeTask"
+                class="com.longlian.console.task_mq.DataChargeTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 0 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="任务不明确"/>
+    <job:simple id="FreeTimeTask"
+                class="com.longlian.console.task_mq.FreeTimeTask"
+                registry-center-ref="registryCenter"
+                cron="0 1 0 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="清空免费有效期"/>
+    <job:simple id="OssLogTask"
+                class="com.longlian.console.task_mq.OssLogTask"
+                registry-center-ref="registryCenter"
+                cron="0 7 0 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="录播和回放流量消耗统计"/>
+    <job:simple id="SetLivePeopleTask"
+                class="com.longlian.console.task_mq.SetLivePeopleTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/5 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="添加虚拟用户"/>
+    <job:simple id="UpdateVideoConvertAddressTask"
+                class="com.longlian.console.task_mq.UpdateVideoConvertAddressTask"
+                registry-center-ref="registryCenter"
+                cron="0 0/1 * * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="流转化"/>
+    <job:simple id="UploadAddressTask"
+                class="com.longlian.console.task_mq.UploadAddressTask"
+                registry-center-ref="registryCenter"
+                cron="0 10 12 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="更新播放地址"/>
+    <job:simple id="WeeklySelectionCourseTask"
+                class="com.longlian.console.task_mq.WeeklySelectionCourseTask"
+                registry-center-ref="registryCenter"
+                cron="0 0 1 * * ?"
+                sharding-total-count="1"
+                misfire="false"
+                overwrite="true"
+                description="首页每周精选课程缓存"/>-->
+
+    <!-- =============================== 后台定时任务 end ========================= -->
+</beans>

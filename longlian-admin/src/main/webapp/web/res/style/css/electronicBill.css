@@ -1,0 +1,102 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    font-size: 62.5%;
+    background: #fff;
+    font-family: "微软雅黑";
+    font-size: 14px;
+}
+
+.wrapper{
+    width: 900px;
+    height: 350px;
+    margin: 0 auto;
+}
+	.billTitle{
+		width: 898px;
+		height: 82px;
+		margin: 0 auto;
+   		border: 1px solid #F0F0F0;
+   		border-bottom: none;
+	}
+	.billTitle h1{
+		height: 56px;
+		line-height: 58px;
+		text-align: center;
+		font-size: 1.71rem;
+		color: #3d3d3d;
+	}
+	.billTitle div{
+		position: relative;
+		width: 860px;
+		margin: 0 auto;
+	}
+	.billTitle div p{
+		color: #3d3d3d;
+	}
+	.billTitle div p:nth-child(1){
+		float: left;
+		color: #f65555;
+	}
+	.billTitle div p:nth-child(2){
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		text-align: center;
+	}
+	.billTitle div p:nth-child(3){
+		float: right;
+	}
+	.billTable{
+		width: 100%;
+    	border-top: 1px solid #F0F0F0;
+	}
+	.billTable td{
+		width: 16.666%;
+		height: 48px;
+		color: #3d3d3d;
+		vertical-align: middle;
+    	border: 1px solid #F0F0F0;
+	}
+	.billTable td span{
+		margin-left: 18px;
+	}
+	.billTable td:nth-child(odd){
+		background: #F3F7FE;
+	}
+	.billTable td:nth-child(even){
+		text-align: left;
+	}
+	.billTableInfo td{
+		width: 25%;
+		height: 24px;
+		text-align: left;
+	}
+	.billTableInfo td:nth-child(odd){
+		background: #fff;
+	}
+	.billTableInfo td:nth-child(odd) span{
+		margin-left: 84px;
+	}
+	.billTableInfo td.otherTd{
+		width: 115px;
+		text-align: center;
+	}
+	.billTableInfo td.otherTd span{
+		margin: 0;
+	}
+	.billTableInfo td:nth-child(odd) span.spanMargin{ 
+		margin-left: 18px;
+	}
+	.billTableInfo td.addbg{
+		background: #F3F7FE;
+	}
+	.textColor{
+		color: #f65555;
+	}
+	.textColor{
+		margin-right: 265px;
+	}
+
+

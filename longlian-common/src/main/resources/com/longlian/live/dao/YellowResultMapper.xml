@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.YellowResultMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.YellowResult">
+    <id column="ID" jdbcType="BIGINT" property="id"/>
+    <result column="COURSE_ID" jdbcType="VARCHAR" property="courseId"/>
+    <result column="COURSE_NAME" jdbcType="VARCHAR" property="courseName"/>
+    <result column="RATE" jdbcType="DECIMAL" property="rate"/>
+    <result column="GREEN_LABEL" jdbcType="INTEGER" property="greenLabel"/>
+    <result column="URL" jdbcType="VARCHAR" property="url"/>
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, COUNT_TIME, MACHINE_TYPE ,TYPE, COUNT
+  </sql>
+  <insert id="insert" parameterType="com.longlian.model.YellowResult">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into yellow_result (COURSE_ID,COURSE_NAME, RATE, GREEN_LABEL, URL,CREATE_TIME)
+    values (#{courseId},#{courseName}, #{rate}, #{creenLabel}, #{url},#{createTime})
+  </insert>
+
+    <select id="queryYellowResultByConditionPage" resultType="Map" >
+    SELECT
+        y.COURSE_ID AS courseId,
+        y.COURSE_NAME AS liveTopic,
+        y.URL AS url,
+        y.RATE AS rate,
+        y.GREEN_LABEL AS greenLabel,
+        y.CREATE_TIME AS createTime
+    FROM
+        yellow_result y
+      <where>
+        <if test="@Ognl@isNotEmpty(map.courseId)">AND y.COURSE_ID LIKE  CONCAT('%',#{map.courseId},'%' )</if>
+          <if test="@Ognl@isNotEmpty(map.liveTopic)">AND y.COURSE_NAME LIKE CONCAT('%',#{map.liveTopic},'%' )</if>
+          <if test="@Ognl@isNotEmpty(map.smallRate)">
+            and y.RATE &gt;= #{map.smallRate}
+         </if>
+          <if test="@Ognl@isNotEmpty(map.bigRate)">
+              and y.RATE &lt;= #{map.bigRate}
+          </if>
+          <if test="@Ognl@isNotEmpty(map.greenLabel)">AND y.GREEN_LABEL = '${map.greenLabel}'</if>
+      </where>
+        ORDER BY y.CREATE_TIME DESC
+    </select>
+
+</mapper>

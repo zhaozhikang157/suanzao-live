@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.OrdersMapper">
+    <resultMap id="orderMap" type="com.longlian.model.Orders">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID"  property="appId"/>
+        <result column="TRAN_NO"  property="tranNo"/>
+        <result column="ORDER_NO"  property="orderNo"/>
+        <result column="AMOUNT"  property="amount"/>
+        <result column="REAL_AMOUNT"  property="realAmount"/>
+        <result column="COUPON_AMOUNT"  property="couponAount"/>
+        <result column="COUPON_ID"  property="couponId"/>
+        <result column="BANK_TYPE"  property="bankType"/>
+        <result column="ORDER_TYPE"  property="orderType"/>
+        <result column="OPT_STATUS"  property="optStatus"/>
+        <result column="CREATE_TIME"  property="createTime"/>
+        <result column="SUCCESS_TIME"  property="successTime"/>
+        <result column="MER_ID"  property="merId"/>
+        <result column="NAME"  property="name"/>
+        <result column="BANK_CARD_NO"  property="bankCardNo"/>
+        <result column="BANK_NAME"  property="bankName"/>
+        <result column="MOBILE"  property="mobile"/>
+        <result column="REMARK"  property="remark"/>
+        <result column="JOIN_COURSE_ID"  property="joinCourseId"/>
+        <result column="IOS_PAY_TYPE_ID"  property="iosPayTypeId"/>
+        <result column="IOS_PAY_TYPE"  property="iosPayType"/>
+        <result column="COURSE_TYPE" jdbcType="INTEGER" property="courseType"/>
+    </resultMap>
+
+    <sql id="orderSql">
+        APP_ID,TRAN_NO,ORDER_NO,AMOUNT,REAL_AMOUNT,COUPON_AMOUNT,COUPON_ID,BANK_TYPE,ORDER_TYPE,OPT_STATUS,CREATE_TIME
+        ,SUCCESS_TIME,MER_ID,`NAME`,BANK_CARD_NO,BANK_NAME,MOBILE,REMARK,CHARGE,LL_CHARGE,JOIN_COURSE_ID,IOS_PAY_TYPE_ID,IOS_PAY_TYPE,LL_CHARGE_PERCENT,COURSE_TYPE
+    </sql>
+
+    <insert id="create" parameterType="Orders" >
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT  INTO orders  ( <include refid="orderSql"></include> )
+        VALUES (#{appId} ,#{tranNo} ,#{orderNo},#{amount},#{realAmount},#{couponAount},#{couponId},#{bankType},#{orderType}
+        ,#{optStatus},#{createTime},#{successTime},#{merId},#{name},#{bankCardNo},#{bankName},#{mobile},#{remark},#{charge},#{llCharge},#{joinCourseId},#{iosPayTypeId},#{iosPayType},#{llChargePercent},#{courseType})
+    </insert>
+
+    <select id="getOrderByOrderNo" parameterType="java.lang.String" resultMap="orderMap">
+        SELECT ID,
+        <include refid="orderSql"></include>
+        FROM orders
+        where  ORDER_NO = #{orderNo}
+    </select>
+
+    <select id="getOrderById" parameterType="java.lang.Long" resultMap="orderMap">
+        SELECT ID,
+        <include refid="orderSql"></include>
+        FROM orders
+        where  ID = #{id}
+    </select>
+    <select id="getOrderByJoinCourseRecordId" parameterType="java.lang.Long" resultMap="orderMap">
+        SELECT ID,OPT_STATUS,ORDER_NO
+        FROM orders
+        where  JOIN_COURSE_ID = #{joinCourseRecordId} ORDER  by ID DESC;
+    </select>
+
+
+    <update id="updateRechargeById" parameterType="Orders" >
+        update orders set OPT_STATUS = '1' , SUCCESS_TIME = #{successTime} ,TRAN_NO = #{tranNo}
+        <if test="@Ognl@isNotEmpty(charge)">, CHARGE = #{charge} </if>
+        <if test="@Ognl@isNotEmpty(chargePercent)">, CHARGE_PERCENT = #{chargePercent} </if>
+        <if test="@Ognl@isNotEmpty(llCharge)">, LL_CHARGE = #{llCharge} </if>
+        <if test="@Ognl@isNotEmpty(llChargePercent)">, LL_CHARGE_PERCENT = #{llChargePercent} </if>
+        where ID = #{id} AND OPT_STATUS = '0'
+    </update>
+
+    <select id="getTopUpRecord" resultType="map">
+        SELECT o.ID AS id,o.ORDER_NO AS orderNo,o.CREATE_TIME AS createTime,o.AMOUNT AS amount
+        FROM orders AS o
+        <where>
+            o.ORDER_TYPE='0'
+            AND o.OPT_STATUS='1'
+            AND o.APP_ID=#{appId}
+            <if test="lastId>0">
+                AND o.ID &lt; #{lastId}
+            </if>
+        </where>
+        ORDER BY o.CREATE_TIME DESC
+        LIMIT 10
+    </select>
+
+    <!--今天申请中和申请成功的提现金额-->
+    <select id="findAmountByAppId" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(AMOUNT),0)
+        FROM orders WHERE APP_ID = #{appId} AND ORDER_TYPE = '1' AND OPT_STATUS IN ('0','1')
+        AND DATE_FORMAT(CREATE_TIME, '%Y-%m-%d') = #{nowTime}
+    </select>
+
+    <!--今日提现金额-->
+    <select id="findAmountToday" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(AMOUNT),0)
+        FROM orders WHERE APP_ID = #{appId} AND ORDER_TYPE = '1' AND OPT_STATUS IN ('0','1')
+        AND DATE_FORMAT(CREATE_TIME, '%Y-%m-%d') = #{nowTime}
+    </select>
+
+    <!--所有申请中的提现金额-->
+    <select id="findAmountAllIng" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(AMOUNT),0)
+        FROM orders WHERE APP_ID = #{appId} AND ORDER_TYPE = '1' AND OPT_STATUS = '0'
+        AND DATE_FORMAT(CREATE_TIME, '%Y-%m-%d') &lt;= #{nowTime}
+    </select>
+
+    <select id="findAccountMoney" resultType="java.math.BigDecimal">
+      SELECT IFNULL(SUM(AMOUNT) ,0) FROM orders WHERE ORDER_TYPE = '1' AND OPT_STATUS = '0' AND APP_ID = #{appId}
+    </select>
+    <update id="cancelById" parameterType="java.lang.Long" >
+        update orders set OPT_STATUS = '2'  where ID = #{id} AND OPT_STATUS = '0'
+    </update>
+
+    <!--提现中的次数-->
+    <select id="getWithIngCount" resultType="Long">
+        SELECT COUNT(*) FROM orders
+        <where>
+            ORDER_TYPE = '1' AND OPT_STATUS = '0' AND
+            CREATE_TIME &gt;= #{startTime} and CREATE_TIME &lt;= #{endTime}
+            AND APP_ID = #{appId}
+        </where>
+    </select>
+
+    <!--提现成功的次数-->
+    <select id="getWithSuccessCount" resultType="Long">
+        SELECT COUNT(*) FROM orders
+        <where>
+            ORDER_TYPE = '1' AND OPT_STATUS = '1' AND
+            SUCCESS_TIME &gt;= #{startTime} and SUCCESS_TIME &lt;= #{endTime}
+            AND APP_ID = #{appId}
+        </where>
+    </select>
+
+</mapper>

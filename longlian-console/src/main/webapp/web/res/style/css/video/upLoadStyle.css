@@ -1,0 +1,54 @@
+html,body{
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	font-size: 62.5%;
+	font-family: "微软雅黑";
+}
+/*------------------------团队详情-----------------------*/
+.teamDetails{
+	width: 100%;
+	height: auto;
+	padding: 0 2%;
+}
+.tableBox{
+	width: 100%;
+}
+.tableBox table{
+	width: 100%;
+}
+.tableBox table thead{
+	background: #00BB9D;
+}
+.tableBox table tr{
+	height: 32px;
+}
+.tableBox table th{
+	height: 32px;
+	line-height: 32px;
+	text-align: center;
+	border: 1px solid #000;
+}
+.tableBox table td{
+	height: 32px;
+	line-height: 32px;
+	border: 1px solid #000;
+}
+
+/*---------------------团队详情----�?----------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

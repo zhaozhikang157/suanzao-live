@@ -1,0 +1,19 @@
+group 'com.longlian'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile project(':longlian-api')
+    compile project(':longlian-res-model')
+    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
+}
+war {
+    archiveName "longlian-res.war"
+}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+ 

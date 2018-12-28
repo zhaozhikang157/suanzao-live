@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://code.alibabatech.com/schema/dubbo          
+    	http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+      <!-- 提供方应用信息，用于计算依赖关系 --> 
+	<dubbo:application name="longlian-console"  />
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry address="zookeeper://10.111.73.3:2181" check="false"></dubbo:registry>
+    <dubbo:reference id="resService" interface="com.longlian.res.service.ResService"  check="false"/>
+    <dubbo:reference id="userService" interface="com.longlian.res.service.ThirdUserService"  check="false"/>
+</beans>

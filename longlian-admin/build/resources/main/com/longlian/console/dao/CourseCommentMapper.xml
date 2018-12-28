@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.CourseCommentMapper">
+
+  <resultMap id="BaseResultMap" type="com.longlian.model.CourseComment">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="COURSE_ID" jdbcType="BIGINT" property="courseId" />
+    <result column="APP_ID" jdbcType="BIGINT" property="appId" />
+    <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, COURSE_ID, APP_ID, CONTENT, STATUS, CREATE_TIME
+  </sql>
+
+  <insert id="insert" parameterType="com.longlian.model.CourseComment">
+
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_comment (COURSE_ID, APP_ID, CONTENT, STATUS, CREATE_TIME)
+    values (#{courseId}, #{appId}, #{content}, #{status}, #{createTime})
+  </insert>
+
+  <update id="update" parameterType="com.longlian.model.CourseComment">
+    update course_comment
+    set COURSE_ID = #{courseId},
+      APP_ID = #{appId},
+      CONTENT = #{content},
+      STATUS = #{status},
+      CREATE_TIME = #{createTime}
+    where ID = #{id}
+  </update>
+
+  <select id="getCourseCommentList" parameterType="long" resultType="map">
+    SELECT cc.CREATE_TIME AS createTime,cc.CONTENT AS content,a.PHOTO AS photo,a.`NAME` AS name
+    FROM course_comment cc
+    LEFT JOIN course c ON c.ID = cc.COURSE_ID
+    LEFT JOIN app_user a ON a.ID = cc.APP_ID
+    WHERE  cc.STATUS = '0' AND cc.COURSE_ID= #{courseId}
+  </select>
+
+  <select id="getListPage" resultType="map">
+    SELECT c.id courseId,cc.ID AS id,cc.CREATE_TIME AS createTime,cc.CONTENT AS content,a.`NAME` AS appName,c.LIVE_TOPIC AS liveTopic,c.REMARK AS remark
+    FROM course_comment cc
+    LEFT JOIN course c ON c.ID = cc.COURSE_ID
+    LEFT JOIN app_user a ON a.ID = cc.APP_ID
+    <where>
+      1=1
+      <if test="@Ognl@isNotEmpty(map.appName)">
+        AND a.`NAME` LIKE CONCAT('%',#{map.appName},'%' )
+      </if>
+      <if test="@Ognl@isNotEmpty(map.liveTopic)">
+        AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+      </if>
+      <if test="@Ognl@isNotEmpty(map.beginTime)">
+        AND cc.CREATE_TIME &gt; #{map.beginTime}
+      </if>
+      <if test="@Ognl@isNotEmpty(map.endnTime)">
+        AND cc.CREATE_TIME &lt; #{map.endnTime}
+      </if>
+    </where>
+    ORDER BY cc.CREATE_TIME desc
+  </select>
+
+  <delete id="deleteById" parameterType="long">
+     DELETE  FROM  course_comment WHERE  ID = #{id}
+  </delete>
+</mapper>

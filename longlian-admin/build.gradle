@@ -1,0 +1,24 @@
+group 'com.longlian'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':longlian-common'),fileTree(dir: 'libs', include: '*.jar')
+   /* compile project(':longlian-api')*/
+    compile project(':longlian-res-model')
+
+    compile   'com.rabbitmq:amqp-client:4.0.3',
+            'com.rabbitmq:http-client:1.1.1.RELEASE',
+            'org.springframework.amqp:spring-rabbit:1.7.5.RELEASE',
+            'org.springframework.amqp:spring-amqp:1.7.5.RELEASE'
+    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
+}
+war {
+    archiveName "longlian-admin.war"
+}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

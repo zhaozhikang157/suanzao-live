@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- mybatis配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" >
+			<array>
+				<value>classpath:com/longlian/live/dao/*.xml</value>
+				<value>classpath:com/longlian/mq/dao/*.xml</value>
+			</array>
+		</property>
+		 <property name="typeAliasesPackage" value="com.longlian.model"/>
+		<property name="plugins">
+			<array>
+				<!-- 分页拦截器 -->
+				<bean class="com.github.pagehelper.PageHelper">
+					<property name="properties">
+						<value>
+							dialect=mysql
+							reasonable=true
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+	
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.longlian.live.dao,com.longlian.mq.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	</bean>
+
+	<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.longlian.live.newdao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	</bean>
+
+	<!-- 为业务逻辑层的方法解析DynamicDataSourcekey注解  为当前线程的DynamicDataSourcekeyHolder注入数据源key -->
+	<bean id="aspectBean" class="com.huaxin.util.db.DataSourceInterceptor"></bean>
+	<aop:config>
+		<aop:aspect id="dataSourceAspect" ref="aspectBean" order="1">
+			<aop:pointcut id="dataSourcePoint" expression="execution(public * com.longlian.*.service.*.*(..))" />
+			<aop:before method="dataSourceBefore" pointcut-ref="dataSourcePoint"/>
+		</aop:aspect>
+	</aop:config>
+
+	<!-- transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+		<qualifier value="mysql" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!-- 配置事务的传播特性 -->
+	<tx:advice id ="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes >
+			<tx:method name ="find*" read-only="true" />
+			<tx:method name ="get*" read-only="true" />
+			<tx:method name ="query*" read-only="true" />
+			<tx:method name ="select*" read-only="true" />
+			<tx:method name ="load*"  read-only="true" />
+			<tx:method name ="add*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name ="batch*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name ="create*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name ="del*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name ="remove*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name ="update*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name ="edit*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name ="*" propagation="REQUIRED" rollback-for="Exception"/>
+		</tx:attributes >
+	</tx:advice >
+	<!--配置事务切入点, 以及把事务切入点和事务属性关联起来-->
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="dataSourcePoint"/>
+	</aop:config>
+
+</beans>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.mq.dao.CourseRelayMapper">
+    <resultMap id="courseRelayMap" type="com.longlian.dto.CourseRelayDto">
+        <id column="ORI_COURSE_ID" jdbcType="BIGINT" property="oriCourseId"/>
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="ORI_APP_ID" jdbcType="BIGINT" property="oriAppId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="RELAY_CHARGE" jdbcType="DECIMAL" property="relayCharge"/>
+        <result column="RELAY_SCALE" jdbcType="FLOAT" property="relayScale"/>
+    </resultMap>
+
+    <update id="updateRelayVisitCount" >
+        update course_relay
+        set
+        VISIT_COUNT = #{visitCount}
+        where ID = #{id}
+    </update>
+
+</mapper>

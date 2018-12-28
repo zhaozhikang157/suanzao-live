@@ -1,0 +1,1708 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.CourseMapper">
+    <cache></cache>
+    <resultMap id="BaseResultMap" type="com.longlian.model.Course">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="ROOM_ID" jdbcType="BIGINT" property="roomId"/>
+        <result column="APP_ID" jdbcType="BIGINT" property="appId"/>
+        <result column="LIVE_TOPIC" jdbcType="VARCHAR" property="liveTopic"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="LIVE_WAY" jdbcType="VARCHAR" property="liveWay"/>
+        <result column="LIVE_TYPE" jdbcType="VARCHAR" property="liveType"/>
+        <result column="LIVE_PWD" jdbcType="VARCHAR" property="livePwd"/>
+        <result column="DIVIDE_SCALE" jdbcType="VARCHAR" property="divideScale"/>
+        <result column="COVERSS_ADDRESS" jdbcType="VARCHAR" property="coverssAddress"/>
+        <result column="CHARGE_AMT" jdbcType="DECIMAL" property="chargeAmt"/>
+        <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="ORDER_SORT" jdbcType="INTEGER" property="orderSort"/>
+        <result column="COURSE_TYPE" jdbcType="BIGINT" property="courseType"/>
+        <!--<result column="PUSH_PRAISE_COUNT" jdbcType="INTEGER" property="pushPraiseCount" />-->
+        <result column="VISIT_COUNT" jdbcType="INTEGER" property="visitCount"/>
+        <result column="JOIN_COUNT" jdbcType="INTEGER" property="joinCount"/>
+        <!--<result column="STUDY_COUNT" jdbcType="INTEGER" property="studyCount" />-->
+        <!--<result column="COMMENT_COUNT" jdbcType="INTEGER" property="commentCount" />-->
+        <result column="END_TIME" property="endTime"/>
+        <result column="LIVE_ADDRESS" property="liveAddress"/>
+        <result column="PUSH_ADDRESS" property="pushAddress"/>
+        <result column="VIDEO_ADDRESS" property="videoAddress"/>
+        <result column="RECO_TIME" property="recoTime"/>
+        <result column="HLS_LIVE_ADDRESS" property="hlsLiveAddress"/>
+        <result column="CHAT_ROOM_ID" property="chatRoomId"/>
+        <result column="IS_SERIES_COURSE" property="isSeriesCourse"/>
+        <result column="SERIES_COURSE_ID" property="seriesCourseId"/>
+        <result column="COURSE_PLAN_COUNT" property="coursePlanCount"/>
+        <result column="UPDATED_COUNT" property="updatedCount"/>
+        <result column="ENDED_COUNT" property="endedCount"/>
+        <result column="IS_DELETE" property="isDelete"/>
+        <result column="AUTO_CLOSE_TIME" property="autoCloseTime"/>
+        <result column="IS_VERTICAL_SCREEN" property="isVerticalScreen"/>
+        <result column="PUSH_TYPE" property="pushType"/>
+        <result column="PUSH_CONTENT" property="pushContent"/>
+        <result column="COL_IMG_ADDRESS" property="colImgAddress"/>
+
+        <result column="VERTICAL_COVERSS_ADDRESS" property="verticalCoverssAddress"/>
+
+        <result column="CLEAN_SCREEN_TIME" property="cleanScreenTime"/>
+        <result column="AD_ADDRESS" property="adAddress"/>
+        <result column="IS_RECORDED" property="isRecorded"/>
+        <result column="REC_TIME" property="recTime"/>
+        <result column="TRY_SEE_TIME" property="trySeeTime"/>
+        <result column="IS_INVITE_CODE" property="isInviteCode"/>
+        <result column="MUST_SHARE_TIME" property="mustShareTime"/>
+        <result column="CAN_CONNECT" property="canConnect"/>
+        <result column="SORT" property="sort"/>
+        <result column="RECO_SORT" property="recoSort"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.longlian.dto.CourseDto" extends="BaseResultMap">
+        <result column="appId" property="appId"/>
+        <result column="appUserName" property="appUserName"/>
+        <result column="courseTypeName" property="courseTypeName"/>
+        <result column="videoId" property="videoId"/>
+        <result column="DURATION" property="duration"/>
+        <result column="BUY_COUNT" property="buyCount"/>
+        <result column="total_course_amount" property="totalCourseAmount"/>
+        <result column="CUSTOM_DISTRIBUTION" property="customDistribution"/>
+        <result column="live_room_name" property="liveRoomName"/>
+        <result column="TYPE_SORT" property="typeSort"/>
+        <result column="real_buy_count" property="realBuyCount"/>
+        <result column="IS_HIDE" property="isHide"/>
+        <result column="totalRelayCourseAmount" property="totalRelayCourseAmount"/>
+        <result column="totalAmount" property="totalAmount"/>
+        <result column="IS_RELAY_HIDE" property="isRelayHide"/>
+    </resultMap>
+
+
+    <resultMap id="BaseResultMapVideoDto" type="com.longlian.dto.CourseDto" extends="BaseResultMap">
+        <result column="videoId" property="videoId"/>
+        <result column="DURATION" property="duration"/>
+    </resultMap>
+
+    <!--   <resultMap id="BaseResultMapCourseStream" type="com.longlian.dto.CourseDto" extends="BaseResultMap">
+           <result column="oId" property="oId"/>
+           <result column="appId" property="appId"/>
+           <result column="appName" property="appName"/>
+           <result column="toTAmount" property="toTAmount"/>
+           <result column="successTime" property="successTime"/>
+           <result column="appMobile" property="appMobile"/>
+           <result column="chargeAmt" property="chargeAmt"/>
+       </resultMap>-->
+
+    <sql id="Base_Column_List">
+        ID, ROOM_ID, APP_ID, LIVE_TOPIC, REMARK, LIVE_WAY, LIVE_TYPE, LIVE_PWD, DIVIDE_SCALE,
+        COVERSS_ADDRESS, CHARGE_AMT, START_TIME, UPDATE_TIME, STATUS, CREATE_TIME, ORDER_SORT,
+        COURSE_TYPE
+        , VISIT_COUNT
+        , JOIN_COUNT
+        , END_TIME ,LIVE_ADDRESS, PUSH_ADDRESS ,VIDEO_ADDRESS ,  RECO_TIME ,HLS_LIVE_ADDRESS, CHAT_ROOM_ID,AUTO_CLOSE_TIME,PUSH_TYPE,PUSH_CONTENT,COL_IMG_ADDRESS,IS_VERTICAL_SCREEN,MUST_SHARE_TIME,CAN_CONNECT , SORT,RECO_SORT
+    </sql>
+
+
+    <select id="getCourseOrdersList" resultType="map" fetchSize="1000">
+        SELECT o.ID oid,o.ORDER_NO orderNo,
+        c.LIVE_TOPIC liveTopic,c.START_TIME startTime,c.END_TIME endTime,
+        au.NAME uname,au.REAL_NAME realName,au.MOBILE mobile,o.SUCCESS_TIME successTime,o.AMOUNT amount
+        FROM orders o,join_course_record jcr,course c,app_user au
+        <where>
+            1=1 and o.order_type=0 and o.bank_type!=16
+            and o.OPT_STATUS=1
+            and jcr.ID = o.JOIN_COURSE_ID
+            and jcr.course_id=c.id
+            and au.ID = o.APP_ID and c.charge_amt &gt; 0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.uname)">
+                AND (au.name LIKE CONCAT('%',#{map.uname},'%' )
+                or au.real_name  LIKE CONCAT('%',#{map.uname},'%' )
+                )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND  au.mobile LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND o.success_time &gt;= '${map.startTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND o.success_time &lt;= '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cstartTime)">
+                AND c.START_TIME &gt;= '${map.cstartTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cendTime)">
+                AND c.START_TIME &lt;= '${map.cendTime}'
+            </if>
+        </where>
+        ORDER  BY o.ID DESC
+        limit #{map.startIndex},#{map.pageSize}
+    </select>
+
+    <select id="getCourseOrdersListTotal" resultType="map">
+        SELECT count(*) totalCount
+        FROM orders o,join_course_record jcr,course c,app_user au
+        <where>
+            1=1 and o.order_type=0 and o.bank_type!=16
+            and o.OPT_STATUS=1
+            and jcr.ID = o.JOIN_COURSE_ID
+            and jcr.course_id=c.id
+            and au.ID = o.APP_ID and c.charge_amt &gt; 0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.uname)">
+                AND (au.name LIKE CONCAT('%',#{map.uname},'%' )
+                or au.real_name  LIKE CONCAT('%',#{map.uname},'%' )
+                )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND  au.mobile LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startTime)">
+                AND o.success_time &gt;= '${map.startTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND o.success_time &lt;= '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cstartTime)">
+                AND c.START_TIME &gt;= '${map.cstartTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cendTime)">
+                AND c.START_TIME &lt;= '${map.cendTime}'
+            </if>
+        </where>
+        ORDER  BY o.ID DESC
+    </select>
+
+    <select id="getCoursePlatformStreamList" resultType="map">
+        select o.id orderId,o.order_no orderNo,o.app_id appId,au.name appName,act.amount toTAmount,
+        o.success_time successTime,
+        au.mobile appMobile,c.CHARGE_AMT chargeAmt
+        from app_user au,course c
+        inner  JOIN join_course_record jcr on c.id=jcr.COURSE_ID
+        inner JOIN orders o on jcr.id=o.JOIN_COURSE_ID
+        LEFT  join account_track act ON (act.FORM_ACCOUNT_ID = o.app_id and act.ORDER_ID=o.id and act.RETURN_MONEY_LEVEL=0)
+        <where>
+            1=1
+            and au.id=o.app_id
+            <!-- and act.ORDER_ID=o.id  -->
+            <if test="@Ognl@isNotEmpty(map.courseId)">
+                AND c.ID= #{map.courseId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND o.success_time &gt; #{map.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND o.success_time &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND au.mobile LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getCoursePlatformStreamListPage" resultType="map" useCache="false">
+        select o.id orderId,o.order_no orderNo,o.app_id appId,au.name appName,act.amount toTAmount,
+        o.success_time successTime,
+        au.mobile appMobile,c.CHARGE_AMT chargeAmt
+        from app_user au,
+        (select id,CHARGE_AMT from course union all select cr.id,c.CHARGE_AMT from course_relay cr LEFT JOIN course c ON c.ID=cr.ORI_COURSE_ID  ) c
+        inner  JOIN join_course_record jcr on c.id=jcr.COURSE_ID
+        inner JOIN orders o on jcr.id=o.JOIN_COURSE_ID
+        LEFT  join account_track act ON (act.FORM_ACCOUNT_ID = o.app_id and act.ORDER_ID=o.id and act.RETURN_MONEY_LEVEL=0)
+        <where>
+            1=1
+            and au.id=o.app_id
+            <!--and act.ORDER_ID=o.id-->
+            <if test="@Ognl@isNotEmpty(map.courseId)">
+                AND c.ID= #{map.courseId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND o.success_time &gt; #{map.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND o.success_time &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND au.mobile LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getCoursePlatformStreamTotalCount" resultType="map">
+        select count(*) totalCount
+        from app_user au,course c
+        inner  JOIN join_course_record jcr on c.id=jcr.COURSE_ID
+        inner JOIN orders o on jcr.id=o.JOIN_COURSE_ID
+        LEFT  join account_track act ON (act.FORM_ACCOUNT_ID = o.app_id and act.ORDER_ID=o.id and act.RETURN_MONEY_LEVEL=0)
+        <where>
+            1=1
+            and au.id=o.app_id
+            <!--and act.ORDER_ID=o.id-->
+            <if test="@Ognl@isNotEmpty(map.courseId)">
+                AND c.ID= #{map.courseId}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND o.success_time &gt; #{map.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND o.success_time &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.mobile)">
+                AND au.mobile LIKE CONCAT('%',#{map.mobile},'%' )
+            </if>
+        </where>
+    </select>
+
+    <!--   查询老师收益-->
+    <select id="getTeacherCourseProfit" resultType="map">
+        select (case when t.profit  is null then 0 else t.profit END ) profit ,
+        (case when m.trackProfit  is null then 0 else m.trackProfit END ) trackProfit
+        from
+        (select sum(act.amount) profit
+        from app_user au,(select id from course union all select cr.id from course_relay cr  ) c , join_course_record jcr
+        ,orders o
+        right join account_track act on act.FORM_ACCOUNT_ID=o.app_id
+        <where>
+            1=1
+            AND o.bank_type!=16
+            and c.id=jcr.COURSE_ID
+            and au.id=o.app_id and jcr.id=o.JOIN_COURSE_ID
+            and act.ORDER_ID=o.id and act.RETURN_MONEY_LEVEL=0
+            <if test="@Ognl@isNotEmpty(map.courseId)">
+                AND c.ID= #{map.courseId}
+            </if>
+        </where>) t,
+
+        (select sum(act.amount) trackProfit
+        from app_user au,(select id from course union select cr.id from course_relay cr  ) c , join_course_record jcr
+        ,orders o
+        right join account_track act on act.FORM_ACCOUNT_ID=o.app_id
+        <where>
+            1=1
+            and c.id=jcr.COURSE_ID
+            and au.id=o.app_id and jcr.id=o.JOIN_COURSE_ID
+            and act.ORDER_ID=o.id and act.RETURN_MONEY_LEVEL=1
+            <if test="@Ognl@isNotEmpty(map.courseId)">
+                AND c.ID= #{map.courseId}
+            </if>
+        </where>) m
+    </select>
+
+    <select id="getCourseList" resultMap="BaseResultMapDto" fetchSize="1000">
+        SELECT c.ID, c.CREATE_TIME, c.START_TIME, c.END_TIME, c.LIVE_TOPIC, c.LIVE_WAY,c.LIVE_WAY,lr.NAME live_room_name
+        , c.CHARGE_AMT,c.VISIT_COUNT,c.JOIN_COUNT ,c.DIVIDE_SCALE,c.STATUS
+        , a.ID AS appId,a.NAME AS appUserName,t.NAME AS courseTypeName , c.IS_DELETE , c.IS_SERIES_COURSE, c.SERIES_COURSE_ID,c.AUTO_CLOSE_TIME,c.RECO_SORT
+        , (select count(*) buyCount from orders  o,join_course_record jcr2 where o.join_course_id =jcr2.id and jcr2.course_id=c.id) as BUY_COUNT,
+        (select count(*) buyCount from orders  o,join_course_record jcr2 where o.join_course_id=jcr2.id and jcr2.course_id=c.id)*c.CHARGE_AMT AS total_course_amount
+        FROM course c
+        INNER JOIN app_user a ON a.ID = c.APP_ID
+        INNER JOIN  live_room lr ON  lr.APP_ID=a.ID
+        LEFT JOIN  course_type t ON  t.ID = c.COURSE_TYPE
+        <where>
+            (
+            1=1
+            <if test="@Ognl@isNotEmpty(map.isRelay)">
+                AND c.IS_RELAY= #{map.isRelay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.startDate)">
+                AND c.START_TIME &gt;'${map.startDate}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endDate)">
+                AND c.START_TIME &lt; '${map.endDate}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.status)">
+                AND c.STATUS= #{map.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.id)">
+                AND c.ID= #{map.id}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveWay)">
+                AND c.LIVE_WAY= #{map.liveWay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                AND c.IS_RECORDED= #{map.isRecorded}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE=1)   <!-- 序列课  不显示序列课下的 单节课-->
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isFree)">
+                <if test="map.isFree == 0 ">
+                    AND c.CHARGE_AMT = 0
+                </if>
+                <if test="map.isFree == 1 ">
+                    AND c.CHARGE_AMT &gt; 0
+                </if>
+            </if>
+            )
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                or  EXISTS (
+                select c1.id,c1.IS_SERIES_COURSE from course c1
+                where c1.LIVE_TOPIC LIKE CONCAT('%', #{map.liveTopic}, '%')
+                and c1.IS_SERIES_COURSE=1 and c.SERIES_COURSE_ID=c1.id
+                <if test="@Ognl@isNotEmpty(map.isFree)">
+                    <if test="map.isFree == 0 ">
+                        AND cl.CHARGE_AMT = 0
+                    </if>
+                    <if test="map.isFree == 1 ">
+                        AND c1.CHARGE_AMT &gt; 0
+                    </if>
+                </if>
+                <if test="@Ognl@isNotEmpty(map.status)">
+                    AND c1.STATUS= #{map.status}
+                </if>
+
+                <if test="@Ognl@isNotEmpty(map.startDate)">
+                    AND c1.START_TIME &gt;'${map.startDate}'
+                </if>
+                <if test="@Ognl@isNotEmpty(map.endDate)">
+                    AND c1.START_TIME &lt; '${map.endDate}'
+                </if>
+                )
+            </if>
+        </where>
+        ORDER BY c.CREATE_TIME desc
+    </select>
+
+    <select id="getCourseDataNum" resultType="map">
+        select count(*) totalNum from course c where c.IS_SERIES_COURSE=0 and SERIES_COURSE_ID=0
+        <if test="@Ognl@isNotEmpty(map.startTime)">AND c.create_time &gt;='${map.startTime}'</if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">AND c.create_time &lt;='${map.endTime}'</if>
+        UNION ALL
+        select count(*) totalNum from course c where c.IS_SERIES_COURSE=1
+        <if test="@Ognl@isNotEmpty(map.startTime)"> AND c.create_time &gt;='${map.startTime}' </if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">AND c.create_time &lt;='${map.endTime}'</if>
+        UNION ALL
+        select count(*) totalNum from course c where c.IS_SERIES_COURSE=0 and SERIES_COURSE_ID=0 and c.CHARGE_AMT>0
+        <if test="@Ognl@isNotEmpty(map.startTime)">AND c.create_time &gt;='${map.startTime}'</if>
+        <if test="@Ognl@isNotEmpty(map.endTime)"> AND c.create_time &lt;='${map.endTime}'</if>
+        UNION ALL
+        select count(*) totalNum from course c where c.IS_SERIES_COURSE=1 and c.CHARGE_AMT>0
+        <if test="@Ognl@isNotEmpty(map.startTime)"> AND c.create_time &gt;='${map.startTime}'</if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">AND c.create_time &lt;='${map.endTime}'</if>
+    </select>
+    <select id="getCourseDataIncome" resultType="map">
+        select (case when sum(T1.singleTotalAmount) is null then 0 else sum(T1.singleTotalAmount) end) totalAmount FROM
+        (
+        select count(*) ,jcr2.course_id cid,o.AMOUNT,count(*)*o.AMOUNT as singleTotalAmount
+        from orders  o,join_course_record jcr2 ,course c
+        where  o.bank_type!=16 and o.join_course_id =jcr2.id and jcr2.course_id=c.id and IS_SERIES_COURSE=0 and SERIES_COURSE_ID=0
+        <if test="@Ognl@isNotEmpty(map.startTime)">
+            AND o.success_time &gt;='${map.startTime}'
+        </if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">
+            AND o.success_time &lt;='${map.endTime}'
+        </if>
+        GROUP BY jcr2.course_id
+        ) T1
+        UNION ALL
+        SELECT (case when SUM(T2.seriesTotalAmount) IS null THEN  0 else SUM(T2.seriesTotalAmount) end) totalAmount FROM
+        (
+        select count(*) ,jcr2.course_id cid,o.AMOUNT,count(*)*o.AMOUNT as seriesTotalAmount
+        from orders  o,join_course_record jcr2 ,course c
+        where  o.bank_type!=16 and o.join_course_id =jcr2.id and jcr2.course_id=c.id and IS_SERIES_COURSE=1
+        <if test="@Ognl@isNotEmpty(map.startTime)">
+            AND o.success_time &gt;='${map.startTime}'
+        </if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">
+            AND o.success_time &lt;='${map.endTime}'
+        </if>
+        GROUP BY jcr2.course_id
+        ) T2
+    </select>
+    <select id="getLists" resultMap="BaseResultMapDto" fetchSize="1000" useCache="false">
+        SELECT c.cId ID, c.CREATE_TIME, c.START_TIME, c.END_TIME, c.LIVE_TOPIC, c.LIVE_WAY,lr.NAME live_room_name,c.TYPE_SORT,c.IS_HIDE,c.IS_RELAY_HIDE
+        , c.CHARGE_AMT,c.VISIT_COUNT,c.JOIN_COUNT ,c.DIVIDE_SCALE,c.STATUS,c.CUSTOM_DISTRIBUTION CUSTOM_DISTRIBUTION,c.isRelay,c.isRelayCourse
+        , a.ID AS appId,a.NAME AS appUserName,t.NAME AS courseTypeName , c.IS_DELETE , c.IS_SERIES_COURSE, c.SERIES_COURSE_ID,c.AUTO_CLOSE_TIME,c.RECO_SORT
+        , (select count(*) buyCount from orders  o,join_course_record jcr2 where o.join_course_id =jcr2.id and jcr2.course_id=c.cId) as BUY_COUNT,
+        (select count(*) buyCount from orders  o,join_course_record jcr2 where  o.bank_type!=16 and o.join_course_id =jcr2.id and jcr2.course_id=c.cId ) as real_buy_count,
+        if(c.isRelayCourse=1,
+        (select count(*) buyCount from orders  o,join_course_record jcr2 where o.bank_type!=16 and o.join_course_id=jcr2.id and jcr2.course_id=c.cId)*c.CHARGE_AMT*c.RELAY_SCALE/100
+        ,(select count(*) buyCount from orders  o,join_course_record jcr2 where o.bank_type!=16 and o.join_course_id=jcr2.id and jcr2.course_id=c.cId)*c.CHARGE_AMT
+        )AS total_course_amount
+        ,c.totalRelayCourseAmount
+        FROM (
+        select
+        c.RELAY_CHARGE,
+        c.RELAY_SCALE,
+        c.ID,
+        c.CREATE_TIME,
+        c.START_TIME,
+        c.END_TIME,
+        c.LIVE_TOPIC,
+        c.LIVE_WAY,
+        c.TYPE_SORT,
+        c.IS_HIDE,
+        c.CHARGE_AMT,
+        c.VISIT_COUNT,
+        c.JOIN_COUNT,
+        c.DIVIDE_SCALE,
+        c. STATUS,
+        c.CUSTOM_DISTRIBUTION CUSTOM_DISTRIBUTION,
+        c.IS_DELETE,
+        c.IS_SERIES_COURSE,
+        c.SERIES_COURSE_ID,
+        c.AUTO_CLOSE_TIME,
+        c.RECO_SORT,
+        c.COURSE_TYPE
+        ,c.app_id appId,c.id cid,0 isRelayCourse,sum(ri.CHARGE) totalRelayCourseAmount,c.id courseId,c.IS_RELAY_HIDE,c.is_relay isRelay,c.IS_RECORDED
+        from course c
+        left join relay_income ri on ri.ori_COURSE_ID=c.id
+        group by c.id
+        union
+        select
+        c.RELAY_CHARGE,
+        c.RELAY_SCALE,
+        c.ID,
+        c.CREATE_TIME,
+        c.START_TIME,
+        c.END_TIME,
+        c.LIVE_TOPIC,
+        c.LIVE_WAY,
+        c.TYPE_SORT,
+        c.IS_HIDE,
+        c.CHARGE_AMT,
+        c.VISIT_COUNT,
+        c.JOIN_COUNT,
+        c.DIVIDE_SCALE,
+        cr. STATUS,
+        c.CUSTOM_DISTRIBUTION CUSTOM_DISTRIBUTION,
+        cr.IS_DELETE,
+        c.IS_SERIES_COURSE,
+        c.SERIES_COURSE_ID,
+        c.AUTO_CLOSE_TIME,
+        c.RECO_SORT,
+        c.COURSE_TYPE,
+        cr.app_id appId ,cr.id cid,1 isRelayCourse,0 totalRelayCourseAmount,0 courseId,c.IS_RELAY_HIDE,0 isRelay ,c.IS_RECORDED
+        from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+
+        )c
+        INNER JOIN app_user a ON a.ID = c.appId
+        INNER JOIN  live_room lr ON  lr.APP_ID=a.ID
+        LEFT JOIN  course_type t ON  t.ID = c.COURSE_TYPE
+        <where>
+            (
+            c.IS_DELETE=0
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRelayHide)">
+                AND c.IS_RELAY_HIDE= #{map.isRelayHide}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRelayCourse)">
+                AND c.isRelayCourse= #{map.isRelayCourse}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isHide)">
+                AND c.IS_HIDE = #{map.isHide}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND (c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+                or lr.NAME LIKE CONCAT('%',#{map.liveTopic},'%' )
+                )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;='${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt;= '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cebeginTime)">
+                AND c.END_TIME &gt;='${map.cebeginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.ceendTime)">
+                AND c.END_TIME &lt;= '${map.ceendTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cbeginTime)">
+                AND c.CREATE_TIME &gt;='${map.cbeginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cendTime)">
+                AND c.CREATE_TIME &lt;= '${map.cendTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.status)">
+                AND c.STATUS= #{map.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.id)">
+                AND c.ID= #{map.id}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveWay)">
+                AND c.LIVE_WAY= #{map.liveWay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                AND c.IS_RECORDED= #{map.isRecorded}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND <!--(c.SERIES_COURSE_ID  >0 or--> IS_SERIES_COURSE=1 <!--)-->
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isFree)">
+                <if test="map.isFree == 0 ">
+                    AND c.CHARGE_AMT = 0
+                </if>
+                <if test="map.isFree == 1 ">
+                    AND c.CHARGE_AMT &gt; 0
+                </if>
+            </if>
+            )
+            <if test="@Ognl@isNotSeries(map.isSerier)">
+                <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                    or  EXISTS (
+                    select c1.id,c1.IS_SERIES_COURSE from course c1
+                    where c1.LIVE_TOPIC LIKE CONCAT('%', #{map.liveTopic}, '%')
+                    and c1.IS_SERIES_COURSE=1 and c.SERIES_COURSE_ID=c1.id  and c.IS_DELETE=0
+                    <if test="@Ognl@isNotEmpty(map.isFree) ">
+                        <if test="map.isFree == 0 ">
+                            AND c.CHARGE_AMT = 0
+                        </if>
+                        <if test="map.isFree == 1 ">
+                            AND c.CHARGE_AMT &gt; 0
+                        </if>
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.status)">
+                        AND c.STATUS= #{map.status}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.isRelayCourse)">
+                        AND c.isRelayCourse= #{map.isRelayCourse}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.beginTime)">
+                        AND c.START_TIME &gt;'${map.beginTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.endTime)">
+                        AND c.START_TIME &lt; '${map.endTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.cebeginTime)">
+                        AND c.END_TIME &gt;='${map.cebeginTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.ceendTime)">
+                        AND c.END_TIME &lt;= '${map.ceendTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.cbeginTime)">
+                        AND c.CREATE_TIME &gt;='${map.cbeginTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.cendTime)">
+                        AND c.CREATE_TIME &lt;= '${map.cendTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.appUserName)">
+                        AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.id)">
+                        AND c.ID= #{map.id}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.courseType)">
+                        AND c.COURSE_TYPE= #{map.courseType}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.liveWay)">
+                        AND c.LIVE_WAY= #{map.liveWay}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                        AND c.IS_RECORDED= #{map.isRecorded}
+                    </if>
+                    )
+                </if>
+            </if>
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            <if test="@Ognl@isNotEmpty(map.sortType)">
+                <if test="map.sortType==1">
+                    ORDER BY c.CREATE_TIME desc
+                </if>
+                <if test="map.sortType==2">
+                    ORDER BY c.RECO_SORT desc
+                </if>
+            </if>
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sort)">
+            ORDER  BY  ${map.sort} ${map.orderType}
+        </if>
+
+        limit #{map.startIndex},#{map.pageSize}
+    </select>
+
+    <select id="getDatasList" resultType="map">
+        SELECT c.ID id,a.name appUserName, c.CREATE_TIME createTime, c.START_TIME startTime, c.END_TIME endTime, c.LIVE_TOPIC liveTopic,
+        c.IS_SERIES_COURSE isSeriesCourse, c.SERIES_COURSE_ID seriesCourseId,
+        bs.*
+        FROM course c
+        LEFT  JOIN  ( SELECT   sum(totalStayTime) as totalStayTime ,
+        sum(pCount) pCount,sum(visitCount) vCount,
+        sum(iosCountp) iosCountp,sum(weixinCountc) weixinCountc,sum(androidCountc) androidCountc,
+        sum(iosCountc) iosCountc,sum(androidCountp) androidCountp,sum(weixinCountp) weixinCountp,
+        sum(iosStayTime) iosStayTime,sum(androidStayTime) androidStayTime,sum(weixinStayTime) weixinStayTime,
+        courseId
+        FROM  courseDetail_statictis cs  WHERE  type=#{map.pageUrl}
+        <if test="@Ognl@isNotEmpty(map.beginDate)">  AND visitDate &gt;= #{map.beginDate}  </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND visitDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId
+        ) bs on bs.courseId=c.id
+        INNER JOIN app_user a ON a.ID = c.APP_ID
+        <where>
+            (1=1  and c.IS_DELETE=0 and c.STATUS=0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND IS_SERIES_COURSE=1
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            )
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            ORDER BY c.CREATE_TIME desc
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sort)">
+            ORDER  BY  ${map.sort} ${map.orderType}
+        </if>
+    </select>
+
+    <select id="getDatasListPage" resultType="map">
+        SELECT c.ID id,a.name appUserName, c.CREATE_TIME createTime, c.START_TIME startTime, c.END_TIME endTime, c.LIVE_TOPIC liveTopic,
+        c.IS_SERIES_COURSE isSeriesCourse, c.SERIES_COURSE_ID seriesCourseId,
+        bs.*
+        FROM course c
+        LEFT  JOIN  ( SELECT   sum(totalStayTime) as totalStayTime ,
+        sum(pCount) pCount,sum(visitCount) vCount,
+        sum(iosCountp) iosCountp,sum(weixinCountc) weixinCountc,sum(androidCountc) androidCountc,
+        sum(iosCountc) iosCountc,sum(androidCountp) androidCountp,sum(weixinCountp) weixinCountp,
+        sum(iosStayTime) iosStayTime,sum(androidStayTime) androidStayTime,sum(weixinStayTime) weixinStayTime,
+        courseId
+        FROM  courseDetail_statictis cs  WHERE  type=#{map.pageUrl}
+        <if test="@Ognl@isNotEmpty(map.beginDate)">  AND visitDate &gt;= #{map.beginDate}  </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND visitDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId
+        ) bs on bs.courseId=c.id
+        INNER JOIN app_user a ON a.ID = c.APP_ID
+        <where>
+            (1=1  and c.IS_DELETE=0 and c.STATUS=0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND IS_SERIES_COURSE=1
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            )
+           <!-- <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                or  EXISTS (
+                select c1.id,c1.IS_SERIES_COURSE from course c1
+                where c1.LIVE_TOPIC LIKE CONCAT('%', #{map.liveTopic}, '%')
+                and c1.IS_SERIES_COURSE=1 and c.SERIES_COURSE_ID=c1.id  and c.IS_DELETE=0
+                <if test="@Ognl@isNotEmpty(map.isFree)">
+                    <if test="map.isFree == 0 ">
+                        AND cl.CHARGE_AMT = 0
+                    </if>
+                    <if test="map.isFree == 1 ">
+                        AND c1.CHARGE_AMT &gt; 0
+                    </if>
+                </if>
+                <if test="@Ognl@isNotEmpty(map.beginTime)">
+                    AND c1.START_TIME &gt;'${map.beginTime}'
+                </if>
+                <if test="@Ognl@isNotEmpty(map.endTime)">
+                    AND c1.START_TIME &lt; '${map.endTime}'
+                </if>
+                )
+            </if>-->
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            ORDER BY c.CREATE_TIME desc
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sort)">
+            ORDER  BY  ${map.sort} ${map.orderType}
+        </if>
+        limit #{map.startIndex},#{map.pageSize}
+    </select>
+
+
+    <select id="getButtonDatasBListPage" resultType="map">
+        SELECT c.ID id,a.name appUserName, c.CREATE_TIME createTime, c.START_TIME startTime, c.END_TIME endTime, c.LIVE_TOPIC liveTopic,
+        c.IS_SERIES_COURSE isSeriesCourse, c.SERIES_COURSE_ID seriesCourseId,
+        ( SELECT sum(visitCount) vCount FROM  courseDetail_statictis WHERE courseId=c.id
+        <if test="@Ognl@isNotEmpty(map.beginDate)">  AND visitDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)">   AND visitDate &lt;= #{map.endDate} </if>
+        ) vCount,bs.*,ps.*,es.*
+        FROM course c
+        LEFT  JOIN  (select sum(pCount)  pClickCount,sum(visitCount) visitClickCount,
+        sum(weixinCountc) weixinCountc,sum(androidCountc) androidCountc, sum(iosCountc) iosCountc,
+        sum(androidCountp) androidCountp,sum(weixinCountp) weixinCountp,sum(iosCountp) iosCountp,courseId courseId1
+        from buttonCount_statictis where buttonType='008'
+        <if test="@Ognl@isNotEmpty(map.beginDate)">AND visitDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND visitDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId1
+        ) bs on bs.courseId1=c.id
+        LEFT JOIN (select sum(pCount)  ppClickCount,sum(visitCount) visitpClickCount,
+        sum(weixinCountc) weixinpCountc,sum(androidCountc) androidpCountc, sum(iosCountc) iospCountc,
+        sum(androidCountp) androidpCountp,sum(weixinCountp) weixinpCountp,sum(iosCountp) iospCountp,courseId courseId2
+        from buttonCount_statictis where buttonType='025'
+        <if test="@Ognl@isNotEmpty(map.beginDate)">AND visitDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND visitDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId2
+        ) ps on ps.courseId2=c.id
+        LEFT JOIN (select sum(pCount)  peClickCount,sum(visitCount) visiteClickCount,
+        sum(weixinCountc) weixineCountc,sum(androidCountc) androideCountc, sum(iosCountc) ioseCountc,
+        sum(androidCountp) androideCountp,sum(weixinCountp) weixineCountp,sum(iosCountp) ioseCountp,courseId courseId3
+        from buttonCount_statictis where buttonType='026'
+        <if test="@Ognl@isNotEmpty(map.beginDate)">AND visitDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND visitDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId3
+        ) es on es.courseId3=c.id
+        INNER JOIN app_user a ON a.ID = c.APP_ID
+        <where>
+            (1=1  and c.IS_DELETE=0 and c.STATUS=0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND IS_SERIES_COURSE=1
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            )
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            ORDER BY c.CREATE_TIME desc
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sort)">
+            ORDER  BY  ${map.sort} ${map.orderType}
+        </if>
+        limit #{map.startIndex},#{map.pageSize}
+    </select>
+
+    <select id="getButtonDatasBListPg" resultType="map">
+        SELECT c.ID id,a.name appUserName, c.CREATE_TIME createTime, c.START_TIME startTime, c.END_TIME endTime, c.LIVE_TOPIC liveTopic,
+        c.IS_SERIES_COURSE isSeriesCourse, c.SERIES_COURSE_ID seriesCourseId,
+        ( SELECT sum(visitCount) vCount FROM  courseDetail_statictis WHERE courseId=c.id
+        <if test="@Ognl@isNotEmpty(map.beginDate)">  AND visitDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)">   AND visitDate &lt;= #{map.endDate} </if>
+        ) vCount,bs.*,ps.*,es.*
+        FROM course c
+        LEFT  JOIN  (select sum(pCount)  pClickCount,sum(visitCount) visitClickCount,
+        sum(weixinCountc) weixinCountc,sum(androidCountc) androidCountc, sum(iosCountc) iosCountc,
+        sum(androidCountp) androidCountp,sum(weixinCountp) weixinCountp,sum(iosCountp) iosCountp,courseId courseId1
+        from buttonCount_statictis where buttonType='008'
+        <if test="@Ognl@isNotEmpty(map.beginDate)">AND staticDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND staticDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId1
+        ) bs on bs.courseId1=c.id
+        LEFT JOIN (select sum(pCount)  ppClickCount,sum(visitCount) visitpClickCount,
+        sum(weixinCountc) weixinpCountc,sum(androidCountc) androidpCountc, sum(iosCountc) iospCountc,
+        sum(androidCountp) androidpCountp,sum(weixinCountp) weixinpCountp,sum(iosCountp) iospCountp,courseId courseId2
+        from buttonCount_statictis where buttonType='025'
+        <if test="@Ognl@isNotEmpty(map.beginDate)">AND staticDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND staticDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId2
+        ) ps on ps.courseId2=c.id
+        LEFT JOIN (select sum(pCount)  peClickCount,sum(visitCount) visiteClickCount,
+        sum(weixinCountc) weixineCountc,sum(androidCountc) androideCountc, sum(iosCountc) ioseCountc,
+        sum(androidCountp) androideCountp,sum(weixinCountp) weixineCountp,sum(iosCountp) ioseCountp,courseId courseId3
+        from buttonCount_statictis where buttonType='026'
+        <if test="@Ognl@isNotEmpty(map.beginDate)">AND staticDate &gt;= #{map.beginDate} </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)"> AND staticDate &lt;= #{map.endDate} </if>
+        GROUP BY courseId3
+        ) es on es.courseId3=c.id
+        INNER JOIN app_user a ON a.ID = c.APP_ID
+        <where>
+            (1=1  and c.IS_DELETE=0 and c.STATUS=0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND IS_SERIES_COURSE=1
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            )
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            ORDER BY c.CREATE_TIME desc
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sort)">
+            ORDER  BY  ${map.sort} ${map.orderType}
+        </if>
+        limit #{map.startIndex},#{map.pageSize}
+    </select>
+
+    <select id="getListChannelSimplePage" resultMap="BaseResultMapDto" fetchSize="1000">
+        SELECT c.ID, c.CREATE_TIME, c.START_TIME, c.END_TIME, c.LIVE_TOPIC, c.LIVE_WAY
+        FROM course c
+        <where>
+            ( 1=1  and c.IS_DELETE=0
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; '${map.endTime}'
+            </if>
+            )
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                or  EXISTS (
+                select c1.id,c1.IS_SERIES_COURSE from course c1
+                where c1.LIVE_TOPIC LIKE CONCAT('%', #{map.liveTopic}, '%')
+                and c1.IS_SERIES_COURSE=1 and c.SERIES_COURSE_ID=c1.id  and c.IS_DELETE=0
+                <if test="@Ognl@isNotEmpty(map.isFree)">
+                    <if test="map.isFree == 0 ">
+                        AND cl.CHARGE_AMT = 0
+                    </if>
+                    <if test="map.isFree == 1 ">
+                        AND c1.CHARGE_AMT &gt; 0
+                    </if>
+                </if>
+                <if test="@Ognl@isNotEmpty(map.status)">
+                    AND c1.STATUS= #{map.status}
+                </if>
+
+                <if test="@Ognl@isNotEmpty(map.beginTime)">
+                    AND c1.START_TIME &gt;'${map.beginTime}'
+                </if>
+                <if test="@Ognl@isNotEmpty(map.endTime)">
+                    AND c1.START_TIME &lt; '${map.endTime}'
+                </if>
+                )
+            </if>
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            <if test="@Ognl@isNotEmpty(map.sortType)">
+                <if test="map.sortType==1">
+                    ORDER BY c.CREATE_TIME desc
+                </if>
+                <if test="map.sortType==2">
+                    ORDER BY c.RECO_SORT desc
+                </if>
+            </if>
+        </if>
+        <if test="@Ognl@isNotEmpty(map.sort)">
+            ORDER  BY  ${map.sort} ${map.orderType}
+        </if>
+        limit #{map.startIndex},#{map.pageSize}
+    </select>
+    
+	<!-- 课程列表总数 -->
+    <select id="getListTotal" resultType="map" useCache="false">
+    SELECT count(1) totalCount FROM (
+        select
+        c.RELAY_CHARGE,
+        c.RELAY_SCALE,
+        c.ID,
+        c.CREATE_TIME,
+        c.START_TIME,
+        c.END_TIME,
+        c.LIVE_TOPIC,
+        c.LIVE_WAY,
+        c.TYPE_SORT,
+        c.IS_HIDE,
+        c.CHARGE_AMT,
+        c.VISIT_COUNT,
+        c.JOIN_COUNT,
+        c.DIVIDE_SCALE,
+        c. STATUS,
+        c.CUSTOM_DISTRIBUTION CUSTOM_DISTRIBUTION,
+        c.IS_DELETE,
+        c.IS_SERIES_COURSE,
+        c.SERIES_COURSE_ID,
+        c.AUTO_CLOSE_TIME,
+        c.RECO_SORT,
+        c.COURSE_TYPE
+        ,c.app_id appId,c.id cid,0 isRelayCourse,sum(ri.CHARGE) totalRelayCourseAmount,c.id courseId,c.IS_RELAY_HIDE,c.IS_RELAY isRelay,c.IS_RECORDED
+        from course c
+        left join relay_income ri on ri.ori_COURSE_ID=c.id
+        group by c.id
+        union
+        select
+        c.RELAY_CHARGE,
+        c.RELAY_SCALE,
+        c.ID,
+        c.CREATE_TIME,
+        c.START_TIME,
+        c.END_TIME,
+        c.LIVE_TOPIC,
+        c.LIVE_WAY,
+        c.TYPE_SORT,
+        c.IS_HIDE,
+        c.CHARGE_AMT,
+        c.VISIT_COUNT,
+        c.JOIN_COUNT,
+        c.DIVIDE_SCALE,
+        c. STATUS,
+        c.CUSTOM_DISTRIBUTION CUSTOM_DISTRIBUTION,
+        c.IS_DELETE,
+        c.IS_SERIES_COURSE,
+        c.SERIES_COURSE_ID,
+        c.AUTO_CLOSE_TIME,
+        c.RECO_SORT,
+        c.COURSE_TYPE,
+        cr.app_id appId ,cr.id cid,1 isRelayCourse,0 totalRelayCourseAmount,0 courseId,c.IS_RELAY_HIDE,0 isRelay ,c.IS_RECORDED
+        from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+
+        )c
+        INNER JOIN app_user a ON a.ID = c.appId
+        INNER JOIN  live_room lr ON  lr.APP_ID=a.ID
+        LEFT JOIN  course_type t ON  t.ID = c.COURSE_TYPE
+        <where>
+            (
+            c.IS_DELETE=0
+            <if test="@Ognl@isNotEmpty(map.isRelayHide)">
+                AND c.IS_RELAY_HIDE= #{map.isRelayHide}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRelayCourse)">
+                AND c.isRelayCourse= #{map.isRelayCourse}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isHide)">
+                AND c.IS_HIDE = #{map.isHide}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND (c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+                or lr.NAME LIKE CONCAT('%',#{map.liveTopic},'%' )
+                )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;='${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt;= '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cebeginTime)">
+                AND c.END_TIME &gt;='${map.cebeginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.ceendTime)">
+                AND c.END_TIME &lt;= '${map.ceendTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cbeginTime)">
+                AND c.CREATE_TIME &gt;='${map.cbeginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.cendTime)">
+                AND c.CREATE_TIME &lt;= '${map.cendTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.status)">
+                AND c.STATUS= #{map.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.id)">
+                AND c.ID= #{map.id}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveWay)">
+                AND c.LIVE_WAY= #{map.liveWay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                AND c.IS_RECORDED= #{map.isRecorded}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND <!--(c.SERIES_COURSE_ID  >0 or--> IS_SERIES_COURSE=1 <!--)-->
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isFree)">
+                <if test="map.isFree == 0 ">
+                    AND c.CHARGE_AMT = 0
+                </if>
+                <if test="map.isFree == 1 ">
+                    AND c.CHARGE_AMT &gt; 0
+                </if>
+            </if>
+            )
+            <if test="@Ognl@isNotSeries(map.isSerier)">
+                <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                    or  EXISTS (
+                    select c1.id,c1.IS_SERIES_COURSE from course c1
+                    where c1.LIVE_TOPIC LIKE CONCAT('%', #{map.liveTopic}, '%')
+                    and c1.IS_SERIES_COURSE=1 and c.SERIES_COURSE_ID=c1.id  and c.IS_DELETE=0
+                    <if test="@Ognl@isNotEmpty(map.isFree) ">
+                        <if test="map.isFree == 0 ">
+                            AND c.CHARGE_AMT = 0
+                        </if>
+                        <if test="map.isFree == 1 ">
+                            AND c.CHARGE_AMT &gt; 0
+                        </if>
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.status)">
+                        AND c.STATUS= #{map.status}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.isRelayCourse)">
+                        AND c.isRelayCourse= #{map.isRelayCourse}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.beginTime)">
+                        AND c.START_TIME &gt;'${map.beginTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.endTime)">
+                        AND c.START_TIME &lt; '${map.endTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.cebeginTime)">
+                        AND c.END_TIME &gt;='${map.cebeginTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.ceendTime)">
+                        AND c.END_TIME &lt;= '${map.ceendTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.cbeginTime)">
+                        AND c.CREATE_TIME &gt;='${map.cbeginTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.cendTime)">
+                        AND c.CREATE_TIME &lt;= '${map.cendTime}'
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.appUserName)">
+                        AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.id)">
+                        AND c.ID= #{map.id}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.courseType)">
+                        AND c.COURSE_TYPE= #{map.courseType}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.liveWay)">
+                        AND c.LIVE_WAY= #{map.liveWay}
+                    </if>
+                    <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                        AND c.IS_RECORDED= #{map.isRecorded}
+                    </if>
+                    )
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="getListTotalCount" resultType="map" useCache="false">
+        SELECT COUNT(*) totalCount
+        FROM
+        (
+        select * ,app_id appId,id cid,0 isRelay,IS_DELETE crIsDelete
+        from course
+        union
+        select c.*,cr.app_id appId ,cr.id cid,1 isRelay,cr.IS_DELETE crIsDelete
+        from course_relay cr
+        left join course c on c.id=cr.ORI_COURSE_ID
+        )
+        c
+        INNER JOIN app_user a ON a.ID = c.appId
+        INNER JOIN  live_room lr ON  lr.APP_ID=a.ID
+        LEFT JOIN  course_type t ON  t.ID = c.COURSE_TYPE
+        <where>
+            (
+            1=1
+            and c.crIsDelete=0
+            <if test="@Ognl@isNotEmpty(map.isRelay)">
+                AND c.isRelay= #{map.isRelay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isHide)">
+                AND c.IS_HIDE = #{map.isHide}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND (c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+                or lr.NAME LIKE CONCAT('%',#{map.liveTopic},'%' )
+                )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; '${map.endTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.status)">
+                AND c.STATUS= #{map.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.id)">
+                AND c.ID= #{map.id}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveWay)">
+                AND c.LIVE_WAY= #{map.liveWay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                AND c.IS_RECORDED= #{map.isRecorded}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND <!--(c.SERIES_COURSE_ID  >0 or--> IS_SERIES_COURSE=1 <!--)-->
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND (c.SERIES_COURSE_ID > 0 or IS_SERIES_COURSE=1)
+                </if>
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isFree)">
+                <if test="map.isFree == 0 ">
+                    AND c.CHARGE_AMT = 0
+                </if>
+                <if test="map.isFree == 1 ">
+                    AND c.CHARGE_AMT &gt; 0
+                </if>
+            </if>
+            )
+
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                or  EXISTS (
+                select c1.id,c1.IS_SERIES_COURSE from course c1
+                where c1.LIVE_TOPIC LIKE CONCAT('%', #{map.liveTopic}, '%')
+                and c1.IS_SERIES_COURSE=1 and c.SERIES_COURSE_ID=c1.id  and c.IS_DELETE=0
+                <if test="@Ognl@isNotEmpty(map.isFree)">
+                    <if test="map.isFree == 0 ">
+                        AND cl.CHARGE_AMT = 0
+                    </if>
+                    <if test="map.isFree == 1 ">
+                        AND c1.CHARGE_AMT &gt; 0
+                    </if>
+                </if>
+                <if test="@Ognl@isNotEmpty(map.status)">
+                    AND c1.STATUS= #{map.status}
+                </if>
+
+                <if test="@Ognl@isNotEmpty(map.beginTime)">
+                    AND c1.START_TIME &gt;'${map.beginTime}'
+                </if>
+                <if test="@Ognl@isNotEmpty(map.endTime)">
+                    AND c1.START_TIME &lt; '${map.endTime}'
+                </if>
+                )
+            </if>
+        </where>
+        <if test="@Ognl@isEmpty(map.sort)">
+            <if test="@Ognl@isNotEmpty(map.sortType)">
+                <if test="map.sortType==1">
+                    ORDER BY c.CREATE_TIME desc
+                </if>
+                <if test="map.sortType==2">
+                    ORDER BY c.RECO_SORT desc
+                </if>
+            </if>
+        </if>
+    </select>
+    <select id="findTotalCountByCourseId" parameterType="long" resultType="map">
+        select count(*) buyCount from orders  o where o.join_course_id in(
+        select id from join_course_record jcr where jcr.course_id=#{courseId})
+
+    </select>
+    <select id="findById" parameterType="long" resultMap="BaseResultMapDto">
+        SELECT c.LIVE_TOPIC,c.REMARK,c.CHARGE_AMT
+        ,c.VISIT_COUNT
+        ,c.RECO_TIME,c.COVERSS_ADDRESS,
+        (CASE WHEN c.STATUS='0' THEN '上线' ELSE '下线' END ) AS STATUS
+        ,c.COMMENT_COUNT,a.NAME AS appUserName
+        FROM course c
+        LEFT JOIN  app_user a ON a.ID = c.APP_ID
+        WHERE c.ID= #{id}
+
+    </select>
+
+    <update id="updateDown" parameterType="long">
+        update course
+        set STATUS ='1'
+        WHERE ID = #{id} or SERIES_COURSE_ID=#{id}
+    </update>
+
+    <update id="recoveryCourse" parameterType="long">
+        update course
+        set END_TIME = NULL
+        WHERE ID = #{id}
+    </update>
+
+
+    <update id="setVisitCount">
+        update course
+        set VISIT_COUNT =#{visitCount}
+        WHERE ID = #{id}
+    </update>
+
+
+
+    <update id="setJoinCount">
+        update course
+        set JOIN_COUNT =#{joinCount}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="setRecoSort">
+        update course
+        set RECO_SORT =#{recoSort}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="setTypeSort">
+        update course
+        set TYPE_SORT =#{typeSort}
+        WHERE ID = #{id}
+    </update>
+    <update id="setAutoCloseTime">
+        update course
+        set AUTO_CLOSE_TIME =#{autoCloseTime}
+        WHERE ID = #{id}
+    </update>
+
+
+
+    <update id="updateUp" parameterType="long">
+        update course
+        set STATUS ='0'
+        WHERE ID = #{id} or SERIES_COURSE_ID=#{id}
+    </update>
+
+
+    <update id="restore" parameterType="long">
+        update course
+        set IS_DELETE ='0'
+        WHERE ID = #{id} or SERIES_COURSE_ID=#{id}
+    </update>
+
+    <update id="del" parameterType="long">
+        update course
+        set IS_DELETE ='1'
+        WHERE ID = #{id} or SERIES_COURSE_ID=#{id}
+    </update>
+
+    <update id="dels" parameterType="java.util.List">
+        update course
+        set IS_DELETE ='1'
+        WHERE ID IN
+        <foreach collection="courses" item="course" open="(" separator="," close=")">
+            #{course.id}
+        </foreach>
+    </update>
+
+    <select id="getNotEndListBy24Hour" parameterType="string" resultMap="BaseResultMap">
+        SELECT ID ,APP_ID,LIVE_WAY ,LIVE_TYPE ,START_TIME,CHARGE_AMT , IS_SERIES_COURSE , SERIES_COURSE_ID , AUTO_CLOSE_TIME
+        FROM course c
+        WHERE END_TIME is null
+        and c.IS_SERIES_COURSE ='0'
+    </select>
+
+    <select id="getNoChatRoomId"  resultMap="BaseResultMap">
+        select * from course c where (c.CHAT_ROOM_ID is null or c.CHAT_ROOM_ID = 0) AND c.IS_SERIES_COURSE = '0' and END_TIME is null order by CREATE_TIME desc
+    </select>
+
+
+
+    <select id="getCourseMessageTaskPage" resultMap="BaseResultMapDto" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM course
+        WHERE STATUS = '0' AND START_TIME &gt; now() AND END_TIME is null
+    </select>
+    <update id="updateEndTime" parameterType="long">
+        update course
+        set
+        END_TIME = now()
+        where ID = #{id}
+    </update>
+
+    <select id="getCourse" resultMap="BaseResultMap">
+        SELECT *
+        FROM course c
+
+        WHERE c.ID = #{id}
+    </select>
+
+    <select id="getDistributionInformation" parameterType="long" resultType="map">
+        SELECT SUM(a.AMOUNT) distributionAmount,COUNT(j.APP_ID)  distributionNum
+        FROM account_track a
+        LEFT JOIN orders o ON o.ID =  a.ORDER_ID
+        LEFT JOIN join_course_record j ON o.JOIN_COURSE_ID = j.ID
+        WHERE   a.RETURN_MONEY_LEVEL = '1' AND o.OPT_STATUS = '1' AND j.STATUS = '0' AND j.SIGN_UP_STATUS = '1'AND  j.COURSE_ID = #{courseId}
+    </select>
+
+    <select id="getCourseMessagePage" resultType="java.util.Map">
+        SELECT
+        c.ID AS courseId,
+        c.LIVE_TOPIC AS liveTopic,
+        c.CHAT_ROOM_ID AS chatRoomId,
+        r.FROM_NICK AS fromNick,
+        r.MSG_TIMESTAMP AS msgTime,
+        r.REPLY_NAME AS replyName,
+        r.MSG_TYPE as msgType,
+        r.ATTACH as attach
+        FROM
+        course c
+        RIGHT JOIN chat_room_msg r ON c.CHAT_ROOM_ID = r.CHAT_ROOM_ID
+        <where>
+            c.LIVE_TYPE = '0'
+            <if test="@Ognl@isNotEmpty(courseId)">
+                AND c.Id = #{courseId}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(attach)">
+                AND r.ATTACH LIKE CONCAT('%',#{attach},'%' )
+            </if>
+        </where>
+        ORDER BY c.CREATE_TIME desc
+        limit #{page.offset},#{page.limit}
+    </select>
+
+    <select id="getCourseMessageTotal" resultType="java.lang.Integer">
+        SELECT count(*) totalCount
+        FROM
+        course c
+        RIGHT JOIN chat_room_msg r ON c.CHAT_ROOM_ID = r.CHAT_ROOM_ID
+        <where>
+            c.LIVE_TYPE = '0'
+            <if test="@Ognl@isNotEmpty(courseId)">
+                AND c.Id = #{courseId}
+            </if>
+            <if test="@Ognl@isNotEmpty(liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(attach)">
+                AND r.ATTACH LIKE CONCAT('%',#{attach},'%' )
+            </if>
+        </where>
+    </select>
+
+    <select id="getPreRemindByHourList" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+        ID ,APP_ID,LIVE_WAY ,LIVE_TOPIC,START_TIME,ROOM_ID,LIVE_TYPE ,CHARGE_AMT,COVERSS_ADDRESS
+        FROM
+        course
+        WHERE
+        ISNULL(END_TIME)
+        AND START_TIME &lt;= #{time}
+        AND START_TIME &gt; now()
+        and status = '0' AND IS_SERIES_COURSE != '1'
+    </select>
+
+    <select id="findDuringThisPeriodCourse" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM course
+        WHERE status = '0' AND END_TIME IS NOT NULL AND SERIES_COURSE_ID = 0
+        AND END_TIME &lt;= #{endTime} AND END_TIME &gt;= #{startTime}
+        AND ID NOT IN
+        <foreach collection="ids" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </select>
+    <update id="update" parameterType="com.longlian.model.Course">
+        update  course
+        SET
+        <if test="@Ognl@isNotEmpty(coverssAddress)">
+            COVERSS_ADDRESS=#{coverssAddress},
+        </if>
+        <if test="@Ognl@isNotEmpty(colImgAddress)">
+            COL_IMG_ADDRESS = #{colImgAddress},
+        </if>
+        <if test="@Ognl@isNotEmpty(pushContent)">
+            PUSH_CONTENT = #{pushContent},
+        </if>
+        <if test="@Ognl@isNotEmpty(verticalCoverssAddress)">
+            VERTICAL_COVERSS_ADDRESS = #{verticalCoverssAddress},
+        </if>
+        <if test="@Ognl@isNotEmpty(remark)">
+            REMARK=#{remark},
+        </if>
+        <if test="@Ognl@isNotEmpty(startTime)">
+            START_TIME=#{startTime},
+        </if>
+
+        <if test="@Ognl@isNotEmpty(pushType)">
+            PUSH_TYPE = #{pushType},
+        </if>
+        <if test="@Ognl@isNotEmpty(courseType)">
+            COURSE_TYPE = #{courseType},
+        </if>
+        LIVE_TOPIC=#{liveTopic}
+        where id = #{id}
+    </update>
+    <select id="getAuditListPage"   resultType="map" useCache="false">
+        SELECT c.ID as id, c.CREATE_TIME as createTime, c.START_TIME as startTime, c.END_TIME as endTime, c.LIVE_TOPIC as liveTopic, c.LIVE_WAY as liveWay
+        , c.CHARGE_AMT as chargeAmt ,c.DIVIDE_SCALE as divideScale,c.STATUS as status,c.IS_SERIES_COURSE as isSeriesCourse,c.JOIN_COUNT as joinCount,a.id as auditId,
+        a.AUDIT_USER_NAME as appUserName,a.REMARK as remark,a.AUDIT_TIME as auditTime
+        FROM course c  INNER JOIN course_audit a on c.id = a.COURSE_ID  and IS_RECORDED = 1 and c.IS_DELETE = 0
+        <where>
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt; #{map.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.status)">
+                AND c.STATUS= #{map.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.auditStatus)">
+                AND a.STATUS= #{map.auditStatus}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.id)">
+                AND c.ID= #{map.id}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveWay)">
+                AND c.LIVE_WAY= #{map.liveWay}
+            </if>
+        </where>
+        ORDER BY
+        <if test="@Ognl@isNotEmpty(map.auditStatus)">
+            a.AUDIT_TIME desc
+        </if>
+        <if test="@Ognl@isEmpty(map.auditStatus)">
+            a.CREATE_TIME desc
+        </if>
+    </select>
+    <select id="getNotEndRecordCourseList"  resultMap="BaseResultMapVideoDto">
+        select c.id ,c.START_TIME,c.IS_RECORDED, c.LIVE_TOPIC , c.STATUS , c.REC_TIME , v.id videoId , v.DURATION , c.SERIES_COURSE_ID
+
+        from course c LEFT JOIN video v on c.id = v.COURSE_ID WHERE c.END_TIME is null
+        and c.IS_SERIES_COURSE ='0' and c.IS_RECORDED = '1' and c.STATUS = '0'
+
+
+    </select>
+    <select id="getSeriesCourseNotEnd" resultMap="BaseResultMap">
+        select * from course c where c.IS_SERIES_COURSE = '1' and c.END_TIME is null and status = '0'
+    </select>
+    <select id="getCourseBySeries" resultMap="BaseResultMap">
+        select * from course c where c.IS_SERIES_COURSE = '0' and c.SERIES_COURSE_ID =#{seriesId} and `STATUS` = '0';
+    </select>
+
+    <select id="findStatus" resultType="Long">
+        SELECT ID FROM course WHERE `STATUS` = '1' or IS_DELETE = '1'
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT ID,ROOM_ID ,IS_SERIES_COURSE,SERIES_COURSE_ID,APP_ID , STATUS , IS_DELETE FROM course
+    </select>
+    <select id="getNeedDealCourse" resultType="java.util.Map">
+        SELECT
+        A.SERIES_COURSE_ID courseId,
+        count1,
+        count2,
+        max(A.JOIN_COUNT) count4,
+        MAX(A.VISIT_COUNT) count3
+        FROM
+        (
+        SELECT
+        c.ID,
+        c.LIVE_TOPIC,
+        c.SERIES_COURSE_ID,
+        c.JOIN_COUNT,
+        c.VISIT_COUNT,
+        p.JOIN_COUNT count2,
+        p.VISIT_COUNT count1
+        FROM
+        course c
+        LEFT JOIN course p ON p.id = c.SERIES_COURSE_ID
+        WHERE
+        c.SERIES_COURSE_ID > 0
+        AND (c.JOIN_COUNT > p.JOIN_COUNT or c.VISIT_COUNT > p.VISIT_COUNT)
+        ) A
+        GROUP BY
+        A.SERIES_COURSE_ID
+    </select>
+
+    <select id="findAllCourse" resultMap="BaseResultMap">
+        SELECT ID , VIDEO_ADDRESS FROM course
+        WHERE VIDEO_ADDRESS IS NOT null AND VIDEO_ADDRESS != 'novideo'
+        limit #{offset} , #{pageSize}
+    </select>
+
+    <update id="updateVideoAddress">
+        UPDATE course set VIDEO_ADDRESS = #{videoAddress} WHERE ID = #{id}
+    </update>
+
+    <select id="findVideoAddress" resultMap="BaseResultMap">
+        SELECT ID , VIDEO_ADDRESS FROM course
+        WHERE VIDEO_ADDRESS IS NOT null AND VIDEO_ADDRESS != 'novideo'
+        AND (LIVE_WAY = '0' OR IS_RECORDED = '1') AND STATUS = '0' AND IS_SERIES_COURSE = '0' AND IS_DELETE = '0'
+        ORDER BY ID DESC limit #{pageSize}
+    </select>
+
+    <select id="getListByRoomIdPage" resultMap="BaseResultMapDto" useCache="false">
+        SELECT c.ID, c.CREATE_TIME, c.START_TIME, c.END_TIME, c.LIVE_TOPIC, c.LIVE_WAY
+        , c.CHARGE_AMT,c.VISIT_COUNT,c.JOIN_COUNT ,c.DIVIDE_SCALE,c.STATUS
+        , a.ID AS appId,a.NAME AS appUserName,t.NAME AS courseTypeName , c.IS_DELETE , c.IS_SERIES_COURSE, c.SERIES_COURSE_ID,c.AUTO_CLOSE_TIME,c.RECO_SORT
+        FROM course c
+        LEFT JOIN app_user a ON a.ID = c.APP_ID
+        LEFT JOIN  course_type t ON  t.ID = c.COURSE_TYPE
+        <where>
+            1=1 AND c.ROOM_ID = #{map.roomId} AND c.IS_DELETE = '0'
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND c.START_TIME &gt; #{map.beginTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND c.START_TIME &lt; #{map.endTime}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.status)">
+                AND c.STATUS= #{map.status}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.id)">
+                AND c.ID= #{map.id}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.courseType)">
+                AND c.COURSE_TYPE= #{map.courseType}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.liveWay)">
+                AND c.LIVE_WAY= #{map.liveWay}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isRecorded)">
+                AND c.IS_RECORDED= #{map.isRecorded}
+            </if>
+            <if test="@Ognl@isNotEmpty(map.isSerier)">
+                <if test="map.isSerier == 1 ">
+                    AND c.SERIES_COURSE_ID > 0
+                </if>
+                <if test="map.isSerier == 0 ">
+                    AND c.SERIES_COURSE_ID = 0 AND IS_SERIES_COURSE = 0
+                </if>
+            </if>
+        </where>
+        <if test="@Ognl@isNotEmpty(map.sortType)">
+            <if test="map.sortType==1">
+                ORDER BY c.CREATE_TIME desc
+            </if>
+            <if test="map.sortType==2">
+                ORDER BY c.RECO_SORT desc
+            </if>
+        </if>
+    </select>
+    <update id="updateShowHide" parameterType="com.longlian.model.Course">
+        update  course
+        SET
+        IS_HIDE=#{isHide}
+        where ID = #{id}
+    </update>
+    
+        
+	<update id="updateShowRelayHide" parameterType="com.longlian.model.Course">
+        update  course
+        SET
+        IS_RELAY_HIDE=#{isRelayHide}
+        where ID = #{id}
+    </update>
+    <select id="getOpenCourseCountsByTime" resultType="java.lang.Long">
+        select count(*)count from course where START_TIME BETWEEN #{startTime} AND #{endTime}
+    </select>
+</mapper>

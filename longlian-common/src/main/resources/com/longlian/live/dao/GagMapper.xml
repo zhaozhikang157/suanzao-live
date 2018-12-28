@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.GagMapper">
+    <resultMap id="BaseResultMap" type="com.longlian.model.Gag">
+        <id column="ID" property="id"/>
+        <result column="COURSE_ID" property="courseId"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="OPT_ID" property="optId"/>
+        <result column="CREATE_TIME" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+     COURSE_ID, USER_ID ,OPT_ID, CREATE_TIME
+    </sql>
+
+    <select id="findSameUserId" parameterType="Gag" resultType="int">
+        SELECT count(*) FROM course_gag WHERE COURSE_ID = #{courseId} AND USER_ID = #{userId}
+    </select>
+
+    <insert id="setGag">
+        INSERT INTO course_gag (<include refid="Base_Column_List"/>) VALUES (#{courseId},#{userId},#{optId},#{createTime})
+    </insert>
+
+    <select id="findUserIdByCourseId" resultType="String">
+        SELECT USER_ID FROM course_gag WHERE COURSE_ID = #{courseId}
+    </select>
+
+    <delete id="delGag" parameterType="Gag">
+        DELETE FROM course_gag WHERE USER_ID = #{userId} AND COURSE_ID = #{courseId}
+    </delete>
+
+</mapper>

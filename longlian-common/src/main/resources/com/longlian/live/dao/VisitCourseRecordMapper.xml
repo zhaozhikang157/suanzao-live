@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.VisitCourseRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.VisitCourseRecord">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="COURSE_ID" jdbcType="BIGINT" property="courseId" />
+        <result column="APP_ID" jdbcType="BIGINT" property="appId" />
+        <result column="STATUS" jdbcType="INTEGER" property="status" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="FROM_TYPE" jdbcType="VARCHAR" property="fromType" />
+        <result column="INVITATION_USER_ID" jdbcType="TIMESTAMP" property="invitationUserId" />
+        <result column="SERIES_COURSE_ID" jdbcType="BIGINT" property="seriesCourseId" />
+        <result column="FROM_SHARE_TYPE" jdbcType="VARCHAR" property="fromShareType" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, COURSE_ID, APP_ID, STATUS, CREATE_TIME, FROM_TYPE, INVITATION_USER_ID , SERIES_COURSE_ID , FROM_SHARE_TYPE
+    </sql>
+    <select id="findCourseSource" parameterType="long" resultType="map">
+    select
+    IFNULL(sum(case when FROM_TYPE='0' OR FROM_TYPE IS NULL then 1 else 0 end),0) as normal,
+    IFNULL(sum(case when FROM_TYPE='1' then 1 else 0 end),0) as invitationCard,
+    IFNULL(sum(case when FROM_TYPE='2' then 1 else 0 end),0) as distributorsShareLinks
+    from visit_course_record
+    WHERE  STATUS = '0' AND COURSE_ID = #{courseId}
+ </select>
+
+
+    <insert id="insertRecord" parameterType="com.longlian.model.VisitCourseRecord">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into visit_course_record (COURSE_ID, APP_ID, STATUS, CREATE_TIME,FROM_TYPE,INVITATION_USER_ID , SERIES_COURSE_ID , FROM_SHARE_TYPE)
+        values (#{courseId}, #{appId}, #{status}, #{createTime}, #{fromType}, #{invitationUserId}  ,  #{seriesCourseId},  #{fromShareType})
+    </insert>
+
+    <select id="findByUserIdAndCourseId" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM visit_course_record WHERE APP_ID = #{userId} and COURSE_ID= #{courseId}
+    </select>
+
+
+    <delete id="deleteRecord" >
+        delete FROM visit_course_record  WHERE  APP_ID = #{userId} and COURSE_ID= #{courseId}
+    </delete>
+
+    <select id="findByCourseId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM visit_course_record WHERE   COURSE_ID= #{courseId}
+    </select>
+
+</mapper>

@@ -1,0 +1,34 @@
+html,body{
+	width: 100%;
+	height: 100%;
+}
+.titles{
+	width: 100px;
+	text-align: right;
+}
+.much{
+	display: inline-block;
+}
+.texry{
+	width: 150px;
+	height: 66px;
+	max-width: 150px;
+	max-height: 66px;
+	font-size: 10px;
+	margin-left: 4px;
+	float: right;
+}
+.texterybox{
+	width: 228px;
+	height: 66px;
+	margin: 0 auto;
+}
+.footerBtn{
+	clear: both;
+	text-align: center;
+	margin-top: 14px;
+}
+#form1 .infoBox{
+	display: inline-block;
+	width: 48%;
+}

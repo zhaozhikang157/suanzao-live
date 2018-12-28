@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.CourseDetailsStaticsMapper">
+
+    <insert id="insert">
+        INSERT INTO courseDetail_statictis(
+          courseId,totalStayTime,visitCount,pCount,visitDate,
+          weixinCountc,androidCountc,iosCountc,weixinCountp,androidCountp,iosCountp,type,
+          weixinStayTime,androidStayTime,iosStayTime
+        )VALUES(#{map.courseId},#{map.totalStayTime},#{map.visitCount},#{map.pCount},#{map.visitDate},
+                 #{map.weixinCountc},#{map.androidCountc},#{map.iosCountc},#{map.weixinCountp},#{map.androidCountp},#{map.iosCountp},#{map.type},
+                 #{map.weixinStayTime},#{map.androidStayTime},#{map.iosStayTime}
+                )
+    </insert>
+
+
+
+    <select id="getCourseDatasRange" resultType="map">
+        SELECT  (CASE when sum(totalStayTime) is null  THEN 0 ELSE sum(totalStayTime) END)as totalStayTime ,
+                 (CASE  when  sum(visitCount) IS null then 0 ELSE  sum(visitCount) END ) AS vCount,
+                 (case when sum(pCount) IS NULL  then 0 ELSE sum(pCount) END ) as pCount
+        FROM  courseDetail_statictis
+        WHERE 1=1
+        <if test="@Ognl@isNotEmpty(map.beginTime)">
+            AND visitDate &gt;= #{map.beginTime}
+        </if>
+        <if test="@Ognl@isNotEmpty(map.endTime)">
+            AND visitDate &lt;= #{map.endTime}
+        </if>
+    </select>
+
+    <select id="getCourseDetailStatictisByCourse" resultType="map">
+        SELECT sum(totalStayTime) as totalStayTime ,sum(visitCount) vCount,sum(pCount) as pCount
+        FROM  courseDetail_statictis
+        WHERE courseId=#{courseId}
+        <if test="@Ognl@isNotEmpty(map.beginDate)">
+            AND visitDate &gt;= #{map.beginDate}
+        </if>
+        <if test="@Ognl@isNotEmpty(map.endDate)">
+            AND visitDate &lt;= #{map.endDate}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.mq.dao.CourseImgMapper">
+
+    <resultMap id="BaseResultMap" type="com.longlian.model.CourseImg">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="COURSE_ID" jdbcType="BIGINT" property="courseId"/>
+        <result column="ADDRESS" jdbcType="VARCHAR" property="address"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="CONTENT" jdbcType="TIMESTAMP" property="content"/>
+        <result column="ORDER_SORT" jdbcType="TIMESTAMP" property="orderSort"/>
+        <result column="LOCAL_IDS" property="localIds"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, COURSE_ID, ADDRESS, STATUS, CREATE_TIME,CONTENT,ORDER_SORT,LOCAL_IDS
+    </sql>
+
+    <update id="updateAddressById">
+        UPDATE course_img SET ADDRESS = #{url} WHERE ID = #{id}
+    </update>
+
+    <select id="getCourseImgList" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM course_img WHERE STATUS = '0' AND COURSE_ID = #{courseId}
+        ORDER BY ORDER_SORT ASC
+    </select>
+</mapper>

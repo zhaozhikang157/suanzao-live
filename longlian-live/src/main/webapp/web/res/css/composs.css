@@ -1,0 +1,227 @@
+.wrap{
+	width: 100%;
+	padding-top:1.7rem;
+	background: url(../image/11111223.png) repeat-y center center;
+	background-size:100% 100% ;
+}
+.head{
+	width: 17.5rem;
+	height: 5rem;
+	background: url(../image/33@2x.png) no-repeat center center;
+	background-size:100% 100% ;
+	margin: 0 auto;
+}
+.con_top{
+	width: 16.5rem;
+	padding-top: 5rem;
+	height: 21rem;
+	background: url(../image/44@2x.png) no-repeat center center;
+	background-size:100% 100% ;
+	margin: 0 auto;
+}
+.con_bottom{
+	width: 18.7rem;
+	height: 27.5rem;
+	padding-top:6rem ;
+	background: url(../image/11112.png) no-repeat center center;
+	background-size:100% 100%;
+	margin: 0 auto;
+	margin-top: 1.25rem;
+	position: relative;
+}
+.con_top ul{
+	width:13.15rem;
+	height: 20rem;
+	margin: 0 auto;
+	margin-left: 2.3rem;
+	
+}
+.con_bottom ul{
+	margin-left: 3.5rem;
+}
+.con_top ul li p{
+	font-size: .75rem;
+}
+.con_top ul li span{
+	display: inline-block;
+	width: 5.2rem;
+	height: 1.75rem;
+	line-height: 1.75rem;
+	text-align: center;
+	font-size: 0.75rem;
+	background: url(../image/yesorno_03.png) no-repeat center center;
+	background-size:100% 100%;
+	margin-top: .5rem;
+	margin-bottom: .5rem;
+}
+ul li span:nth-of-type(1){
+	margin-right: .5rem;
+}
+ul li{
+	position: relative;
+}
+ul li p img{
+	display: inline-block;
+	width:1.25rem;
+	height: 1.25rem;
+	position: absolute;
+	left: -1.4rem;
+	top: 0;
+}
+.lefpic{
+	width: 6.85rem;
+	height: 6.65rem;
+	background:url(../image/001.png) no-repeat center center;
+	background-size:100% 100% ;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+}
+.rightpic{
+	width: 4.45rem;
+	height: 6.9rem;
+	background:url(../image/002.png) no-repeat center center;
+	background-size:100% 100% ;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+.upBtn{
+	width:5.15rem;
+	height:1.65rem;
+	background: url(../image/upbtn_04.png) no-repeat center center;
+	background-size:100% 100%;
+	margin: 0 auto;
+	display: block;
+	margin-left: 3rem;
+	margin-top: .5rem;
+}
+.con_top ul li span.on{
+	background: url(../image/orgin_03.png) no-repeat center center;
+    background-size: 100% 100%;
+}
+.hed{
+	width:11rem;
+	height:4.6rem;
+	background:url(../image/1@2x.png) no-repeat center center;
+	background-size:100% 100%;
+	margin: 0 auto;
+}
+.con{
+	width: 17rem;
+	height:22.5rem;
+	background: url(../image/2@2x.png) no-repeat center center;
+	background-size:100% 100%;
+	margin: 0 auto;
+	position: relative;
+}
+.wrapp{
+	width: 100%;
+	height: 100%;
+	background: url(../image/bac1.png) no-repeat center center;
+	background-size:100% 100% ;
+}
+.topBox{
+	width: 12rem;
+	margin: 0 auto;
+	text-align: center;
+	padding-top: 2.2rem;
+}
+.user{
+	display: block;
+	width:3.55rem;
+	height: 3.55rem;
+	border-radius: 3.55rem;
+	overflow: hidden;
+	margin: 0 auto;
+	margin-bottom: .4rem;
+}
+.userTitle{
+	font-size:1rem;
+	color: #231815;
+	margin-bottom: .2rem;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+.sizeCole{
+	font-size:1rem;
+	color: #231815;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+#echear{
+	width: 14.5rem;
+	height: 9.6rem;
+	margin: 0 auto;
+}
+.ewm{
+	position: absolute;
+	display: block;
+	width: 3.2rem;
+	height: 3.2rem;
+	bottom: 1.2rem;
+	left: 6.1rem;
+}
+/*弹出框 */
+/* CSS Document */
+.pop_wrap{
+	overflow: auto;
+	position: fixed;
+	left: 50%;
+	z-index: 11111111;
+	width:10.9rem;
+	height: 1.95rem;
+	line-height: 1.95rem;
+	margin-left:-5.45rem ;
+	border-radius: 1.95rem;
+}
+.pop_con{
+	display:-webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	-webkit-box-orient: vertical;
+	text-align: center;
+	font-size: 1.4rem;
+	color:rgba(255,255,255,0.9);
+	margin: 0 auto;
+}
+.warning{
+	background: rgba(0,0,0,0.6);
+}
+
+.warning .pop_title{
+	font-size: 1.6rem;
+	background:#67bef5;
+
+}
+.error{
+	background: rgba(0,0,0,0.6);
+
+}
+.error .classpic{
+	width: 1.4rem;
+	height: 1.4rem;
+	background: url(../image/pic_gantanhao.png) no-repeat center center;
+	background-size:100% 100%;
+	margin-bottom: 0.4rem;
+	margin-right: 0;
+}
+.error .pop_title{
+	font-size: 1.6rem;
+}
+.normal {
+	background: rgba(0,0,0,0.6);
+}
+.normal .classpic{
+	width: 1.4rem;
+	height: 1.4rem;
+	background: url(../image/pic_duihao.png) no-repeat center center;
+	background-size:100% 100%;
+	margin-bottom: 0.4rem;
+}
+.poptext{
+	font-size: 0.7rem;
+	color: white;
+}
+/*结束 */

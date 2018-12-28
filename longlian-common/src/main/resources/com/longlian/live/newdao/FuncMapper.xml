@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longlian.live.newdao.FuncMapper" >
+  <resultMap id="BaseResultMap" type="com.longlian.model.Func" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="FUNC_CODE" property="funcCode" jdbcType="VARCHAR" />
+    <result column="FUNC_DISC" property="funcDisc" jdbcType="VARCHAR" />
+    <result column="FUNC_NAME" property="funcName" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="getFuncListPage"  resultType="Map">
+    SELECT
+    f.id as id,
+    f.FUNC_CODE AS funcCode,
+    f.FUNC_NAME AS funcName,
+    f.FUNC_DISC AS funcDisc,
+    f.STATUS as status
+    FROM
+    func f
+    WHERE 
+    1=1
+    <if test="@Ognl@isNotEmpty(map.funcName)">
+      AND f.FUNC_NAME LIKE CONCAT('%',#{map.funcName},'%' )
+    </if>
+    <if test="@Ognl@isNotEmpty(map.status)">
+      AND f.STATUS ='1'
+    </if>
+  </select>
+  <select id="getFuncList"  resultType="Map">
+    SELECT
+    f.id as id,
+    f.FUNC_CODE AS funcCode,
+    f.FUNC_NAME AS funcName,
+    f.FUNC_DISC AS funcDisc,
+    f.STATUS as status
+    FROM
+    func f
+    WHERE
+    f.STATUS = '1'
+    <if test="@Ognl@isNotEmpty(map.funcName)">
+      AND f.FUNC_NAME LIKE  CONCAT('%',#{map.funcName},'%' )
+    </if>
+  </select>
+  <select id="isExistFunc" resultType="int">
+    SELECT count(id) from func WHERE FUNC_CODE = #{funcCode}
+  </select>
+  <update id="deleteById">
+    DELETE  FROM  func  WHERE ID = #{id}
+  </update>
+</mapper>

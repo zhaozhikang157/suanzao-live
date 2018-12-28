@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+        <!-- 加载配置文件 -->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:spring/mybatis-config.xml"/>
+        <property name="typeAliasesPackage" value="com.longlian.model"/>
+        <property name="configurationProperties">
+            <props>
+                <prop key="dialect" >mysql</prop>
+            </props>
+        </property>
+
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.longlian.live.third.service,com.longlian.live.dao,com.longlian.console.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.longlian.live.newdao,com.longlian.console.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 为业务逻辑层的方法解析DynamicDataSourcekey注解  为当前线程的DynamicDataSourcekeyHolder注入数据源key -->
+    <bean id="aspectBean" class="com.huaxin.util.db.DataSourceInterceptor"></bean>
+    <aop:config>
+        <aop:aspect id="dataSourceAspect" ref="aspectBean" order="1">
+            <aop:pointcut id="dataSourcePoint" expression="execution(public * com.longlian.*.service.*.*(..))" />
+            <aop:before method="dataSourceBefore" pointcut-ref="dataSourcePoint"/>
+        </aop:aspect>
+    </aop:config>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!-- 配置事务的传播特性 -->
+    <tx:advice id ="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes >
+            <tx:method name ="find*" read-only="true" />
+            <tx:method name ="get*" read-only="true" />
+            <tx:method name ="query*" read-only="true" />
+            <tx:method name ="select*" read-only="true" />
+            <tx:method name ="load*"  read-only="true" />
+            <tx:method name ="add*" propagation="REQUIRED" rollback-for="Exception" />
+            <tx:method name ="batch*" propagation="REQUIRED" rollback-for="Exception" />
+            <tx:method name ="create*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name ="del*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name ="remove*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name ="update*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name ="edit*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name ="*" propagation="REQUIRED" rollback-for="Exception"/>
+        </tx:attributes >
+    </tx:advice >
+    <!--配置事务切入点, 以及把事务切入点和事务属性关联起来-->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="dataSourcePoint"/>
+    </aop:config>
+
+</beans>

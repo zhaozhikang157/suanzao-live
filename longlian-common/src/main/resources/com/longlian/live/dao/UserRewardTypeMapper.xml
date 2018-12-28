@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.UserRewardTypeMapper">
+    <resultMap id="paramMap" type="com.longlian.model.UserRewardType">
+        <id column="ID" property="id"/>
+        <result column="AMOUNT"  property="amount"/>
+        <result column="STATUS"  property="status"/>
+        <result column="CREATE_TIME"  property="createTime"/>
+        <result column="REMARK"  property="remark"/>
+        <result column="PIC_ADDRESS"  property="picAddress"/>
+        <result column="CHAT_PIC_ADDRESS"  property="chatPicAddress"/>
+    </resultMap>
+
+    <sql id="sql">
+        ID,AMOUNT,STATUS,CREATE_TIME,REMARK,PIC_ADDRESS,CHAT_PIC_ADDRESS
+    </sql>
+    <select id="getUseList" resultMap="paramMap">
+        SELECT <include refid="sql"/> FROM user_reward_type
+        <if test="@Ognl@isNotEmpty(status)">
+            WHERE STATUS = #{status}
+        </if>
+        ORDER  BY  AMOUNT
+    </select>
+
+    <select id="getById" resultMap="paramMap">
+        SELECT <include refid="sql"/> FROM user_reward_type  WHERE ID = #{id}
+    </select>
+
+    <select id="findrewardTypeInfoPage" resultMap="paramMap">
+        SELECT <include refid="sql"/>
+        FROM user_reward_type
+        <where>
+            <if test="@Ognl@isNotEmpty(userRewardType.status)">
+                STATUS = #{userRewardType.status}
+            </if>
+        </where>
+        ORDER  BY  AMOUNT
+    </select>
+
+    <insert id="createUserRewardType">
+        INSERT  INTO user_reward_type (AMOUNT,STATUS,CREATE_TIME,REMARK,PIC_ADDRESS,CHAT_PIC_ADDRESS)
+        VALUES (#{amount},#{status},now(),#{remark},#{picAddress},#{chatPicAddress})
+    </insert>
+
+    <update id="updateUserRewardType">
+        UPDATE user_reward_type SET AMOUNT = #{amount},STATUS = #{status},REMARK = #{remark},
+        PIC_ADDRESS = #{picAddress},CHAT_PIC_ADDRESS = #{chatPicAddress}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE user_reward_type SET STATUS = #{status} WHERE ID = #{id}
+    </update>
+
+
+</mapper>

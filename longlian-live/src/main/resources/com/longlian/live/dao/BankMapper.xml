@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.live.dao.BankMapper">
+    <resultMap id="bankMap" type="com.longlian.model.Bank">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="NAME"  property="name"/>
+        <result column="REMARK"  property="remark"/>
+        <result column="ORDER_SORT"  property="orderSort"/>
+        <result column="STATUS"  property="status"/>
+        <result column="PIC_ADDRESS"  property="picAddress"/>
+        <result column="BACKGROUND_START"  property="backgroundStart"/>
+        <result column="BACKGROUND_END"  property="backgroundEnd"/>
+    </resultMap>
+    <sql id="bankSql">
+        `NAME`,REMARK,ORDER_SORT,STATUS,PIC_ADDRESS,BACKGROUND_START,BACKGROUND_END
+    </sql>
+    <select id="getAllBank" resultMap="bankMap">
+      SELECT ID,
+      <include refid="bankSql"></include>
+      FROM bank
+      where  status = '0'
+    </select>
+
+    <select id="getById" resultMap="bankMap">
+        SELECT ID,<include refid="bankSql"></include>
+        FROM  bank
+        WHERE ID=#{id}
+    </select>
+</mapper>

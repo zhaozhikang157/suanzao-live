@@ -1,0 +1,30 @@
+/**/
+html,body{ height:100%; background:#eee;}
+#wrapper{ position:relative; width:100%; max-width:18.75rem; height:100%; margin:0 auto; background:#eeeeee; overflow:auto;}
+#cont_box{ padding-bottom:2rem;}
+
+.fit_big{ width:18.75rem; height:10.545rem; overflow:hidden;}
+.fit_big li{width:18.75rem; height:10.545rem; position:relative;}
+.fit_big li span{ width:2.5rem; height:2.5rem; position:absolute; top:50%; left:50%; margin:-1.25rem 0 0 -1.25rem; background:url(../image/fitImg/fitImg_1.png) no-repeat; background-size:100%;}
+#fit_min { width:18.75rem; overflow:hidden; position:relative;}
+.swiper-container {
+	width: 100%;
+	height: 100%;
+}
+#fit_min .swiper-slide{ text-align:center; padding:10px 0; width:25%;}
+#fit_min .swiper-slide span{ font-size:.5rem; color:#6c6c6c;}
+#fit_min .swiper-slide i{ font-size:.5rem; color:#6c6c6c;}
+#fit_min .on span{ font-size:.5rem; color:#9e565a;}
+#fit_min .on img{ border:3px #9e565a solid; }
+#fit_min .on i{ font-size:.5rem; color:#9e565a;}
+#fit_min img{ border:3px #eee solid; width:4rem; height:2.25rem; margin:0 auto;}
+
+.fitNumber{ line-height:1rem; font-size:.7rem; color:#333333; padding:.5rem 0 1rem .5rem;}
+
+.fitbtn{ position:fixed; left:0; bottom:0; width:100%; height:2rem; background:url(../image/fitImg/fitImg_3.png) no-repeat center center #FFF;}
+.fitbtn.on{ position:fixed; left:0; bottom:0; width:100%; height:2rem; background:url(../image/fitImg/fitImg_2.png) no-repeat center center #FFF;}
+.fitDL{ width:18.75rem; height:2.3rem; overflow:hidden; padding-bottom:1rem;}
+.fitDL dt{ width:2.3rem; height:2.3rem; float:left; padding-right:.3rem; padding-left:.5rem;}
+.fitDL dd{ line-height:1rem; padding-top:.2rem}
+.fitDL dd span{ color:#6c6c6c; font-size:.5rem; display:block;}
+.fitDL dd strong{ color:#333333; font-size:.7rem; font-weight:normal; display:block;

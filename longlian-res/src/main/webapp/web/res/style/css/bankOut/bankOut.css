@@ -1,0 +1,76 @@
+.footerBtn button{
+    display: inline-block;
+    margin: 20px auto;
+}
+.footerBtn button:first-child{
+    margin: 0 20px 0 190px;
+}
+.form-group > div > span{
+    margin-top: 7px;
+    display: inline-block;
+}
+.noPassBox{
+    z-index: 999999999;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -210px;
+    margin-top: -56px;
+    display: none;
+    width: 420px;
+    height: 220px;
+    background: #e7e7e7;
+}
+    .noPassTitle{
+        width: 400px;
+        height: 40px;
+        margin: 0 auto;
+    }
+    .noPassTitle p{
+        display: inline-block;
+        float: left;
+        height: 40px;
+        line-height: 40px;
+    }
+    .noPassTitle span{
+        display: inline-block;
+        float: right;
+        width: 20px;
+        height: 20px;
+        margin-top: 10px;
+        line-height: 26px;
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        cursor: pointer;
+    }
+    .noPassTitle span:hover{
+        background: #e8e8e8;
+    }
+    .noPassCont{
+        overflow: auto;
+        width: 380px;
+        height: 120px;
+        margin: 0 auto;
+        padding: 10px;
+        background: #fff;
+    }
+    .noPassCont p{
+        clear: both;
+        display: block;
+        width: 100%;
+    }
+    .noPassCont p input{
+        float: left;
+        display: inline-block;
+        width: 15px;
+    }
+    .noPassCont p label{
+        float: right;
+        display: inline-block;
+        width: 320px;
+        font-weight: normal;
+    }
+    .noPassFooter button{
+        margin-top: 12px;
+    }

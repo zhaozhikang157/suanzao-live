@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.dao.AccountMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.Account">
+    <id column="ACCOUNT_ID"  property="accountId" />
+    <result column="BALANCE"  property="balance" />
+    <result column="ADD_TOTAL_AMOUNT"  property="addTotalAmount" />
+    <result column="DEL_TOTAL_AMOUNT"  property="delTotalAmount" />
+    <result column="FORM_TRACK_ID"  property="formTrackId" />
+    <result column="CREATE_TIME"  property="createTime" />
+    <result column="REMARK"  property="remark" />
+    <result column="TRADE_PWD"  property="tradePwd" />
+    <result column="STATUS"  property="status" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ACCOUNT_ID, BALANCE, ADD_TOTAL_AMOUNT ,DEL_TOTAL_AMOUNT, FORM_TRACK_ID,CREATE_TIME,REMARK,TRADE_PWD,STATUS
+  </sql>
+
+  <select id="getListPage" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT BALANCE FROM  account WHERE ACCOUNT_ID = #{id}
+  </select>
+
+  <select id="add" parameterType="Account" >
+    INSERT INTO  account (
+      <include refid="Base_Column_List"></include>
+    )
+    values (#{accountId} , #{balance} , #{addTotalAmount} , #{delTotalAmount} , #{formTrackId} ,#{createTime}  , #{remark} , #{tradePwd} , #{status})
+  </select>
+
+
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from account where  ACCOUNT_ID= #{accountId}
+  </select>
+  <!-- 根据店铺Id行级锁  -->
+  <select id="getIdRowLockByAccountId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from account where  ACCOUNT_ID= #{accountId}  for UPDATE
+  </select>
+
+  <select id="getAccountByAppId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    a.ACCOUNT_ID,  a.BALANCE-IFNULL(SUM(o.AMOUNT),0.00) AS BALANCE, a.ADD_TOTAL_AMOUNT ,a.DEL_TOTAL_AMOUNT, a.FORM_TRACK_ID,a.CREATE_TIME,a.REMARK,a.TRADE_PWD
+    from account AS  a
+    LEFT JOIN orders AS o ON o.APP_ID=a.ACCOUNT_ID AND o.ORDER_TYPE=1 AND o.OPT_STATUS=0
+    where  ACCOUNT_ID= #{id}
+    group by a.ACCOUNT_ID
+  </select>
+
+  <update id="addUpdateByAccountId" parameterType="Account">
+    update account  set
+    BALANCE = #{balance} , ADD_TOTAL_AMOUNT= #{addTotalAmount}
+    where ACCOUNT_ID = #{accountId}
+  </update>
+  <update id="delUpdateByAccountId" parameterType="Account">
+    update account  set
+    BALANCE = #{balance} , DEL_TOTAL_AMOUNT= #{delTotalAmount}
+    where ACCOUNT_ID = #{accountId}
+  </update>
+
+  <update id="updateTrackIdByAccountId" parameterType="Account">
+    update account  set
+    FORM_TRACK_ID = #{formTrackId} where ACCOUNT_ID = #{accountId}
+  </update>
+
+  <update id="resetTradePassword" parameterType="Account">
+    update account  set TRADE_PWD = #{tradePwd} WHERE ACCOUNT_ID = #{id}
+  </update>
+
+  <update id="forgetTradePwd" parameterType="long">
+    update account  set TRADE_PWD = '' WHERE ACCOUNT_ID = #{id}
+  </update>
+
+  <select id="getAppUserAccountsPage" resultType="Map">
+    SELECT  app_user.ID as id,app_user.`NAME` as name,app_user.MOBILE as mobile,account.BALANCE as balance
+    FROM app_user
+    LEFT JOIN account ON account.ACCOUNT_ID = app_user.ID
+    <where>
+      <if test="@Ognl@isNotEmpty(name)">AND app_user.`NAME` LIKE CONCAT('%',#{name},'%' ) </if>
+      <if test="@Ognl@isNotEmpty(mobile)">AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )</if>
+      <if test="@Ognl@isNotEmpty(appId) and appId>0 ">AND app_user.ID = #{appId}</if>
+    </where>
+    ORDER BY account.BALANCE DESC
+  </select>
+
+  <select id="getSumAmount" resultType="java.math.BigDecimal">
+    SELECT SUM(REAL_AMOUNT) FROM orders WHERE APP_ID = #{appID} AND ORDER_TYPE = 1 AND OPT_STATUS =0
+  </select>
+
+  <select id="membershiprebate" resultType="Map">
+    SELECT app_user.MOBILE mobile , orders.ORDER_NO orderNo,  account_track.AMOUNT amount ,
+      account_track.CREATE_TIME createTime,account_track.RETURN_MONEY_LEVEL returnMoneyLevel
+      FROM account_track
+      LEFT JOIN app_user ON account_track.TO_ACCOUNT_ID = app_user.ID
+      LEFT JOIN orders ON orders.ID = account_track.ORDER_ID
+      WHERE account_track.TO_ACCOUNT_ID = #{id}
+      AND account_track.TYPE = '0'
+    <if test="@Ognl@isNotEmpty(map.beginTime)">
+      AND account_track.`CREATE_TIME` &gt;='${map.beginTime}'
+    </if>
+    <if test="@Ognl@isNotEmpty(map.endTime)">
+      AND account_track.`CREATE_TIME` &lt;='${map.endTime}'
+    </if>
+      ORDER BY  account_track.CREATE_TIME DESC
+  </select>
+
+  <select id="sumWithdrawDeposit" resultType="Map">
+    SELECT  SUM(orders.AMOUNT )as sumAmount,SUM(orders.LL_CHARGE) as sumCharge
+    FROM orders
+    WHERE orders.APP_ID =#{id} AND orders.ORDER_TYPE = 1 AND orders.AUDIT_STATUS = 1
+    ORDER BY orders.ID DESC
+  </select>
+
+  <select id="withdrawDeposit" resultType="Map">
+    SELECT orders.ORDER_NO as orderNo ,orders.BANK_NAME as bankName ,orders.BANK_CARD_NO as bankCardNo,
+    orders.AMOUNT as amount,orders.LL_CHARGE as charge,orders.SUCCESS_TIME as createTime
+    FROM orders
+    WHERE orders.APP_ID =#{id} AND orders.ORDER_TYPE = 1 AND orders.AUDIT_STATUS = 1
+    ORDER BY orders.ID DESC
+  </select>
+
+  <select id="getAppUserAccounts" resultType="Map">
+    SELECT  app_user.ID as id,app_user.`NAME` as name,app_user.MOBILE as mobile,account.BALANCE as balance
+    FROM app_user
+    LEFT JOIN account ON account.ACCOUNT_ID = app_user.ID
+    <where>
+      <if test="@Ognl@isNotEmpty(name)">AND app_user.`NAME` LIKE CONCAT('%',#{name},'%' ) </if>
+      <if test="@Ognl@isNotEmpty(mobile)">AND app_user.MOBILE LIKE CONCAT('%',#{mobile},'%' )</if>
+      <if test="@Ognl@isNotEmpty(appId) and appId>0 ">AND app_user.ID = #{appId}</if>
+    </where>
+    ORDER BY app_user.ID DESC
+  </select>
+
+  <!--所有申请中的提现金额-->
+  <select id="findAmountAllIng" resultType="java.math.BigDecimal">
+    SELECT IFNULL(SUM(AMOUNT),0)
+    FROM orders WHERE APP_ID = #{appId} AND ORDER_TYPE = '1' AND OPT_STATUS = '0'
+    AND DATE_FORMAT(CREATE_TIME, '%Y-%m-%d') &lt;= #{nowTime}
+  </select>
+
+  <select id="findAvatars" resultType="Long">
+    SELECT ACCOUNT_ID FROM account
+  </select>
+
+  <insert id="addNoExitAppIds">
+    insert into account (ACCOUNT_ID,CREATE_TIME,STATUS) values
+    <foreach collection="list" item="item" separator=",">
+      (#{item},now(),'0')
+    </foreach>
+  </insert>
+
+  <insert id="addAppId">
+    insert into account (ACCOUNT_ID,CREATE_TIME,STATUS) values (#{id},now(),'0')
+  </insert>
+
+  <update id="updateZbDown">
+    update account set BALANCE = BALANCE - #{amount} where ACCOUNT_ID = #{appId}
+  </update>
+
+  <update id="updateXbUp">
+    update ll_account set BALANCE = BALANCE + #{amount} where ACCOUNT_ID = #{appId}
+  </update>
+
+  <insert id="createAccountTransRecord" parameterType="AccountTransRecord">
+    insert into account_trans_record (APP_ID,AMOUNT,STATUS,CREATE_TIME) values (${record.appId},${record.amount},${record.status},NOW())
+  </insert>
+
+  <select id="getAccountTransRecordPage" resultType="AccountTransRecord">
+    select id,app_id,amount,status,create_time from account_trans_record where APP_ID = ${appId} order by CREATE_TIME desc
+  </select>
+
+  <select id="getIsZbTransXb" resultType="string">
+    select data from system_config where id = 9
+  </select>
+</mapper>

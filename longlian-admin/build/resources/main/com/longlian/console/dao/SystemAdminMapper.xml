@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.SystemAdminMapper">
+    <resultMap id="systemAdminMapper" type="com.longlian.model.system.SystemAdmin">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="admin_id" property="adminId"/>
+        <result column="admin_name" property="adminName"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="baseSql">
+      id,admin_id,admin_name,create_time
+    </sql>
+    <insert id="insertSystemAdmin" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into system_admin (admin_id,admin_name,create_time) values(#{adminId},#{adminName},now())
+    </insert>
+    <select id="getSystemAdminList" resultType="com.longlian.model.system.SystemAdmin">
+        SELECT  id,admin_id adminId,admin_name adminName,create_time createTime FROM system_admin
+    </select>
+    <delete id="deleteSystemAdmin">
+        delete from system_admin where id=#{id}
+    </delete>
+    <select id="findSystemAdminByUserId" resultType="int">
+        select count(1) from system_admin where admin_id=#{adminId}
+    </select>
+    <!-- 插入老师-超级管理员id关联关系 -->
+    <insert id="insertSystemAdminRel" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT into system_admin_rel(TEACHER_ID,USER_ID,CREATE_TIME) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.teacherId,jdbcType=VARCHAR}, #{item.userId,jdbcType=INTEGER},now())
+        </foreach>
+    </insert>
+</mapper>

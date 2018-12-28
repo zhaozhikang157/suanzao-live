@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/mvc
+         http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 启用spring mvc 注解 -->
+	<context:annotation-config />
+	<!-- 设置使用注解的类所在的jar包 -->
+	<bean id="properties" class="com.huaxin.util.spring.CustomizedPropertyConfigurer" >
+		<property name="locations">
+			<list>
+				<value>classpath*:sysconfig.properties</value>
+			</list>
+		</property>
+	</bean>
+	<context:component-scan base-package="com.longlian" use-default-filters="false">
+		<context:include-filter type="annotation"
+								expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation"
+								expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+
+	<mvc:resources mapping="/web/res/**" location="/web/res/"></mvc:resources>
+	<!--<mvc:resources mapping="/weixin/**" location="/weixin/"></mvc:resources>-->
+	<mvc:interceptors>
+		<!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.user"/>
+			<bean class="com.longlian.third.interceptor.SpringMVCInterceptor"/>
+		</mvc:interceptor>
+
+		<!--<mvc:interceptor>-->
+			<!--<mvc:mapping path="/**/*"/>-->
+			<!--<mvc:exclude-mapping path="/chatRoom/receiveMsg"/>-->
+			<!--<bean class="com.longlian.live.interceptor.SpringMVCInterceptor"/>-->
+		<!--</mvc:interceptor>-->
+	</mvc:interceptors>
+
+	<mvc:annotation-driven conversion-service="conversionServiceCustomer">
+		<mvc:message-converters register-defaults="true">
+			<!-- StringHttpMessageConverter编码为UTF-8，防止乱码 -->
+			<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+			<bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.huaxin.conversion.CustomerObjectMapper"></bean>
+				</property>
+				<property name="supportedMediaTypes">
+					<list>
+						<bean class="org.springframework.http.MediaType">
+							<constructor-arg index="0" value="application"/>
+							<constructor-arg index="1" value="json"/>
+							<constructor-arg index="2" value="UTF-8"/>
+						</bean>
+						<bean class="org.springframework.http.MediaType">
+							<constructor-arg index="0" value="text"/>
+							<constructor-arg index="1" value="json"/>
+							<constructor-arg index="2" value="UTF-8"/>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean id="conversionServiceCustomer" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<bean class="com.huaxin.conversion.CustomerBigDecimalConversion"></bean>
+				<bean class="com.huaxin.conversion.CustomerDoubleConversion"></bean>
+				<bean class="com.huaxin.conversion.CustomerLongConversion"></bean>
+				<bean class="com.huaxin.conversion.CustomerIntegerConversion"></bean>
+				<bean class="com.huaxin.conversion.CustomerDateConversion"></bean>
+			</set>
+		</property>
+	</bean>
+
+
+	<!-- 开启controller层aspect注解支持 -->
+	<aop:aspectj-autoproxy expose-proxy="true"/>
+
+
+	<bean  class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+				  value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp">
+		</property>
+	</bean>
+
+
+	<!-- 文件上传配置 -->
+	<bean id="multipartResolver"
+		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" /> <!-- 默认编码 (ISO-8859-1) -->
+		<property name="maxInMemorySize" value="10240" /> <!-- 最大内存大小 (10240) -->
+		<property name="maxUploadSize" value="20971520" /> <!-- 最大文件大小，单位kb -1为无限止(-1) -->
+	</bean>
+</beans>

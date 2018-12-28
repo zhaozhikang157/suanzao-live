@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.console.dao.CoursePrivateCardMapper">
+
+    <sql id="Base_Column_List">
+
+   </sql>
+    <resultMap id="BaseResultMapDto" type="com.longlian.dto.CoursePrivateCardDto">
+        <result column="id" property="id"/>
+        <result column="courseId" property="courseId"/>
+        <result column="userId" property="userId"/>
+        <result column="liveTopic" property="liveTopic"/>
+        <result column="appUserName" property="appUserName"/>
+        <result column="createTime" property="addTime"/>
+    </resultMap>
+
+    <select id="getListPage" resultType="map">
+        SELECT cpc.id,c.id cid,c.live_topic liveTopic,a.name appUserName,cpc.add_time createTime
+        FROM  course_private_card cpc,course c,app_user a
+        <where>
+            1=1 and cpc.course_id=c.id and cpc.user_id=a.id
+            <if test="@Ognl@isNotEmpty(map.liveTopic)">
+                AND c.LIVE_TOPIC LIKE CONCAT('%',#{map.liveTopic},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.appUserName)">
+                AND a.NAME LIKE CONCAT('%',#{map.appUserName},'%' )
+            </if>
+            <if test="@Ognl@isNotEmpty(map.beginTime)">
+                AND cpc.add_TIME &gt;'${map.beginTime}'
+            </if>
+            <if test="@Ognl@isNotEmpty(map.endTime)">
+                AND cpc.add_TIME &lt; '${map.endTime}'
+            </if>
+        </where>
+        ORDER  BY cpc.add_TIME DESC
+    </select>
+
+    <select id="getCoursePrivateCardById"  resultType="map">
+        SELECT cpc.id id,cpc.course_id courseId,c.app_id userId,c.live_topic liveTopic,a.name appUserName,cpc.add_time createTime
+        FROM  course_private_card cpc,course c,app_user a
+        <where>
+            1=1 and cpc.id=#{id} AND cpc.course_id=c.id and cpc.user_id=a.id
+        </where>
+    </select>
+
+
+    <select id="getCourseByCourseId"  resultType="map">
+        SELECT c.live_topic liveTopic,a.id userId,a.name appUserName
+        FROM   course c,app_user a
+        <where>
+            1=1 and c.id=#{courseId} and  c.app_id=a.id
+        </where>
+    </select>
+
+    <delete id="deleteById">
+        delete from course_private_card WHERE id = #{id}
+    </delete>
+
+    <insert id="addCoursePrivateCard" parameterType="com.longlian.model.course.CoursePrivateCard" useGeneratedKeys="true">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        insert into course_private_card (
+        id,course_id,user_id,add_time
+        )
+        values(#{coursePrivateCard.id},#{coursePrivateCard.courseId},#{coursePrivateCard.userId},#{coursePrivateCard.addTime})
+    </insert>
+
+    <update id="updateCoursePrivateCard" parameterType="com.longlian.model.course.CoursePrivateCard">
+        update  course_private_card
+        SET
+        course_id=#{coursePrivateCard.courseId},user_id=#{coursePrivateCard.userId},add_time=#{coursePrivateCard.addTime}
+        where id = #{coursePrivateCard.id}
+    </update>
+
+
+
+</mapper>

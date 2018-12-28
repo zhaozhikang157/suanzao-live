@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.longlian.console.dao.InviCardMapper">
+    <resultMap id="inciCardmapper" type="com.longlian.model.InviCard">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="CODE" property="code"/>
+        <result column="NAME" property="name"/>
+        <result column="ADDRESS" property="address"/>
+        <result column="XY" property="xy"/>
+    </resultMap>
+
+    <sql id="inviCardSql">
+        ID,CODE,NAME,ADDRESS,XY
+    </sql>
+
+    <select id="getAllInviCard" resultMap="inciCardmapper">
+        SELECT <include refid="inviCardSql"/>
+        FROM invi_card
+    </select>
+
+    <select id="findInviCardById" resultMap="inciCardmapper">
+        SELECT <include refid="inviCardSql"/>
+        FROM invi_card where ID = #{id}
+    </select>
+
+    <insert id="insertInviCard" parameterType="InviCard">
+        INSERT INTO invi_card(CODE , NAME ,ADDRESS , XY) VALUES (#{code},#{name},#{address},#{xy})
+    </insert>
+
+    <update id="updateInviCard" parameterType="InviCard">
+        UPDATE invi_card SET
+        <if test="@Ognl@isNotEmpty(name)">
+           `NAME` = #{name}
+        </if>
+        <if test="@Ognl@isNotEmpty(code)">
+            , CODE = #{code}
+        </if>
+        <if test="@Ognl@isNotEmpty(xy)">
+            , XY = #{xy}
+        </if>
+        <if test="@Ognl@isNotEmpty(address)">
+            , ADDRESS = #{address}
+        </if>
+    </update>
+
+    <delete id="delInviCardById" parameterType="long">
+        DELETE FROM invi_card WHERE ID = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,33 @@
+group 'com.longlian'
+apply plugin: 'java'
+
+def libPath = '/usr/local/longlian-mq/libs'
+def libPathStr = 'libs'
+repositories {
+    mavenCentral()
+}
+jar {
+    manifest {
+        attributes 'Class-Path': new File(libPath).list().findAll{ it.endsWith('.jar') }.collect{"$libPathStr/$it" }.join(' ')
+        attributes 'Main-Class': 'com.longlian.mq.Main'
+    }
+}
+
+dependencies {
+    compile project(':huaxin-util'),fileTree(dir: 'lib', include: '*.jar')
+    compile project(':longlian-model')
+    compile project(':longlian-common')
+    compile 'io.netty:netty-buffer:4.1.12.Final',
+    'io.netty:netty-codec:4.1.12.Final',
+    'io.netty:netty-codec-http:4.1.12.Final',
+    'io.netty:netty-common:4.1.12.Final',
+    'io.netty:netty-handler:4.1.12.Final',
+    'io.netty:netty-resolver:4.1.12.Final',
+    'io.netty:netty-transport:4.1.12.Final',
+             'com.rabbitmq:amqp-client:4.0.3',
+    'com.rabbitmq:http-client:1.1.1.RELEASE',
+    'org.springframework.amqp:spring-rabbit:1.7.5.RELEASE',
+    'org.springframework.amqp:spring-amqp:1.7.5.RELEASE'
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

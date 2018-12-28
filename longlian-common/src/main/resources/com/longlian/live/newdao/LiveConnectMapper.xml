@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longlian.live.newdao.LiveConnectMapper">
+  <resultMap id="BaseResultMap" type="com.longlian.model.LiveConnect">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TEACHER" jdbcType="BIGINT" property="teacher" />
+    <result column="STUDENT" jdbcType="BIGINT" property="student" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="REQ_ID" jdbcType="BIGINT" property="reqId" />
+    <result column="COURSE_ID" jdbcType="BIGINT" property="courseId" />
+    <result column="APPLY_USER" jdbcType="BIGINT" property="applyUser" />
+  </resultMap>
+    <select id="getLiveConnectByRequest" resultMap="BaseResultMap">
+      select * from live_connect where APPLY_USER = #{req.applyUser} and STUDENT = #{req.student} and COURSE_ID = #{req.courseId}
+    </select>
+
+  <!--* WHA -  The student asked the teacher to connect to the network voice：Request list-->
+  <select id="getEvenForWheatListPage" resultType="java.util.Map">
+      SELECT
+      test.ID as id,test.STUDENT AS student,test.`NAME` as name,test.PHOTO as photo
+      FROM(
+          SELECT
+      live_connect.ID,live_connect.STUDENT,live_connect.TEACHER, live_connect.REQ_ID,app_user.`NAME` ,app_user.PHOTO ,CASE live_connect.APPLY_USER
+          WHEN #{student} THEN
+              '0'
+          ELSE
+              '1'
+          END t
+          FROM
+              live_connect
+          LEFT JOIN live_connect_request ON live_connect.REQ_ID = live_connect_request.ID
+      LEFT JOIN app_user ON live_connect.STUDENT = app_user.ID
+    <where>
+          live_connect.TEACHER = #{teacher}
+          AND live_connect.COURSE_ID = #{courseId}
+          AND live_connect.STUDENT = live_connect.APPLY_USER
+          AND live_connect_request.`STATUS` = '0'
+          AND live_connect_request.STUDENT_STATUS = '1'
+    </where>
+      ) test
+    <where>
+      test.t = '1'
+    </where>
+  ORDER BY
+      test.REQ_ID ASC
+  </select>
+
+    <!--* WHA -  The student asked the teacher to connect to the network voice：Request list-->
+    <select id="getEvenForWheatList" resultType="Long">
+        SELECT
+       test.STUDENT AS student
+        FROM(
+        SELECT
+        live_connect.ID,live_connect.STUDENT,live_connect.TEACHER, live_connect.REQ_ID,app_user.`NAME` ,app_user.PHOTO ,CASE live_connect.APPLY_USER
+        WHEN #{student} THEN
+        '0'
+        ELSE
+        '1'
+        END t
+        FROM
+        live_connect
+        LEFT JOIN live_connect_request ON live_connect.REQ_ID = live_connect_request.ID
+        LEFT JOIN app_user ON live_connect.STUDENT = app_user.ID
+        <where>
+            live_connect.COURSE_ID = #{courseId}
+            AND live_connect_request.`STATUS` = '0'
+            AND live_connect_request.STUDENT_STATUS = '1'
+        </where>
+        ) test
+        <where>
+            test.t = '1'
+        </where>
+        ORDER BY
+        test.REQ_ID ASC
+    </select>
+
+  <!--* WHA -  The student asked the teacher to connect to the network voice：Request list-->
+  <select id="getEvenForWheatEndListPage" resultType="java.util.Map">
+      SELECT
+      test.ID AS id,
+      test.STUDENT AS student,
+      test.`NAME` AS name,
+      test.PHOTO AS photo,
+      test.t
+      FROM
+      (
+      SELECT
+      live_connect.ID,
+      live_connect.STUDENT,
+      live_connect.TEACHER,
+      live_connect_request.CLOSE_TIME,
+      app_user.`NAME`,
+      app_user.PHOTO,
+      CASE live_connect.STUDENT
+      WHEN #{student} THEN
+      '0'
+      ELSE
+      '1'
+      END t
+      FROM
+      live_connect
+      LEFT JOIN live_connect_request ON live_connect.REQ_ID = live_connect_request.ID
+      LEFT JOIN app_user ON live_connect.STUDENT = app_user.ID
+
+      <where>
+      live_connect.COURSE_ID = #{courseId} AND live_connect.TEACHER =  #{teacher}
+          AND live_connect_request.STUDENT_STATUS = '1'
+      AND (live_connect_request.`STATUS` = '-3'OR (live_connect_request.`STATUS` = '1'AND live_connect.STUDENT =  #{student}))
+      </where>
+      ) test
+      GROUP BY test.STUDENT ,test.TEACHER
+      ORDER BY
+      test.t ASC,test.CLOSE_TIME DESC
+  </select>
+
+    <select id="findByCouseIdAndApplyUser" resultType="Long">
+        SELECT REQ_ID FROM live_connect WHERE COURSE_ID = #{courseId} AND APPLY_USER = #{applyUser}
+        ORDER BY CREATE_TIME DESC
+        LIMIT 1
+    </select>
+</mapper>

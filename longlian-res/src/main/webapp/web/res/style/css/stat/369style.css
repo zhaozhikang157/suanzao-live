@@ -1,0 +1,164 @@
+html,body{
+	width: 100%;
+}
+.wrap{
+	width: 100%;
+	background: #f1f2f7;
+}
+.padingbox{
+	padding: 20px;
+}
+.topbox{
+	width: 1084px;
+	height: 125px;
+	padding: 20px;
+	background: white;
+}
+h2{
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+.topbox ul li{
+	float: left;
+	width: 118px;
+	height: 89px;
+	border-radius: 4px;
+	text-align: center;
+	margin-right: 20px;
+}
+.topbox ul li:last-child{
+	margin-right: 0;
+}
+.topbox ul li img{
+	margin:0 auto;
+	display: block;
+	width: 36px;
+	height: 36px;
+	margin-top: 12px;
+}
+.topbox ul li p{
+	margin-top: 12px;
+	font-size: 12px;
+	color: white;
+}
+.midbox{
+	width: 1124px;
+	height: 345px;
+	margin-top: 20px;
+}
+#leftbox{
+	width: 512px;
+	height: 312px;
+	padding: 20px;
+	float: left;
+	background: white !important;
+}
+#rightbox{
+	width: 512px;
+	height: 312px;
+	padding: 20px;
+	float: right;
+	background: white !important;
+}
+.bottombox{
+	width: 1084px;
+	height: 242px;
+	padding: 20px;
+	margin-top: 24px;
+	background: white;
+}
+.bottombox dl{
+	width: 354px;
+	height: 102px;
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 14px;
+}
+.bottombox dl dt{
+	width: 75px;
+	height: 75px;
+	float: left;
+	margin-right: 30px;
+	margin-top: 12px;
+}
+.bottombox dl dt img{
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.bottombox dl dd{
+	padding-left: 14px;
+	padding-top: 20px;
+	text-align: left;
+	width:230px;
+	height: 70px;
+	background:url(../img/pic_fengetiao.png) no-repeat left center ;
+	float: left;
+}
+.bottombox dl dd p{
+	font-size: 14px;
+	color: #999999;
+}
+.noneright{
+	margin-right: 0!important;
+}
+h3{
+	font-size: 16px;
+	color: #666666;
+}
+.footerbox{
+	width: 1124px;
+	height: 305px;
+	margin-top: 22px;
+}
+h4{
+	font-size: 18px;
+	color: #666666;
+}
+.footleftbox{
+	width:500px;
+	height:266px;
+	background: white;
+	float: left;
+	padding: 20px;
+}
+.footerbox ul{
+	margin-top: 14px;
+}
+.footerbox ul li{
+	line-height: 24px;
+	color: #666666;
+}
+.footerbox ul li span{
+	font-size: 10px;
+	color: #999999;
+	float: right;
+}
+.tap{
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	border-radius:12px ;
+	background: #cccccc;
+	color: white;
+	line-height: 12px;
+	text-align: center;
+	font-size: 8px;
+	margin-right: 20px;
+}
+.one{
+	background: #fc8675;
+}
+.two{
+	background: #ffab60;
+}
+.three{
+	background: #ffd248;
+}
+.footmidtbox{
+	width:520px;
+	height:266px;
+	background: white;
+	float: right;
+	padding: 20px;
+}
